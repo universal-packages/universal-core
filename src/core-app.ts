@@ -8,7 +8,20 @@ import BaseApp from './BaseApp'
 import { coreConfigSchema } from './core-app.schema'
 import { CoreAppConfig } from './core-app.types'
 
-const coreCapsule = {
+interface CoreCapsule {
+  App: typeof BaseApp
+  allConfig: Record<string, any>
+  appConfig: Record<string, any>
+  appInstance: BaseApp
+  appParamCaseName: string
+  appPascalCaseName: string
+  args: Record<string, any>
+  coreAppConfig: CoreAppConfig
+  logger: Logger
+  stopping: boolean
+}
+
+const coreCapsule: CoreCapsule = {
   App: null,
   allConfig: null,
   appConfig: null,
@@ -17,7 +30,8 @@ const coreCapsule = {
   appPascalCaseName: null,
   args: null,
   coreAppConfig: null,
-  logger: new Logger()
+  logger: new Logger(),
+  stopping: false
 }
 
 export async function startApp(name: string, args: Record<string, any>): Promise<void> {
@@ -34,6 +48,25 @@ export async function startApp(name: string, args: Record<string, any>): Promise
 
   proceed = await loadApp(name, args)
   if (!proceed) return
+
+  const terminate = async (): Promise<void> => {
+    process.stdout.clearLine(0)
+    process.stdout.cursorTo(0)
+
+    if (coreCapsule.stopping) process.exit(0)
+
+    coreCapsule.logger.publish('INFO', `Stopping ${name} app gracefully, press CTRL+C to kill`, null, 'CORE')
+
+    coreCapsule.stopping = true
+    await coreCapsule.appInstance.stop()
+    await coreCapsule.appInstance.release()
+  }
+
+  process.addListener('SIGINT', terminate)
+  process.addListener('SIGTERM', terminate)
+
+  coreCapsule.logger.publish('INFO', `Staring ${name} app`, null, 'CORE')
+  await coreCapsule.appInstance.start()
 }
 
 export async function execTask(name: string, directive: string, directiveOptions: string[], options: Record<string, any>): Promise<void> {
@@ -178,7 +211,7 @@ async function loadApp(name: string, args: Record<string, any>): Promise<boolean
     return false
   }
 
-  coreCapsule.logger.publish('INFO', `App ${name} loaded`, null, 'CORE', { measurement: measurer.finish().toString() })
+  coreCapsule.logger.publish('DEBUG', `App ${name} loaded`, null, 'CORE', { measurement: measurer.finish().toString() })
 
   return true
 }

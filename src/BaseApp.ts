@@ -20,14 +20,14 @@ export default class BaseApp<O = any, A = any> {
   }
 
   public async start(): Promise<void> {
-    throw 'Implement me: Apps should implement the load amethod'
+    throw 'Implement me: Apps should implement the start amethod'
   }
 
   public async stop(): Promise<void> {
-    throw 'Implement me: Apps should implement the load amethod'
+    throw 'Implement me: Apps should implement the stop amethod'
   }
 
   public async release(): Promise<void> {
-    throw 'Implement me: Apps should implement the load amethod'
+    throw 'Implement me: Apps should implement the release amethod'
   }
 }
