@@ -171,8 +171,10 @@ async function loadApp(name: string, args: Record<string, any>): Promise<boolean
   const appPascalCaseName = pascalCase(name)
   const appParamCaseName = paramCase(name)
 
-  const apps = await loadModules(core.coreAppConfig.appsDirectory, { conventionPrefix: 'app' })
-  const appModuleRegistry = apps.find((module: ModuleRegistry): boolean => {
+  const localApps = await loadModules(core.coreAppConfig.appsDirectory, { conventionPrefix: 'app' })
+  const thirdPartyApps = await loadModules(core.coreAppConfig.appsDirectory, { conventionPrefix: 'universal-core-app' })
+  const finalApps = [...localApps, ...thirdPartyApps]
+  const appModuleRegistry = finalApps.find((module: ModuleRegistry): boolean => {
     const fileMatches = !!module.location.match(new RegExp(`(${appPascalCaseName}|${appParamCaseName}).app\..*$`))
 
     return module.exports ? module.exports.appShortName === name || module.exports.name === name || fileMatches : fileMatches
