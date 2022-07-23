@@ -55,18 +55,38 @@ export async function startApp(name: string, args: Record<string, any>): Promise
 
     if (coreCapsule.stopping) process.exit(0)
 
-    coreCapsule.logger.publish('INFO', `Stopping ${name} app gracefully, press CTRL+C to kill`, null, 'CORE')
+    coreCapsule.logger.publish('INFO', 'Stopping app gracefully', 'press CTRL+C again to kill', 'CORE')
 
     coreCapsule.stopping = true
-    await coreCapsule.appInstance.stop()
-    await coreCapsule.appInstance.release()
+    try {
+      await coreCapsule.appInstance.stop()
+    } catch (error) {
+      coreCapsule.logger.publish('ERROR', coreCapsule.appParamCaseName, 'There was an error while stoppig app', 'CORE', { error })
+      await coreCapsule.logger.await()
+      process.exit(1)
+    }
+    try {
+      await coreCapsule.appInstance.release()
+    } catch (error) {
+      coreCapsule.logger.publish('ERROR', coreCapsule.appParamCaseName, 'There was an error while relaasing app', 'CORE', { error })
+      await coreCapsule.logger.await()
+      process.exit(1)
+    }
   }
 
   process.addListener('SIGINT', terminate)
   process.addListener('SIGTERM', terminate)
 
-  coreCapsule.logger.publish('INFO', `Staring ${name} app`, null, 'CORE')
-  await coreCapsule.appInstance.start()
+  coreCapsule.logger.publish('INFO', `${coreCapsule.appParamCaseName}, Staring...`, coreCapsule.App.description, 'CORE')
+
+  try {
+    await coreCapsule.appInstance.start()
+  } catch (error) {
+    coreCapsule.logger.publish('ERROR', coreCapsule.appParamCaseName, 'There was an error while starting app', 'CORE', { error })
+
+    await coreCapsule.logger.await()
+    process.exit(1)
+  }
 }
 
 export async function execTask(name: string, directive: string, directiveOptions: string[], options: Record<string, any>): Promise<void> {
@@ -101,18 +121,17 @@ async function loadCoreAppConfig(): Promise<boolean> {
   if (errors.length > 0) {
     const errorMessages = errors.map((error: any): string => `${error.path} - ${error.message}`)
 
-    coreCapsule.logger.publish('ERROR', 'Core configuration validation error', null, 'CORE', {
+    coreCapsule.logger.publish('ERROR', 'Core config validation error', null, 'CORE', {
       metadata: { errors: errorMessages },
       measurement: measurer.finish().toString()
     })
 
-    await coreCapsule.logger.await()
     return false
   } else {
     if (finalCoreAppConfig.logger?.level) coreCapsule.logger.level = finalCoreAppConfig.logger.level
     if (finalCoreAppConfig.logger?.silence === true) coreCapsule.logger.silence = true
 
-    coreCapsule.logger.publish('DEBUG', 'Core Configuration loaded', null, 'CORE', { metadata: finalCoreAppConfig, measurement: measurer.finish().toString() })
+    coreCapsule.logger.publish('DEBUG', 'Core config loaded', null, 'CORE', { metadata: finalCoreAppConfig, measurement: measurer.finish().toString() })
 
     coreCapsule.coreAppConfig = finalCoreAppConfig
 
@@ -126,11 +145,11 @@ async function loadAppConfig(): Promise<boolean> {
   try {
     const loadedAppConfig = await loadConfig(coreCapsule.coreAppConfig.configDirectory, { selectEnvironment: true })
 
-    coreCapsule.logger.publish('DEBUG', 'Core Configuration loaded', null, 'CORE', { metadata: loadedAppConfig, measurement: measurer.finish().toString() })
+    coreCapsule.logger.publish('DEBUG', 'App config loaded', null, 'CORE', { metadata: loadedAppConfig, measurement: measurer.finish().toString() })
 
     coreCapsule.allConfig = loadedAppConfig
   } catch (error) {
-    coreCapsule.logger.publish('ERROR', 'There was an error loading the config (The one from teh config dir)', null, 'CORE', {
+    coreCapsule.logger.publish('ERROR', 'There was an error loading the app config', null, 'CORE', {
       error,
       measurement: measurer.finish().toString()
     })
@@ -154,31 +173,13 @@ async function loadApp(name: string, args: Record<string, any>): Promise<boolean
   })
 
   if (!appModuleRegistry) {
-    coreCapsule.logger.publish({
-      level: 'ERROR',
-      title: `No app named ${name} found`,
-      category: 'CORE'
-    })
-    await coreCapsule.logger.await()
+    coreCapsule.logger.publish('ERROR', `No app named ${name} found`, null, 'CORE')
     return false
   } else if (appModuleRegistry.error) {
-    coreCapsule.logger.publish({
-      level: 'ERROR',
-      title: 'There was an error loading the App',
-      message: `App "${name}" was loadaded with errors`,
-      category: 'CORE',
-      error: appModuleRegistry.error
-    })
-    await coreCapsule.logger.await()
+    coreCapsule.logger.publish('ERROR', appParamCaseName, 'There was an error loading the app', 'CORE', { error: appModuleRegistry.error })
     return false
   } else if (!(appModuleRegistry.exports.prototype instanceof BaseApp)) {
-    coreCapsule.logger.publish({
-      level: 'ERROR',
-      title: 'Uable to load App',
-      message: `App "${name}" seems to not be a class inheriting from BaseApp`,
-      category: 'CORE'
-    })
-    await coreCapsule.logger.await()
+    coreCapsule.logger.publish('ERROR', appParamCaseName, 'App seems to not be a class inheriting from BaseApp', 'CORE')
     return false
   }
 
@@ -190,28 +191,18 @@ async function loadApp(name: string, args: Record<string, any>): Promise<boolean
     coreCapsule.App = appModuleRegistry.exports
     coreCapsule.appInstance = new coreCapsule.App(coreCapsule.appConfig, args, coreCapsule.logger)
   } catch (error) {
-    coreCapsule.logger.publish({
-      level: 'ERROR',
-      title: 'There was an error instantiating the App',
-      category: 'CORE',
-      error: error
-    })
+    coreCapsule.logger.publish('ERROR', appParamCaseName, 'There was an error instantiating the App', 'CORE', { error })
     return false
   }
 
   try {
-    await coreCapsule.appInstance.load()
+    await coreCapsule.appInstance.prepare()
   } catch (error) {
-    coreCapsule.logger.publish({
-      level: 'ERROR',
-      title: 'There was an error running the App load routine',
-      category: 'CORE',
-      error: error
-    })
+    coreCapsule.logger.publish('ERROR', appParamCaseName, 'There was an error prparing the app', 'CORE', { error })
     return false
   }
 
-  coreCapsule.logger.publish('DEBUG', `App ${name} loaded`, null, 'CORE', { measurement: measurer.finish().toString() })
+  coreCapsule.logger.publish('DEBUG', appParamCaseName, 'Loaded and prepared successfully', 'CORE', { measurement: measurer.finish().toString() })
 
   return true
 }
