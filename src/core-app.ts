@@ -19,8 +19,8 @@ const coreCapsule: CoreCapsule = {
   args: null,
   coreAppConfig: null,
   logger: new Logger(),
+  loadedModules: [],
   moduleRegistries: {},
-  modules: {},
   stopping: false
 }
 
@@ -51,6 +51,18 @@ export async function startApp(name: string, args: Record<string, any>): Promise
     coreCapsule.logger.publish('INFO', 'Stopping app gracefully', 'press CTRL+C again to kill', 'CORE')
 
     coreCapsule.stopping = true
+
+    for (let i = 0; i < coreCapsule.loadedModules.length; i++) {
+      const currentModuleName = coreCapsule.loadedModules[i]
+      const currentModule = coreCapsule.moduleRegistries[currentModuleName]
+
+      try {
+        await currentModule.instance.release()
+      } catch (error) {
+        coreCapsule.logger.publish('ERROR', currentModuleName, 'There was an error releasing module', 'CORE', { error })
+      }
+    }
+
     try {
       await coreCapsule.appInstance.stop()
     } catch (error) {
@@ -205,7 +217,7 @@ async function loadCoreAppModules(): Promise<boolean> {
   const measurer = startMeasurement()
   const localModules = await loadModules(coreCapsule.coreAppConfig.modulesDirectory, { conventionPrefix: 'module' })
   const thridPartyModules = await loadModules('./node_modules', { conventionPrefix: 'universal-core-app-module' })
-  const finalModules = [...thridPartyModules, ...localModules]
+  const finalModules = [...localModules, ...thridPartyModules]
   let withErorrs = false
 
   for (let i = 0; i < finalModules.length; i++) {
@@ -230,36 +242,39 @@ async function loadCoreAppModules(): Promise<boolean> {
     const moduleParamCaseName = paramCase(moduleName)
     const modulePascalCaseName = pascalCase(moduleName)
     const moduleConfig = (coreCapsule.appConfig = coreCapsule.allConfig[moduleParamCaseName] || coreCapsule.allConfig[modulePascalCaseName] || coreCapsule.allConfig[moduleName])
-    const internalModuleRegistry: InternalModuleRegistry = {
-      ...currentModule,
-      camelCaseName: moduleCamelCaseName,
-      paramCaseName: moduleParamCaseName,
-      pascalCaseName: modulePascalCaseName
+
+    if (coreCapsule.moduleRegistries[moduleParamCaseName]) {
+      coreCapsule.logger.publish('WARNING', `Two modules have the same name: ${moduleName}`, `First loaded will take presedence\n${currentModule.location}`, 'CORE')
+    } else {
+      let moduleInstance: BaseModule
+
+      try {
+        moduleInstance = new currentModule.exports(moduleConfig, coreCapsule.logger)
+      } catch (error) {
+        coreCapsule.logger.publish('ERROR', moduleParamCaseName, 'There was an error instantiating the module', 'CORE', { error })
+        return false
+      }
+
+      try {
+        await moduleInstance.prepare()
+      } catch (error) {
+        coreCapsule.logger.publish('ERROR', moduleParamCaseName, 'There was an error preparing the module', 'CORE', { error })
+        return false
+      }
+
+      const internalModuleRegistry: InternalModuleRegistry = {
+        ...currentModule,
+        instance: moduleInstance,
+        camelCaseName: moduleCamelCaseName,
+        paramCaseName: moduleParamCaseName,
+        pascalCaseName: modulePascalCaseName
+      }
+
+      coreCapsule.loadedModules.push(moduleParamCaseName)
+      coreCapsule.moduleRegistries[moduleParamCaseName] = internalModuleRegistry
+
+      coreCapsule.logger.publish('DEBUG', moduleParamCaseName, 'Loaded and prepared', 'CORE', { measurement: moduleMeasurer.finish().toString() })
     }
-    let moduleInstance: BaseModule
-
-    try {
-      moduleInstance = new currentModule.exports(moduleConfig, coreCapsule.logger)
-    } catch (error) {
-      coreCapsule.logger.publish('ERROR', moduleParamCaseName, 'There was an error instantiating the module', 'CORE', { error })
-      return false
-    }
-
-    try {
-      await moduleInstance.prepare()
-    } catch (error) {
-      coreCapsule.logger.publish('ERROR', moduleParamCaseName, 'There was an error preparing the module', 'CORE', { error })
-      return false
-    }
-
-    if (coreCapsule.modules[moduleCamelCaseName]) {
-      coreCapsule.logger.publish('WARNING', `Two modules have the same name: ${moduleName}`, `Last loaded will take presedence\n${currentModule.location}`, 'CORE')
-    }
-
-    coreCapsule.moduleRegistries[moduleParamCaseName] = internalModuleRegistry
-    coreCapsule.modules[moduleParamCaseName] = moduleInstance
-
-    coreCapsule.logger.publish('DEBUG', moduleParamCaseName, 'Loaded and prepared', 'CORE', { measurement: moduleMeasurer.finish().toString() })
   }
 
   coreCapsule.logger.publish('INFO', 'Modules loaded', null, 'CORE', { measurement: measurer.finish().toString() })

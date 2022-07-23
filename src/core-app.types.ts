@@ -17,6 +17,7 @@ export interface CoreAppConfig {
 }
 
 export interface InternalModuleRegistry extends ModuleRegistry {
+  instance: BaseModule
   camelCaseName: string
   paramCaseName: string
   pascalCaseName: string
@@ -32,7 +33,7 @@ export interface CoreCapsule {
   args: Record<string, any>
   coreAppConfig: CoreAppConfig
   logger: Logger
+  loadedModules: string[]
   moduleRegistries: Record<string, InternalModuleRegistry>
-  modules: Record<string, BaseModule>
   stopping: boolean
 }
