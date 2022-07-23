@@ -36,12 +36,17 @@ export const coreConfigSchema = new Schema(
       use: { directoryCheck },
       message: 'Directory is not accesible'
     },
-    tasksDirectory: {
+    configDirectory: {
       type: String,
       use: { directoryCheck },
       message: 'Directory is not accesible'
     },
-    configDirectory: {
+    modulesDirectory: {
+      type: String,
+      use: { directoryCheckOptional },
+      message: 'Directory is not accesible'
+    },
+    tasksDirectory: {
       type: String,
       use: { directoryCheck },
       message: 'Directory is not accesible'

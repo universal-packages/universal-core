@@ -3,23 +3,11 @@ import Logger, { TerminalTransport } from '@universal-packages/logger'
 import { loadModules, ModuleRegistry } from '@universal-packages/module-loader'
 import { loadPluginConfig } from '@universal-packages/plugin-config-loader'
 import { startMeasurement } from '@universal-packages/time-measurer'
-import { paramCase, pascalCase } from 'change-case'
+import { camelCase, paramCase, pascalCase } from 'change-case'
 import BaseApp from './BaseApp'
+import BaseModule from './BaseModule'
 import { coreConfigSchema } from './core-app.schema'
-import { CoreAppConfig } from './core-app.types'
-
-interface CoreCapsule {
-  App: typeof BaseApp
-  allConfig: Record<string, any>
-  appConfig: Record<string, any>
-  appInstance: BaseApp
-  appParamCaseName: string
-  appPascalCaseName: string
-  args: Record<string, any>
-  coreAppConfig: CoreAppConfig
-  logger: Logger
-  stopping: boolean
-}
+import { CoreAppConfig, CoreCapsule, InternalModuleRegistry } from './core-app.types'
 
 const coreCapsule: CoreCapsule = {
   App: null,
@@ -31,6 +19,8 @@ const coreCapsule: CoreCapsule = {
   args: null,
   coreAppConfig: null,
   logger: new Logger(),
+  moduleRegistries: {},
+  modules: {},
   stopping: false
 }
 
@@ -44,6 +34,9 @@ export async function startApp(name: string, args: Record<string, any>): Promise
   if (!proceed) return
 
   proceed = await loadAppConfig()
+  if (!proceed) return
+
+  proceed = await loadCoreAppModules()
   if (!proceed) return
 
   proceed = await loadApp(name, args)
@@ -77,7 +70,7 @@ export async function startApp(name: string, args: Record<string, any>): Promise
   process.addListener('SIGINT', terminate)
   process.addListener('SIGTERM', terminate)
 
-  coreCapsule.logger.publish('INFO', `${coreCapsule.appParamCaseName}, Staring...`, coreCapsule.App.description, 'CORE')
+  coreCapsule.logger.publish('INFO', `${coreCapsule.appParamCaseName} staring...`, coreCapsule.App.description, 'CORE')
 
   try {
     await coreCapsule.appInstance.start()
@@ -111,8 +104,9 @@ async function loadCoreAppConfig(): Promise<boolean> {
   const loadedCoreAppConfig = await loadPluginConfig('core-app')
   const finalCoreAppConfig: CoreAppConfig = {
     appsDirectory: './srs/apps',
-    tasksDirectory: '.src/tasks',
     configDirectory: './src/config',
+    modulesDirectory: './src/modules',
+    tasksDirectory: '.src/tasks',
     ...loadedCoreAppConfig,
     logger: { logsDirectory: '.logs', silence: false, ...loadedCoreAppConfig.logger }
   }
@@ -185,7 +179,7 @@ async function loadApp(name: string, args: Record<string, any>): Promise<boolean
 
   coreCapsule.appPascalCaseName = appPascalCaseName
   coreCapsule.appParamCaseName = appParamCaseName
-  coreCapsule.appConfig = coreCapsule.allConfig[appParamCaseName] || coreCapsule.allConfig[appPascalCaseName] || {}
+  coreCapsule.appConfig = coreCapsule.allConfig[appParamCaseName] || coreCapsule.allConfig[appPascalCaseName]
 
   try {
     coreCapsule.App = appModuleRegistry.exports
@@ -202,7 +196,73 @@ async function loadApp(name: string, args: Record<string, any>): Promise<boolean
     return false
   }
 
-  coreCapsule.logger.publish('DEBUG', appParamCaseName, 'Loaded and prepared successfully', 'CORE', { measurement: measurer.finish().toString() })
+  coreCapsule.logger.publish('DEBUG', appParamCaseName, 'Loaded and prepared', 'CORE', { measurement: measurer.finish().toString() })
+
+  return true
+}
+
+async function loadCoreAppModules(): Promise<boolean> {
+  const measurer = startMeasurement()
+  const localModules = await loadModules(coreCapsule.coreAppConfig.modulesDirectory, { conventionPrefix: 'module' })
+  const thridPartyModules = await loadModules('./node_modules', { conventionPrefix: 'universal-core-app-module' })
+  const finalModules = [...thridPartyModules, ...localModules]
+  let withErorrs = false
+
+  for (let i = 0; i < finalModules.length; i++) {
+    const currentModule = finalModules[i]
+
+    if (currentModule.error) {
+      coreCapsule.logger.publish('ERROR', 'Module Error', 'There was an error loading a module', 'CORE', { error: currentModule.error })
+      withErorrs = true
+    } else if (!(currentModule.exports.prototype instanceof BaseModule)) {
+      coreCapsule.logger.publish('ERROR', 'Module does not implements BaseModule', currentModule.location, 'CORE')
+      withErorrs = true
+    }
+  }
+
+  if (withErorrs) return false
+
+  for (let i = 0; i < finalModules.length; i++) {
+    const moduleMeasurer = startMeasurement()
+    const currentModule = finalModules[i]
+    const moduleName = currentModule.exports.moduleName || currentModule.exports.name
+    const moduleCamelCaseName = camelCase(moduleName)
+    const moduleParamCaseName = paramCase(moduleName)
+    const modulePascalCaseName = pascalCase(moduleName)
+    const moduleConfig = (coreCapsule.appConfig = coreCapsule.allConfig[moduleParamCaseName] || coreCapsule.allConfig[modulePascalCaseName] || coreCapsule.allConfig[moduleName])
+    const internalModuleRegistry: InternalModuleRegistry = {
+      ...currentModule,
+      camelCaseName: moduleCamelCaseName,
+      paramCaseName: moduleParamCaseName,
+      pascalCaseName: modulePascalCaseName
+    }
+    let moduleInstance: BaseModule
+
+    try {
+      moduleInstance = new currentModule.exports(moduleConfig, coreCapsule.logger)
+    } catch (error) {
+      coreCapsule.logger.publish('ERROR', moduleParamCaseName, 'There was an error instantiating the module', 'CORE', { error })
+      return false
+    }
+
+    try {
+      await moduleInstance.prepare()
+    } catch (error) {
+      coreCapsule.logger.publish('ERROR', moduleParamCaseName, 'There was an error preparing the module', 'CORE', { error })
+      return false
+    }
+
+    if (coreCapsule.modules[moduleCamelCaseName]) {
+      coreCapsule.logger.publish('WARNING', `Two modules have the same name: ${moduleName}`, `Last loaded will take presedence\n${currentModule.location}`, 'CORE')
+    }
+
+    coreCapsule.moduleRegistries[moduleParamCaseName] = internalModuleRegistry
+    coreCapsule.modules[moduleParamCaseName] = moduleInstance
+
+    coreCapsule.logger.publish('DEBUG', moduleParamCaseName, 'Loaded and prepared', 'CORE', { measurement: moduleMeasurer.finish().toString() })
+  }
+
+  coreCapsule.logger.publish('INFO', 'Modules loaded', null, 'CORE', { measurement: measurer.finish().toString() })
 
   return true
 }

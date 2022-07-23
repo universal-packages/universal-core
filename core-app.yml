@@ -1,6 +1,7 @@
 appsDirectory: './example/apps'
-tasksDirectory: './example/tasks'
 configDirectory: './example/config'
+modulesDirectory: './example/modules'
+tasksDirectory: './example/tasks'
 logger:
   level: TRACE
   silence: false
