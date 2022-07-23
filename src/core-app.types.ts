@@ -2,6 +2,7 @@ import Logger, { LogLevel } from '@universal-packages/logger'
 import { ModuleRegistry } from '@universal-packages/module-loader'
 import BaseApp from './BaseApp'
 import BaseModule from './BaseModule'
+import BaseTask from './BaseTask'
 
 export interface CoreAppConfig {
   appsDirectory: string
@@ -36,4 +37,8 @@ export interface Core {
   loadedModules: string[]
   moduleRegistries: Record<string, InternalModuleRegistry>
   stopping: boolean
+  Task: typeof BaseTask
+  taskInstance: BaseTask
+  taskParamCaseName: string
+  taskPascalCaseName: string
 }

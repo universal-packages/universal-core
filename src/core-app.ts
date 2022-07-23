@@ -6,6 +6,7 @@ import { startMeasurement } from '@universal-packages/time-measurer'
 import { camelCase, paramCase, pascalCase } from 'change-case'
 import BaseApp from './BaseApp'
 import BaseModule from './BaseModule'
+import BaseTask from './BaseTask'
 import { coreConfigSchema } from './core-app.schema'
 import { CoreAppConfig, InternalModuleRegistry } from './core-app.types'
 
@@ -21,7 +22,11 @@ global.core = {
   logger: new Logger(),
   loadedModules: [],
   moduleRegistries: {},
-  stopping: false
+  stopping: false,
+  Task: null,
+  taskInstance: null,
+  taskParamCaseName: null,
+  taskPascalCaseName: null
 }
 
 export async function startApp(name: string, args: Record<string, any>): Promise<void> {
@@ -94,8 +99,74 @@ export async function startApp(name: string, args: Record<string, any>): Promise
   }
 }
 
-export async function execTask(name: string, directive: string, directiveOptions: string[], options: Record<string, any>): Promise<void> {
-  await loadCoreAppConfig()
+export async function execTask(name: string, directive: string, directiveOptions: string[], args: Record<string, any>): Promise<void> {
+  let proceed = true
+
+  proceed = initLogger()
+  if (!proceed) return
+
+  proceed = await loadCoreAppConfig()
+  if (!proceed) return
+
+  proceed = await loadAppConfig()
+  if (!proceed) return
+
+  proceed = await loadCoreAppModules()
+  if (!proceed) return
+
+  proceed = await loadTask(name, directive, directiveOptions, args)
+  if (!proceed) return
+
+  const terminate = async (): Promise<void> => {
+    process.stdout.clearLine(0)
+    process.stdout.cursorTo(0)
+
+    if (core.stopping) process.exit(0)
+
+    core.logger.publish('INFO', 'Aborting task gracefully', 'press CTRL+C again to kill', 'CORE')
+
+    core.stopping = true
+
+    for (let i = 0; i < core.loadedModules.length; i++) {
+      const currentModuleName = core.loadedModules[i]
+      const currentModule = core.moduleRegistries[currentModuleName]
+
+      try {
+        await currentModule.instance.release()
+      } catch (error) {
+        core.logger.publish('ERROR', currentModuleName, 'There was an error releasing module', 'CORE', { error })
+      }
+    }
+
+    try {
+      await core.taskInstance.abort()
+    } catch (error) {
+      core.logger.publish('ERROR', core.taskParamCaseName, 'There was an error while aborting task', 'CORE', { error })
+      await core.logger.await()
+      process.exit(1)
+    }
+    try {
+      await core.taskInstance.release()
+    } catch (error) {
+      core.logger.publish('ERROR', core.taskParamCaseName, 'There was an error while releasing task', 'CORE', { error })
+      await core.logger.await()
+      process.exit(1)
+    }
+  }
+
+  process.addListener('SIGINT', terminate)
+  process.addListener('SIGTERM', terminate)
+
+  core.logger.publish('INFO', `${core.taskParamCaseName} executing...`, core.Task.description, 'CORE')
+
+  try {
+    await core.taskInstance.exec()
+  } catch (error) {
+    core.logger.publish('ERROR', core.taskParamCaseName, 'There was an error while executing app', 'CORE', { error })
+
+    await core.logger.await()
+    process.exit(1)
+  }
 }
 
 function initLogger(): boolean {
@@ -172,10 +243,10 @@ async function loadApp(name: string, args: Record<string, any>): Promise<boolean
   const appParamCaseName = paramCase(name)
 
   const localApps = await loadModules(core.coreAppConfig.appsDirectory, { conventionPrefix: 'app' })
-  const thirdPartyApps = await loadModules(core.coreAppConfig.appsDirectory, { conventionPrefix: 'universal-core-app' })
+  const thirdPartyApps = await loadModules('./node_modules', { conventionPrefix: 'universal-core-app' })
   const finalApps = [...localApps, ...thirdPartyApps]
   const appModuleRegistry = finalApps.find((module: ModuleRegistry): boolean => {
-    const fileMatches = !!module.location.match(new RegExp(`(${appPascalCaseName}|${appParamCaseName}).app\..*$`))
+    const fileMatches = !!module.location.match(new RegExp(`(${appPascalCaseName}|${appParamCaseName}).(app|universal-core-app)\..*$`))
 
     return module.exports ? module.exports.appShortName === name || module.exports.name === name || fileMatches : fileMatches
   })
@@ -206,11 +277,59 @@ async function loadApp(name: string, args: Record<string, any>): Promise<boolean
   try {
     await core.appInstance.prepare()
   } catch (error) {
-    core.logger.publish('ERROR', appParamCaseName, 'There was an error prparing the app', 'CORE', { error })
+    core.logger.publish('ERROR', appParamCaseName, 'There was an error preparing the app', 'CORE', { error })
     return false
   }
 
   core.logger.publish('DEBUG', appParamCaseName, 'Loaded and prepared', 'CORE', { measurement: measurer.finish().toString() })
+
+  return true
+}
+
+async function loadTask(name: string, directive: string, directiveOptions: string[], args: Record<string, any>): Promise<boolean> {
+  const measurer = startMeasurement()
+  const taskPascalCaseName = pascalCase(name)
+  const taskParamCaseName = paramCase(name)
+
+  const localTasks = await loadModules(core.coreAppConfig.tasksDirectory, { conventionPrefix: 'task' })
+  const thirdPartyTasks = await loadModules('./node_modules', { conventionPrefix: 'universal-core-app-task' })
+  const finalTasks = [...localTasks, ...thirdPartyTasks]
+  const taskModuleRegistry = finalTasks.find((module: ModuleRegistry): boolean => {
+    const fileMatches = !!module.location.match(new RegExp(`(${taskPascalCaseName}|${taskParamCaseName}).(task|universal-core-app-task)\..*$`))
+
+    return module.exports ? module.exports.appShortName === name || module.exports.name === name || fileMatches : fileMatches
+  })
+
+  if (!taskModuleRegistry) {
+    core.logger.publish('ERROR', `No task named ${name} found`, null, 'CORE')
+    return false
+  } else if (taskModuleRegistry.error) {
+    core.logger.publish('ERROR', taskParamCaseName, 'There was an error loading the task', 'CORE', { error: taskModuleRegistry.error })
+    return false
+  } else if (!(taskModuleRegistry.exports.prototype instanceof BaseTask)) {
+    core.logger.publish('ERROR', taskParamCaseName, 'Task seems to not be a class inheriting from BaseTask', 'CORE')
+    return false
+  }
+
+  core.taskPascalCaseName = taskPascalCaseName
+  core.taskParamCaseName = taskParamCaseName
+
+  try {
+    core.Task = taskModuleRegistry.exports
+    core.taskInstance = new core.Task(directive, directiveOptions, args, core.logger)
+  } catch (error) {
+    core.logger.publish('ERROR', taskParamCaseName, 'There was an error instantiating the Task', 'CORE', { error })
+    return false
+  }
+
+  try {
+    await core.taskInstance.prepare()
+  } catch (error) {
+    core.logger.publish('ERROR', taskParamCaseName, 'There was an error preparing the task', 'CORE', { error })
+    return false
+  }
+
+  core.logger.publish('DEBUG', taskParamCaseName, 'Loaded and prepared', 'CORE', { measurement: measurer.finish().toString() })
 
   return true
 }

@@ -4,7 +4,8 @@ export default class BaseModule<O = any> {
   public static readonly moduleName: string
   public static readonly description: string
 
-  protected readonly options: O
+  public readonly options: O
+
   protected readonly logger: Logger
 
   public constructor(options: O, logger: Logger) {
