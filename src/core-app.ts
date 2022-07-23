@@ -7,9 +7,9 @@ import { camelCase, paramCase, pascalCase } from 'change-case'
 import BaseApp from './BaseApp'
 import BaseModule from './BaseModule'
 import { coreConfigSchema } from './core-app.schema'
-import { CoreAppConfig, CoreCapsule, InternalModuleRegistry } from './core-app.types'
+import { CoreAppConfig, InternalModuleRegistry } from './core-app.types'
 
-const coreCapsule: CoreCapsule = {
+global.core = {
   App: null,
   allConfig: null,
   appConfig: null,
@@ -46,35 +46,35 @@ export async function startApp(name: string, args: Record<string, any>): Promise
     process.stdout.clearLine(0)
     process.stdout.cursorTo(0)
 
-    if (coreCapsule.stopping) process.exit(0)
+    if (core.stopping) process.exit(0)
 
-    coreCapsule.logger.publish('INFO', 'Stopping app gracefully', 'press CTRL+C again to kill', 'CORE')
+    core.logger.publish('INFO', 'Stopping app gracefully', 'press CTRL+C again to kill', 'CORE')
 
-    coreCapsule.stopping = true
+    core.stopping = true
 
-    for (let i = 0; i < coreCapsule.loadedModules.length; i++) {
-      const currentModuleName = coreCapsule.loadedModules[i]
-      const currentModule = coreCapsule.moduleRegistries[currentModuleName]
+    for (let i = 0; i < core.loadedModules.length; i++) {
+      const currentModuleName = core.loadedModules[i]
+      const currentModule = core.moduleRegistries[currentModuleName]
 
       try {
         await currentModule.instance.release()
       } catch (error) {
-        coreCapsule.logger.publish('ERROR', currentModuleName, 'There was an error releasing module', 'CORE', { error })
+        core.logger.publish('ERROR', currentModuleName, 'There was an error releasing module', 'CORE', { error })
       }
     }
 
     try {
-      await coreCapsule.appInstance.stop()
+      await core.appInstance.stop()
     } catch (error) {
-      coreCapsule.logger.publish('ERROR', coreCapsule.appParamCaseName, 'There was an error while stoppig app', 'CORE', { error })
-      await coreCapsule.logger.await()
+      core.logger.publish('ERROR', core.appParamCaseName, 'There was an error while stoppig app', 'CORE', { error })
+      await core.logger.await()
       process.exit(1)
     }
     try {
-      await coreCapsule.appInstance.release()
+      await core.appInstance.release()
     } catch (error) {
-      coreCapsule.logger.publish('ERROR', coreCapsule.appParamCaseName, 'There was an error while relaasing app', 'CORE', { error })
-      await coreCapsule.logger.await()
+      core.logger.publish('ERROR', core.appParamCaseName, 'There was an error while relaasing app', 'CORE', { error })
+      await core.logger.await()
       process.exit(1)
     }
   }
@@ -82,14 +82,14 @@ export async function startApp(name: string, args: Record<string, any>): Promise
   process.addListener('SIGINT', terminate)
   process.addListener('SIGTERM', terminate)
 
-  coreCapsule.logger.publish('INFO', `${coreCapsule.appParamCaseName} staring...`, coreCapsule.App.description, 'CORE')
+  core.logger.publish('INFO', `${core.appParamCaseName} staring...`, core.App.description, 'CORE')
 
   try {
-    await coreCapsule.appInstance.start()
+    await core.appInstance.start()
   } catch (error) {
-    coreCapsule.logger.publish('ERROR', coreCapsule.appParamCaseName, 'There was an error while starting app', 'CORE', { error })
+    core.logger.publish('ERROR', core.appParamCaseName, 'There was an error while starting app', 'CORE', { error })
 
-    await coreCapsule.logger.await()
+    await core.logger.await()
     process.exit(1)
   }
 }
@@ -100,7 +100,7 @@ export async function execTask(name: string, directive: string, directiveOptions
 
 function initLogger(): boolean {
   try {
-    const termianlTransport = coreCapsule.logger.getTransport('terminal') as TerminalTransport
+    const termianlTransport = core.logger.getTransport('terminal') as TerminalTransport
     termianlTransport.setCategoryColor('CORE', 'BLACK')
   } catch (error) {
     console.log(error)
@@ -127,19 +127,19 @@ async function loadCoreAppConfig(): Promise<boolean> {
   if (errors.length > 0) {
     const errorMessages = errors.map((error: any): string => `${error.path} - ${error.message}`)
 
-    coreCapsule.logger.publish('ERROR', 'Core config validation error', null, 'CORE', {
+    core.logger.publish('ERROR', 'Core config validation error', null, 'CORE', {
       metadata: { errors: errorMessages },
       measurement: measurer.finish().toString()
     })
 
     return false
   } else {
-    if (finalCoreAppConfig.logger?.level) coreCapsule.logger.level = finalCoreAppConfig.logger.level
-    if (finalCoreAppConfig.logger?.silence === true) coreCapsule.logger.silence = true
+    if (finalCoreAppConfig.logger?.level) core.logger.level = finalCoreAppConfig.logger.level
+    if (finalCoreAppConfig.logger?.silence === true) core.logger.silence = true
 
-    coreCapsule.logger.publish('DEBUG', 'Core config loaded', null, 'CORE', { metadata: finalCoreAppConfig, measurement: measurer.finish().toString() })
+    core.logger.publish('DEBUG', 'Core config loaded', null, 'CORE', { metadata: finalCoreAppConfig, measurement: measurer.finish().toString() })
 
-    coreCapsule.coreAppConfig = finalCoreAppConfig
+    core.coreAppConfig = finalCoreAppConfig
 
     return true
   }
@@ -149,13 +149,13 @@ async function loadAppConfig(): Promise<boolean> {
   const measurer = startMeasurement()
 
   try {
-    const loadedAppConfig = await loadConfig(coreCapsule.coreAppConfig.configDirectory, { selectEnvironment: true })
+    const loadedAppConfig = await loadConfig(core.coreAppConfig.configDirectory, { selectEnvironment: true })
 
-    coreCapsule.logger.publish('DEBUG', 'App config loaded', null, 'CORE', { metadata: loadedAppConfig, measurement: measurer.finish().toString() })
+    core.logger.publish('DEBUG', 'App config loaded', null, 'CORE', { metadata: loadedAppConfig, measurement: measurer.finish().toString() })
 
-    coreCapsule.allConfig = loadedAppConfig
+    core.allConfig = loadedAppConfig
   } catch (error) {
-    coreCapsule.logger.publish('ERROR', 'There was an error loading the app config', null, 'CORE', {
+    core.logger.publish('ERROR', 'There was an error loading the app config', null, 'CORE', {
       error,
       measurement: measurer.finish().toString()
     })
@@ -171,7 +171,7 @@ async function loadApp(name: string, args: Record<string, any>): Promise<boolean
   const appPascalCaseName = pascalCase(name)
   const appParamCaseName = paramCase(name)
 
-  const apps = await loadModules(coreCapsule.coreAppConfig.appsDirectory, { conventionPrefix: 'app' })
+  const apps = await loadModules(core.coreAppConfig.appsDirectory, { conventionPrefix: 'app' })
   const appModuleRegistry = apps.find((module: ModuleRegistry): boolean => {
     const fileMatches = !!module.location.match(new RegExp(`(${appPascalCaseName}|${appParamCaseName}).app\..*$`))
 
@@ -179,43 +179,43 @@ async function loadApp(name: string, args: Record<string, any>): Promise<boolean
   })
 
   if (!appModuleRegistry) {
-    coreCapsule.logger.publish('ERROR', `No app named ${name} found`, null, 'CORE')
+    core.logger.publish('ERROR', `No app named ${name} found`, null, 'CORE')
     return false
   } else if (appModuleRegistry.error) {
-    coreCapsule.logger.publish('ERROR', appParamCaseName, 'There was an error loading the app', 'CORE', { error: appModuleRegistry.error })
+    core.logger.publish('ERROR', appParamCaseName, 'There was an error loading the app', 'CORE', { error: appModuleRegistry.error })
     return false
   } else if (!(appModuleRegistry.exports.prototype instanceof BaseApp)) {
-    coreCapsule.logger.publish('ERROR', appParamCaseName, 'App seems to not be a class inheriting from BaseApp', 'CORE')
+    core.logger.publish('ERROR', appParamCaseName, 'App seems to not be a class inheriting from BaseApp', 'CORE')
     return false
   }
 
-  coreCapsule.appPascalCaseName = appPascalCaseName
-  coreCapsule.appParamCaseName = appParamCaseName
-  coreCapsule.appConfig = coreCapsule.allConfig[appParamCaseName] || coreCapsule.allConfig[appPascalCaseName]
+  core.appPascalCaseName = appPascalCaseName
+  core.appParamCaseName = appParamCaseName
+  core.appConfig = core.allConfig[appParamCaseName] || core.allConfig[appPascalCaseName]
 
   try {
-    coreCapsule.App = appModuleRegistry.exports
-    coreCapsule.appInstance = new coreCapsule.App(coreCapsule.appConfig, args, coreCapsule.logger)
+    core.App = appModuleRegistry.exports
+    core.appInstance = new core.App(core.appConfig, args, core.logger)
   } catch (error) {
-    coreCapsule.logger.publish('ERROR', appParamCaseName, 'There was an error instantiating the App', 'CORE', { error })
+    core.logger.publish('ERROR', appParamCaseName, 'There was an error instantiating the App', 'CORE', { error })
     return false
   }
 
   try {
-    await coreCapsule.appInstance.prepare()
+    await core.appInstance.prepare()
   } catch (error) {
-    coreCapsule.logger.publish('ERROR', appParamCaseName, 'There was an error prparing the app', 'CORE', { error })
+    core.logger.publish('ERROR', appParamCaseName, 'There was an error prparing the app', 'CORE', { error })
     return false
   }
 
-  coreCapsule.logger.publish('DEBUG', appParamCaseName, 'Loaded and prepared', 'CORE', { measurement: measurer.finish().toString() })
+  core.logger.publish('DEBUG', appParamCaseName, 'Loaded and prepared', 'CORE', { measurement: measurer.finish().toString() })
 
   return true
 }
 
 async function loadCoreAppModules(): Promise<boolean> {
   const measurer = startMeasurement()
-  const localModules = await loadModules(coreCapsule.coreAppConfig.modulesDirectory, { conventionPrefix: 'module' })
+  const localModules = await loadModules(core.coreAppConfig.modulesDirectory, { conventionPrefix: 'module' })
   const thridPartyModules = await loadModules('./node_modules', { conventionPrefix: 'universal-core-app-module' })
   const finalModules = [...localModules, ...thridPartyModules]
   let withErorrs = false
@@ -224,10 +224,10 @@ async function loadCoreAppModules(): Promise<boolean> {
     const currentModule = finalModules[i]
 
     if (currentModule.error) {
-      coreCapsule.logger.publish('ERROR', 'Module Error', 'There was an error loading a module', 'CORE', { error: currentModule.error })
+      core.logger.publish('ERROR', 'Module Error', 'There was an error loading a module', 'CORE', { error: currentModule.error })
       withErorrs = true
     } else if (!(currentModule.exports.prototype instanceof BaseModule)) {
-      coreCapsule.logger.publish('ERROR', 'Module does not implements BaseModule', currentModule.location, 'CORE')
+      core.logger.publish('ERROR', 'Module does not implements BaseModule', currentModule.location, 'CORE')
       withErorrs = true
     }
   }
@@ -241,24 +241,24 @@ async function loadCoreAppModules(): Promise<boolean> {
     const moduleCamelCaseName = camelCase(moduleName)
     const moduleParamCaseName = paramCase(moduleName)
     const modulePascalCaseName = pascalCase(moduleName)
-    const moduleConfig = (coreCapsule.appConfig = coreCapsule.allConfig[moduleParamCaseName] || coreCapsule.allConfig[modulePascalCaseName] || coreCapsule.allConfig[moduleName])
+    const moduleConfig = (core.appConfig = core.allConfig[moduleParamCaseName] || core.allConfig[modulePascalCaseName] || core.allConfig[moduleName])
 
-    if (coreCapsule.moduleRegistries[moduleParamCaseName]) {
-      coreCapsule.logger.publish('WARNING', `Two modules have the same name: ${moduleName}`, `First loaded will take presedence\n${currentModule.location}`, 'CORE')
+    if (core.moduleRegistries[moduleParamCaseName]) {
+      core.logger.publish('WARNING', `Two modules have the same name: ${moduleName}`, `First loaded will take presedence\n${currentModule.location}`, 'CORE')
     } else {
       let moduleInstance: BaseModule
 
       try {
-        moduleInstance = new currentModule.exports(moduleConfig, coreCapsule.logger)
+        moduleInstance = new currentModule.exports(moduleConfig, core.logger)
       } catch (error) {
-        coreCapsule.logger.publish('ERROR', moduleParamCaseName, 'There was an error instantiating the module', 'CORE', { error })
+        core.logger.publish('ERROR', moduleParamCaseName, 'There was an error instantiating the module', 'CORE', { error })
         return false
       }
 
       try {
         await moduleInstance.prepare()
       } catch (error) {
-        coreCapsule.logger.publish('ERROR', moduleParamCaseName, 'There was an error preparing the module', 'CORE', { error })
+        core.logger.publish('ERROR', moduleParamCaseName, 'There was an error preparing the module', 'CORE', { error })
         return false
       }
 
@@ -270,14 +270,17 @@ async function loadCoreAppModules(): Promise<boolean> {
         pascalCaseName: modulePascalCaseName
       }
 
-      coreCapsule.loadedModules.push(moduleParamCaseName)
-      coreCapsule.moduleRegistries[moduleParamCaseName] = internalModuleRegistry
+      core.loadedModules.push(moduleParamCaseName)
+      core.moduleRegistries[moduleParamCaseName] = internalModuleRegistry
 
-      coreCapsule.logger.publish('DEBUG', moduleParamCaseName, 'Loaded and prepared', 'CORE', { measurement: moduleMeasurer.finish().toString() })
+      // Let modules instances be visible in the global scupe
+      global[moduleCamelCaseName] = moduleInstance
+
+      core.logger.publish('DEBUG', moduleParamCaseName, 'Loaded and prepared', 'CORE', { measurement: moduleMeasurer.finish().toString() })
     }
   }
 
-  coreCapsule.logger.publish('INFO', 'Modules loaded', null, 'CORE', { measurement: measurer.finish().toString() })
+  core.logger.publish('INFO', 'Modules loaded', null, 'CORE', { measurement: measurer.finish().toString() })
 
   return true
 }

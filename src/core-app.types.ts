@@ -23,7 +23,7 @@ export interface InternalModuleRegistry extends ModuleRegistry {
   pascalCaseName: string
 }
 
-export interface CoreCapsule {
+export interface Core {
   App: typeof BaseApp
   allConfig: Record<string, any>
   appConfig: Record<string, any>
