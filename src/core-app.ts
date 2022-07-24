@@ -66,12 +66,14 @@ export async function startApp(name: string, args: Record<string, any>): Promise
       await core.logger.await()
       process.exit(1)
     }
-    try {
-      await core.appInstance.release()
-    } catch (error) {
-      core.logger.publish('ERROR', core.appParamCaseName, 'There was an error while relaasing app', 'CORE', { error })
-      await core.logger.await()
-      process.exit(1)
+    if (core.appInstance.release) {
+      try {
+        await core.appInstance.release()
+      } catch (error) {
+        core.logger.publish('ERROR', core.appParamCaseName, 'There was an error while relaasing app', 'CORE', { error })
+        await core.logger.await()
+        process.exit(1)
+      }
     }
   }
 

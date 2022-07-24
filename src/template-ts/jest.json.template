@@ -1,0 +1,7 @@
+{
+  "transform": {
+    "^.+\\.(ts|tsx)$": "ts-jest"
+  },
+  "testRegex": "(/tests/.*\\.test\\.ts?)$",
+  "collectCoverageFrom": ["src/**/*.ts"]
+}

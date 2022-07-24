@@ -1,5 +1,9 @@
+import { startApp } from "../src/core-app"
+
 describe('core-app', (): void => {
-  it('fills the tests', async (): Promise<void> => {
-    expect(true).toBe(true)
+  describe('startApp', (): void => {
+    it('fills the tests', async (): Promise<void> => {
+
+    })
   })
 })

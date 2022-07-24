@@ -1,5 +1,5 @@
 import { sleep } from '@universal-packages/time-measurer'
-import BaseApp from '../../src/BaseApp'
+import BaseApp from '../src/BaseApp'
 
 export default class WebServerCoreApp extends BaseApp {
   public static readonly description = 'Node web server'

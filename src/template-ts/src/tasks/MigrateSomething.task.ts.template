@@ -1,0 +1,62 @@
+import { BaseTask } from '@universal-packages/core-app'
+
+export default class ExampleTask extends BaseTask {
+  public static readonly taskName = 'example-task'
+  public static readonly description = 'Tasks are meant to ran, do their job and finish by themselves'
+
+  /**
+   * OPCIONAL
+   *
+   * Tasks load almost the same as an app, the preapre method is called
+   * just after instantiation and after all modules are loaded to be
+   * used here.
+   *
+   *
+   * */
+  public async prepare(): Promise<void> {}
+
+  /**
+   * REQUIRED
+   *
+   * Once all is loaded and prepared
+   *
+   * The diference is that instead of loading a configuraration in the
+   * options instance property the task executioner will pass a directive
+   * and directiveOptions
+   *
+   * uca exec example-task migrate users posts
+   *                       |     | |         |
+   *                       ------- -----------
+   *                          |         |
+   *                      directive    directiveOptions (['users', 'posts'])
+   *
+   * these can be accessed as
+   *
+   * this.directive
+   * this.directiveOptions
+   *
+   * And the same as apps the args property will be available via
+   *
+   * this.args
+   *
+   * */
+  public async exec(): Promise<void> {}
+
+  /**
+   * OPCIONAL
+   *
+   * If you have a way to stop your task do it here
+   * so the execution can be stoped gracefully.
+   * 
+   * Example, if your exec method is just a loop you can set here a
+   * this.stop = true property
+   * 
+   * and in your loop
+   * 
+   * for(...) {
+   *   if(this.stop) return
+   * }
+   * 
+   * */
+  public async abort(): Promise<void> {}
+}

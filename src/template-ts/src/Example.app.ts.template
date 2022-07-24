@@ -1,0 +1,88 @@
+import { BaseApp } from '@universal-packages/core-app'
+
+interface ExampleAppOptions {
+  cores: number
+  ram: number
+}
+
+interface ExampleAppArgs {
+  p: string
+  port: string
+}
+
+export default class ExampleApp extends BaseApp<ExampleAppOptions, ExampleAppArgs> {
+  public static readonly appName = 'example-app' // Name your app so you have a closer relationship
+  public static readonly description = 'This app exemplify how the life cycle of a core app goes'
+
+  /**
+   * REQUIRED
+   *
+   * When core app loads your app, it will call this method so you can preapre any custom
+   * stuff you need to preapre in order for your app to run smoothly.
+   *
+   * Normaly Core App modules are a better idea to load, well, modules, that you will need,
+   * in a really modular and encapsulated way and with their own preapre method.
+   *
+   * But some times you just want custom stuff to happen before starting the app.
+   *
+   * Use the config passed to this instance via this App's configuration file as options
+   *
+   * this.options
+   *
+   * the configuration file should be named the same as your app's name
+   * ./config/example-app.yaml | json | js
+   *
+   * Also any params passed via comman line will be passed to this instance
+   * and can be accessed via:
+   *
+   * this.args
+   *
+   * uca start example-app -p 80000
+   *
+   *
+   * */
+  public async prepare(): Promise<void> {
+    // Be sure to handle any expected error
+    // If this function throws an error the app will not initialize
+  }
+
+  /**
+   * REQUIRED
+   *
+   * Once all modules have been loaded as well as your app prepared, this method
+   * is called, here you can start listening for connections, or start a worker,
+   * or any kind of what ever, after all Core App is meant to be use in a universa
+   * way.
+   *
+   * you can use the logger passed to this instance via:
+   *
+   * this.logger
+   *
+   * to publish any kind of relevant events in your app
+   *
+   * */
+  public async start(): Promise<void> {
+    // Be sure to handle any expected error
+    // If this function throws an error the app will not initialize
+    this.logger.publish('INFO', `Example app has started in port ${this.args.p || this.args.port}`)
+  }
+
+  /**
+   * REQUIRED
+   *
+   * After pressing CTRL+C Core App will call this method so you can start
+   * shuting down your app gracefully, starting draining sockets or whatever.
+   *
+   * */
+  public async stop(): Promise<void> {}
+
+  /**
+   * OPCIONAL
+   *
+   * This is the contrapart of prepare use this after your app has stopped
+   * to relase any resources or custom routines to ensure your app
+   * has all setup to finish the process
+   *
+   * */
+  public async release(): Promise<void> {}
+}

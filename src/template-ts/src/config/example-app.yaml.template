@@ -1,0 +1,7 @@
+development:
+  cores: 4
+  ram: 4096
+
+production:
+  cores: 8
+  ram: 8192

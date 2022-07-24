@@ -26,7 +26,5 @@ export default class BaseApp<O = any, A = any> {
     throw 'Implement me: Apps should implement the stop amethod'
   }
 
-  public async release(): Promise<void> {
-    throw 'Implement me: Apps should implement the release amethod'
-  }
+  public async release(): Promise<void> {}
 }
