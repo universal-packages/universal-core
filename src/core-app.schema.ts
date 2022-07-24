@@ -12,12 +12,7 @@ const directoryCheck = (value: any): boolean => {
 
 const directoryCheckOptional = (value: any): boolean => {
   if (!value) return true
-  try {
-    checkDirectory(value)
-    return true
-  } catch {
-    return false
-  }
+  return directoryCheck(value)
 }
 
 const directoryEnsure = (value: any): boolean => {
@@ -27,6 +22,11 @@ const directoryEnsure = (value: any): boolean => {
   } catch {
     return false
   }
+}
+
+const directoryEnsureOptional = (value: any): boolean => {
+  if (!value) return true
+  return directoryEnsure(value)
 }
 
 export const coreConfigSchema = new Schema(
@@ -62,13 +62,32 @@ export const coreConfigSchema = new Schema(
         enum: ['FATAL', 'ERROR', 'WARNING', 'QUERY', 'INFO', 'DEBUG', 'TRACE'],
         message: 'Must be one of: FATAL | ERROR | WARNING | QUERY | INFO | DEBUG | TRACE'
       },
-      logsDirectory: {
-        type: String,
-        use: { directoryEnsure },
-        message: 'Directory is not accesible'
-      },
       silence: {
         type: Boolean
+      },
+      terminal: {
+        enable: {
+          type: Boolean
+        },
+        clear: {
+          type: Boolean
+        },
+        withHeader: {
+          type: Boolean
+        }
+      },
+      localFile: {
+        enable: {
+          type: Boolean
+        },
+        asJson: {
+          type: Boolean
+        },
+        location: {
+          type: String,
+          use: { directoryEnsureOptional },
+          message: 'Directory is not accesible'
+        }
       }
     }
   },

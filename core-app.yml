@@ -1,7 +1,14 @@
-appsDirectory: './example/apps'
+appsDirectory: './example'
 configDirectory: './example/config'
 modulesDirectory: './example/modules'
 tasksDirectory: './example/tasks'
 logger:
-  level: TRACE
+  level: INFO
   silence: false
+  terminal:
+    enable: true
+    clear: false
+    withHeader: true
+  localFile:
+    enable: false
+    asJson: true

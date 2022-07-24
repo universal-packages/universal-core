@@ -1,5 +1,5 @@
 import { loadConfig } from '@universal-packages/config-loader'
-import Logger, { TerminalTransport } from '@universal-packages/logger'
+import Logger, { LocalFileTransport, TerminalTransport } from '@universal-packages/logger'
 import { loadModules, ModuleRegistry } from '@universal-packages/module-loader'
 import { loadPluginConfig } from '@universal-packages/plugin-config-loader'
 import { startMeasurement } from '@universal-packages/time-measurer'
@@ -157,7 +157,7 @@ export async function runConsole(args: Record<string, any>): Promise<void> {
   proceed = await loadCoreAppModules()
   if (!proceed) return
 
-  core.logger.publish('INFO', `Console staring...`, null, 'CORE')
+  core.logger.publish('DEBUG', `Console staring...`, null, 'CORE')
 
   try {
     const repl = await import('repl')
@@ -187,7 +187,7 @@ export async function runConsole(args: Record<string, any>): Promise<void> {
 function initLogger(): boolean {
   try {
     const termianlTransport = core.logger.getTransport('terminal') as TerminalTransport
-    termianlTransport.setCategoryColor('CORE', 'BLACK')
+    termianlTransport.options.categoryColors['CORE'] = 'BLACK'
   } catch (error) {
     console.log(error)
     return false
@@ -201,12 +201,12 @@ async function loadCoreAppConfig(): Promise<boolean> {
 
   const loadedCoreAppConfig = await loadPluginConfig('core-app')
   const finalCoreAppConfig: CoreAppConfig = {
-    appsDirectory: './srs/apps',
+    appsDirectory: './srs',
     configDirectory: './src/config',
-    modulesDirectory: './src/modules',
-    tasksDirectory: '.src/tasks',
+    modulesDirectory: './src',
+    tasksDirectory: '.src',
     ...loadedCoreAppConfig,
-    logger: { logsDirectory: '.logs', silence: false, ...loadedCoreAppConfig.logger }
+    logger: { silence: false, ...loadedCoreAppConfig.logger }
   }
   const errors = coreConfigSchema.validate(finalCoreAppConfig)
 
@@ -222,6 +222,22 @@ async function loadCoreAppConfig(): Promise<boolean> {
   } else {
     if (finalCoreAppConfig.logger?.level) core.logger.level = finalCoreAppConfig.logger.level
     if (finalCoreAppConfig.logger?.silence === true) core.logger.silence = true
+
+    if (finalCoreAppConfig.logger?.terminal) {
+      const trasnport = core.logger.getTransport('terminal') as TerminalTransport
+
+      trasnport.enabled = finalCoreAppConfig.logger?.terminal?.enable !== false
+      trasnport.options.clear = finalCoreAppConfig.logger?.terminal?.clear !== false
+      trasnport.options.withHeader = finalCoreAppConfig.logger?.terminal?.withHeader !== false
+    }
+
+    if (finalCoreAppConfig.logger?.localFile) {
+      const trasnport = core.logger.getTransport('localFile') as LocalFileTransport
+
+      trasnport.enabled = finalCoreAppConfig.logger?.localFile?.enable !== false
+      trasnport.options.asJson = finalCoreAppConfig.logger?.localFile?.asJson !== false
+      trasnport.options.location = finalCoreAppConfig.logger?.localFile.location || trasnport.options.location
+    }
 
     core.logger.publish('DEBUG', 'Core config loaded', null, 'CORE', { metadata: finalCoreAppConfig, measurement: measurer.finish().toString() })
 

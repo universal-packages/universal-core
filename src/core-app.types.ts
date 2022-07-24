@@ -12,8 +12,17 @@ export interface CoreAppConfig {
   logger: {
     transportsDirectory?: string
     level: LogLevel
-    logsDirectory?: string
     silence?: boolean
+    terminal: {
+      clear: boolean
+      enable: boolean
+      withHeader: boolean
+    }
+    localFile: {
+      asJson: boolean
+      location: string
+      enable: boolean
+    }
   }
 }
 

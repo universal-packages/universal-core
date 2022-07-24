@@ -1,3 +1,7 @@
 logger:
-  level: TRACE
-  silence: false
+  level: INFO
+  terminal:
+    clear: true
+    withHeader: false
+  localFile:
+    asJson: false
