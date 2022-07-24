@@ -57,16 +57,7 @@ export async function startApp(name: string, args: Record<string, any>): Promise
 
     core.stopping = true
 
-    for (let i = 0; i < core.loadedModules.length; i++) {
-      const currentModuleName = core.loadedModules[i]
-      const currentModule = core.moduleRegistries[currentModuleName]
-
-      try {
-        await currentModule.instance.release()
-      } catch (error) {
-        core.logger.publish('ERROR', currentModuleName, 'There was an error releasing module', 'CORE', { error })
-      }
-    }
+    await unloadModules()
 
     try {
       await core.appInstance.stop()
@@ -127,28 +118,10 @@ export async function execTask(name: string, directive: string, directiveOptions
 
     core.stopping = true
 
-    for (let i = 0; i < core.loadedModules.length; i++) {
-      const currentModuleName = core.loadedModules[i]
-      const currentModule = core.moduleRegistries[currentModuleName]
-
-      try {
-        await currentModule.instance.release()
-      } catch (error) {
-        core.logger.publish('ERROR', currentModuleName, 'There was an error releasing module', 'CORE', { error })
-      }
-    }
-
     try {
       await core.taskInstance.abort()
     } catch (error) {
       core.logger.publish('ERROR', core.taskParamCaseName, 'There was an error while aborting task', 'CORE', { error })
-      await core.logger.await()
-      process.exit(1)
-    }
-    try {
-      await core.taskInstance.release()
-    } catch (error) {
-      core.logger.publish('ERROR', core.taskParamCaseName, 'There was an error while releasing task', 'CORE', { error })
       await core.logger.await()
       process.exit(1)
     }
@@ -161,8 +134,48 @@ export async function execTask(name: string, directive: string, directiveOptions
 
   try {
     await core.taskInstance.exec()
+    await unloadModules()
   } catch (error) {
     core.logger.publish('ERROR', core.taskParamCaseName, 'There was an error while executing task', 'CORE', { error })
+
+    await core.logger.await()
+    process.exit(1)
+  }
+}
+
+export async function runConsole(args: Record<string, any>): Promise<void> {
+  let proceed = true
+
+  proceed = await loadCoreAppConfig()
+  if (!proceed) return
+
+  proceed = await loadAppConfig()
+  if (!proceed) return
+
+  proceed = await loadCoreAppModules()
+  if (!proceed) return
+
+  core.logger.publish('INFO', `Console staring...`, null, 'CORE')
+
+  try {
+    const repl = await import('repl')
+
+    await core.logger.await()
+
+    // We just start a repl server it even has its own termination CTRL+C
+    const replServer = repl.start({ prompt: 'core > ' })
+    replServer.setupHistory('./.console_history', (error: Error): void => {
+      if (error) throw error
+    })
+
+    // We emit this so the Core knows the user basically sent those signals
+    replServer.on('exit', async (): Promise<void> => {
+      core.stopping = true
+
+      await unloadModules()
+    })
+  } catch (error) {
+    core.logger.publish('ERROR', core.appParamCaseName, 'There was an error while running the console', 'CORE', { error })
 
     await core.logger.await()
     process.exit(1)
@@ -397,11 +410,26 @@ async function loadCoreAppModules(): Promise<boolean> {
       // Let modules instances be visible in the global scupe
       global[moduleCamelCaseName] = moduleInstance
 
-      core.logger.publish('DEBUG', moduleParamCaseName, 'Loaded and prepared', 'CORE', { measurement: moduleMeasurer.finish().toString() })
+      core.logger.publish('DEBUG', moduleParamCaseName, internalModuleRegistry.exports.description, 'CORE', { measurement: moduleMeasurer.finish().toString() })
     }
   }
 
   core.logger.publish('INFO', 'Modules loaded', null, 'CORE', { measurement: measurer.finish().toString() })
 
   return true
+}
+
+async function unloadModules(): Promise<void> {
+  core.logger.publish('DEBUG', 'Unloading modules', null, 'CORE', { metadata: core.loadedModules })
+
+  for (let i = 0; i < core.loadedModules.length; i++) {
+    const currentModuleName = core.loadedModules[i]
+    const currentModule = core.moduleRegistries[currentModuleName]
+
+    try {
+      await currentModule.instance.release()
+    } catch (error) {
+      core.logger.publish('ERROR', currentModuleName, 'There was an error releasing module', 'CORE', { error })
+    }
+  }
 }

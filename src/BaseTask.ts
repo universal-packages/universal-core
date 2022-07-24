@@ -27,8 +27,4 @@ export default class BaseTask<A = any> {
   public async abort(): Promise<void> {
     throw 'Implement me: Tasks should implement the abort method'
   }
-
-  public async release(): Promise<void> {
-    throw 'Implement me: Tasks should implement the release method'
-  }
 }

@@ -1,5 +1,5 @@
 import yargs, { ArgumentsCamelCase, Argv } from 'yargs'
-import { execTask, startApp } from '../core-app'
+import { execTask, runConsole, startApp } from '../core-app'
 
 interface ArgvExtract {
   appName: string
@@ -34,6 +34,15 @@ yargs
     handler: (argv: ArgumentsCamelCase) => {
       const argvExtract = extractArgv(argv)
       execTask(argvExtract.taskName, argvExtract.taskDirective, argvExtract.directiveOptions, argvExtract.options)
+    }
+  })
+  .command({
+    command: 'console',
+    aliases: 'c',
+    describe: 'Runs a ts console with all relevant globals',
+    handler: (argv: ArgumentsCamelCase) => {
+      const argvExtract = extractArgv(argv)
+      runConsole(argvExtract.options)
     }
   })
   .options('env', { alias: ['environment'], description: 'Set node env environment', type: 'string', default: 'development' })
