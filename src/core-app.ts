@@ -162,7 +162,7 @@ export async function execTask(name: string, directive: string, directiveOptions
   try {
     await core.taskInstance.exec()
   } catch (error) {
-    core.logger.publish('ERROR', core.taskParamCaseName, 'There was an error while executing app', 'CORE', { error })
+    core.logger.publish('ERROR', core.taskParamCaseName, 'There was an error while executing task', 'CORE', { error })
 
     await core.logger.await()
     process.exit(1)

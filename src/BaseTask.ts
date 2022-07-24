@@ -17,18 +17,18 @@ export default class BaseTask<A = any> {
   }
 
   public async prepare(): Promise<void> {
-    throw 'Implement me: Apps should implement the prepare method'
+    throw 'Implement me: Tasks should implement the prepare method'
   }
 
   public async exec(): Promise<void> {
-    throw 'Implement me: Apps should implement the exec method'
+    throw 'Implement me: Tasks should implement the exec method'
   }
 
   public async abort(): Promise<void> {
-    throw 'Implement me: Apps should implement the abort method'
+    throw 'Implement me: Tasks should implement the abort method'
   }
 
   public async release(): Promise<void> {
-    throw 'Implement me: Apps should implement the release method'
+    throw 'Implement me: Tasks should implement the release method'
   }
 }
