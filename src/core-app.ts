@@ -4,11 +4,12 @@ import { loadModules, ModuleRegistry } from '@universal-packages/module-loader'
 import { loadPluginConfig } from '@universal-packages/plugin-config-loader'
 import { startMeasurement } from '@universal-packages/time-measurer'
 import { camelCase, paramCase, pascalCase } from 'change-case'
-import BaseApp from './BaseApp'
-import BaseModule from './BaseModule'
-import BaseTask from './BaseTask'
-import { coreConfigSchema } from './core-app.schema'
+import BaseApp from './CoreApp'
+import BaseModule from './CoreModule'
+import BaseTask from './CoreTask'
+import { coreConfigSchema } from './CoreConfig.schema'
 import { CoreAppConfig, InternalModuleRegistry } from './core-app.types'
+
 
 global.core = {
   App: null,

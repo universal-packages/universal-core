@@ -1,5 +1,5 @@
 import yargs, { ArgumentsCamelCase, Argv } from 'yargs'
-import { execTask, runConsole, startApp } from '../core-app'
+import { startApp } from '../startApp'
 
 interface ArgvExtract {
   appName: string
@@ -16,9 +16,8 @@ yargs
     aliases: 's',
     describe: 'Starts an app',
     builder: (yargs: Argv) => yargs.positional('app-name', { description: 'Name of the app to run', type: 'string', demandOption: true }),
-
     handler: (argv: ArgumentsCamelCase) => {
-      const argvExtract = extractArgv(argv)
+      const argvExtract = processArgv(argv)
       startApp(argvExtract.appName, argvExtract.options)
     }
   })
@@ -32,8 +31,8 @@ yargs
         .positional('task-directive', { description: 'Task behavior directive', type: 'string' })
         .positional('directive-options', { description: 'Any options usported by the task directive' }),
     handler: (argv: ArgumentsCamelCase) => {
-      const argvExtract = extractArgv(argv)
-      execTask(argvExtract.taskName, argvExtract.taskDirective, argvExtract.directiveOptions, argvExtract.options)
+      const argvExtract = processArgv(argv)
+      // CoreTask.exec(argvExtract.taskName, argvExtract.taskDirective, argvExtract.directiveOptions, argvExtract.options)
     }
   })
   .command({
@@ -41,8 +40,8 @@ yargs
     aliases: 'c',
     describe: 'Runs a ts console with all relevant globals',
     handler: (argv: ArgumentsCamelCase) => {
-      const argvExtract = extractArgv(argv)
-      runConsole(argvExtract.options)
+      const argvExtract = processArgv(argv)
+      // Core.console(argvExtract.options)
     }
   })
   .options('env', { alias: ['environment'], description: 'Set node env environment', type: 'string', default: 'development' })
@@ -52,7 +51,7 @@ yargs
   .showHelpOnFail(true)
   .epilog('universal-packages 2022').argv
 
-function extractArgv(argv: ArgumentsCamelCase): ArgvExtract {
+function processArgv(argv: ArgumentsCamelCase): ArgvExtract {
   const changeEnv = ((argv.environment as string) !== 'development' && process.env['NODE_ENV'] === 'development') || process.env['NODE_ENV'] === undefined
 
   if (changeEnv) {

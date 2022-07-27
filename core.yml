@@ -2,6 +2,11 @@ appsDirectory: './example'
 configDirectory: './example/config'
 modulesDirectory: './example/modules'
 tasksDirectory: './example/tasks'
+modulesAsGlobals: true
+appWatcher:
+  enabled: true
+  ignore:
+    - .github
 logger:
   level: INFO
   silence: false
@@ -10,5 +15,6 @@ logger:
     clear: false
     withHeader: true
   localFile:
-    enable: false
-    asJson: true
+    enable: true
+    asJson: false
+

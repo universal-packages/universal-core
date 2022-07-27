@@ -1,5 +1,5 @@
 import { sleep } from '@universal-packages/time-measurer'
-import BaseTask from '../../src/BaseTask'
+import BaseTask from '../../src/CoreTask'
 
 export default class MigrateSomethingTask extends BaseTask {
   public static readonly description = 'Migrates some important data'

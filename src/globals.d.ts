@@ -1,1 +1,1 @@
-declare var core: import('./core-app.types').Core
+declare var core: import('./Core.types').CoreGlobal

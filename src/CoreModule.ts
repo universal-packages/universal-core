@@ -1,6 +1,6 @@
 import Logger from '@universal-packages/logger'
 
-export default class BaseModule<O = any> {
+export default class CoreModule<O = any> {
   public static readonly moduleName: string
   public static readonly description: string
 

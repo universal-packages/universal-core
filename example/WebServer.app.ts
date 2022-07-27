@@ -1,7 +1,8 @@
 import { sleep } from '@universal-packages/time-measurer'
-import BaseApp from '../src/BaseApp'
+import CoreApp from '../src/CoreApp'
 
-export default class WebServerCoreApp extends BaseApp {
+export default class WebServerApp extends CoreApp {
+  public static readonly appName = 'web-server'
   public static readonly description = 'Node web server'
 
   private timeout: NodeJS.Timeout
@@ -21,6 +22,6 @@ export default class WebServerCoreApp extends BaseApp {
   }
 
   public async release(): Promise<void> {
-    await sleep(1000)
+    await sleep(3000)
   }
 }

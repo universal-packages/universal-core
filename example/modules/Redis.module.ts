@@ -1,7 +1,7 @@
 import { sleep } from '@universal-packages/time-measurer'
-import BaseModule from '../../src/BaseModule'
+import CoreModule from '../../src/CoreModule'
 
-export default class RedisModule extends BaseModule {
+export default class RedisModule extends CoreModule {
   public static readonly moduleName = 'redis'
   public static readonly description = 'Redis interface'
 

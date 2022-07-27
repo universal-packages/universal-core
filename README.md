@@ -1,13 +1,13 @@
-# Core App
+# Core
 
-[![npm version](https://badge.fury.io/js/@universal-packages%2Fcore-app.svg)](https://www.npmjs.com/package/@universal-packages/core-app)
-[![Testing](https://github.com/universal-packages/universal-core-app/actions/workflows/testing.yml/badge.svg)](https://github.com/universal-packages/universal-core-app/actions/workflows/testing.yml)
-[![codecov](https://codecov.io/gh/universal-packages/universal-core-app/branch/main/graph/badge.svg?token=CXPJSN8IGL)](https://codecov.io/gh/universal-packages/universal-core-app)
+[![npm version](https://badge.fury.io/js/@universal-packages%2Fcore.svg)](https://www.npmjs.com/package/@universal-packages/core)
+[![Testing](https://github.com/universal-packages/universal-core/actions/workflows/testing.yml/badge.svg)](https://github.com/universal-packages/universal-core/actions/workflows/testing.yml)
+[![codecov](https://codecov.io/gh/universal-packages/universal-core/branch/main/graph/badge.svg?token=CXPJSN8IGL)](https://codecov.io/gh/universal-packages/universal-core)
 
 ## Install
 
 ```shell
-npm install @universal-packages/core-app
+npm install @universal-packages/core
 ```
 
 ## Typescript

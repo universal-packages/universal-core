@@ -1,6 +1,6 @@
 import Logger from '@universal-packages/logger'
 
-export default class BaseTask<A = any> {
+export default class CoreTask<A = any> {
   public static readonly taskName: string
   public static readonly description: string
 

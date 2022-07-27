@@ -1,12 +1,12 @@
 {
-  "name": "@universal-packages/core-app",
+  "name": "@universal-packages/core",
   "version": "1.0.0",
-  "description": "Agnostic app and task runner base on interfaces and organization.",
+  "description": "Agnostic and conventional node executions wrap",
   "author": "David De Anda <david@universal-packages.com> (https://github.com/universal-packages)",
   "license": "MIT",
   "main": "index.js",
   "types": "index.d.ts",
-  "repository": "git://git@github.com/universal-packages/universal-core-app.git",
+  "repository": "git://git@github.com/universal-packages/universal-core.git",
   "bin": {
     "uca": "./src/cli/entry"
   },
@@ -22,6 +22,7 @@
     "@universal-packages/plugin-config-loader": "^1.0.0",
     "@universal-packages/time-measurer": "^1.2.0",
     "change-case": "^4.1.2",
+    "chokidar": "^3.5.3",
     "ts-node": "^10.8.2",
     "validate": "^5.2.0",
     "yargs": "^17.5.1"

@@ -36,6 +36,15 @@ export const coreConfigSchema = new Schema(
       use: { directoryCheck },
       message: 'Directory is not accesible'
     },
+    appWatcher: {
+      enabled: {
+        type: Boolean
+      },
+      ignore: {
+        type: Array,
+        each: { type: String }
+      }
+    },
     configDirectory: {
       type: String,
       use: { directoryCheck },
@@ -45,6 +54,9 @@ export const coreConfigSchema = new Schema(
       type: String,
       use: { directoryCheckOptional },
       message: 'Directory is not accesible'
+    },
+    modulesAsGlobals: {
+      type: Boolean
     },
     tasksDirectory: {
       type: String,
