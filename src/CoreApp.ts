@@ -43,8 +43,8 @@ export default class CoreApp<C = any, A = any> extends Core {
 
   public async prepare(): Promise<void> {}
 
-  public async start(): Promise<void> {
-    throw 'Implement me: Apps should implement the start method'
+  public async run(): Promise<void> {
+    throw 'Implement me: Apps should implement the run method'
   }
 
   public async stop(): Promise<void> {

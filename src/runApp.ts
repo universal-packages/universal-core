@@ -5,7 +5,7 @@ import { CoreConfig } from './Core.types'
 import CoreApp from './CoreApp'
 import AppWatcher from './AppWatcher'
 
-export async function startApp(name: string, args: Record<string, any>, demon?: boolean, coreConfigOveride?: CoreConfig): Promise<void> {
+export async function runApp(name: string, args: Record<string, any>, demon?: boolean, coreConfigOveride?: CoreConfig): Promise<void> {
   let measurer: TimeMeasurer
 
   global.core = {
@@ -179,9 +179,9 @@ export async function startApp(name: string, args: Record<string, any>, demon?: 
     core.logger.publish('INFO', `${core.App.appName || core.App.name} staring...`, core.App.description, 'CORE')
 
     try {
-      await core.appInstance.start()
+      await core.appInstance.run()
     } catch (error) {
-      core.logger.publish('ERROR', core.App.appName || core.App.name, 'There was an error while starting app', 'CORE', { error })
+      core.logger.publish('ERROR', core.App.appName || core.App.name, 'There was an error while running app', 'CORE', { error })
 
       await core.logger.await()
       process.exit(1)

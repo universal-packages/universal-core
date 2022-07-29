@@ -30,7 +30,7 @@ global.core = {
   taskPascalCaseName: null
 }
 
-export async function startApp(name: string, args: Record<string, any>): Promise<void> {
+export async function runApp(name: string, args: Record<string, any>): Promise<void> {
   let proceed = true
 
   proceed = initLogger()

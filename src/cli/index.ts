@@ -1,5 +1,5 @@
 import yargs, { ArgumentsCamelCase, Argv } from 'yargs'
-import { startApp } from '../startApp'
+import { runApp } from '../runApp'
 
 interface ArgvExtract {
   appName: string
@@ -12,19 +12,19 @@ interface ArgvExtract {
 yargs
   .usage('Usage: $0 <command>')
   .command({
-    command: 'start <app-name>',
-    aliases: 's',
-    describe: 'Starts an app',
+    command: 'run <app-name>',
+    aliases: 'r',
+    describe: 'Runs a named app',
     builder: (yargs: Argv) => yargs.positional('app-name', { description: 'Name of the app to run', type: 'string', demandOption: true }),
     handler: (argv: ArgumentsCamelCase) => {
       const argvExtract = processArgv(argv)
-      startApp(argvExtract.appName, argvExtract.options)
+      runApp(argvExtract.appName, argvExtract.options)
     }
   })
   .command({
     command: 'exec <task-name> [task-directive] [directive-options...]',
-    aliases: 'g',
-    describe: 'Execs a task',
+    aliases: 'e',
+    describe: 'Execs a named task',
     builder: (yargs: Argv) =>
       yargs
         .positional('task-name', { description: 'Name of the task to run', type: 'string', demandOption: true })

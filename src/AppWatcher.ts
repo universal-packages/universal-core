@@ -20,6 +20,7 @@ export default class AppWatcher extends EventEmitter {
     this.ignore = ignore
   }
 
+  /** Starts the watcher and forks the app running the runApp.script file  */
   public run(): void {
     this.watcher = chokidar
       .watch('.', {
@@ -39,29 +40,35 @@ export default class AppWatcher extends EventEmitter {
       .on('all', (event: 'add' | 'addDir' | 'change' | 'unlink' | 'unlinkDir', path: string): void => {
         if (this.currentChildProcess && !this.restarting) {
           this.currentChildProcess.kill('SIGALRM')
-          this.restarting = true
           this.emit('restart', [`${event} ${path}`])
         }
       })
       .on('ready', (): void => {
         this.spawnSubProcess()
+        this.emit('ready')
       })
   }
 
+  /** Stops watcher and sends the ABRT signal */
   public stop(): void {
     this.stopping = true
+
+    this.watcher.close()
 
     if (this.currentChildProcess) {
       this.currentChildProcess.kill('SIGABRT')
     }
   }
 
+
+  /** Sends the ABRT signal */
   public kill(): void {
     if (this.currentChildProcess) {
       this.currentChildProcess.kill('SIGABRT')
     }
   }
 
+  /** Forks to a new process that run the apps en a demonized way */
   private async spawnSubProcess(): Promise<void> {
     const env: NodeJS.ProcessEnv = {
       ...process.env,
@@ -70,12 +77,10 @@ export default class AppWatcher extends EventEmitter {
       CORE_DEMON: 'true'
     }
 
-    this.currentChildProcess = fork(path.resolve(__dirname, 'startApp.script.ts'), { env, stdio: ['ipc', 'inherit', 'inherit'] })
+    this.currentChildProcess = fork(path.resolve(__dirname, 'runApp.script.ts'), { env, stdio: ['ipc', 'inherit', 'inherit'] })
 
     this.currentChildProcess.on('exit', (): void => {
-      if (this.stopping) {
-        this.watcher.close()
-      } else {
+      if (!this.stopping) {
         this.restarting = false
         this.spawnSubProcess()
       }

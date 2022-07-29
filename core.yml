@@ -17,4 +17,3 @@ logger:
   localFile:
     enable: true
     asJson: false
-
