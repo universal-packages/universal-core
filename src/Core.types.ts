@@ -51,5 +51,6 @@ export interface CoreGlobal {
   projectConfig: ProjectConfig
   stopping: boolean
   Task: typeof CoreTask
+  taskConfig: Record<string, any>
   taskInstance: CoreTask
 }

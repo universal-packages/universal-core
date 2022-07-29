@@ -27,7 +27,7 @@ export default class CoreApp<C = any, A = any> extends Core {
     const appModuleRegistry = finalApps.find((module: ModuleRegistry): boolean => {
       const fileMatches = !!module.location.match(new RegExp(`(${pascalCaseName}|${paramCaseName}).(app|universal-core-app)\..*$`))
 
-      return module.exports ? module.exports.appShortName === name || module.exports.name === name || fileMatches : fileMatches
+      return module.exports ? module.exports.appName === name || module.exports.name === name || fileMatches : fileMatches
     })
 
     if (!appModuleRegistry) {

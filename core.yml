@@ -8,7 +8,7 @@ appWatcher:
   ignore:
     - .github
 logger:
-  level: INFO
+  level: TRACE
   silence: false
   terminal:
     enable: true

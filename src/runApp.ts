@@ -18,6 +18,7 @@ export async function runApp(name: string, args: Record<string, any>, demon?: bo
     projectConfig: null,
     stopping: null,
     Task: null,
+    taskConfig: null,
     taskInstance: null
   }
 
@@ -76,7 +77,7 @@ export async function runApp(name: string, args: Record<string, any>, demon?: bo
       measurer = startMeasurement()
       core.projectConfig = await CoreApp.getProjectConfig(core.coreConfig)
 
-      core.logger.publish('DEBUG', 'Core config loaded', null, 'CORE', { metadata: core.projectConfig, measurement: measurer.finish().toString() })
+      core.logger.publish('DEBUG', 'Project config loaded', null, 'CORE', { metadata: core.projectConfig, measurement: measurer.finish().toString() })
     } catch (error) {
       core.logger.publish('ERROR', 'There was an error loading the project config', null, 'CORE', {
         error: error,
@@ -117,6 +118,7 @@ export async function runApp(name: string, args: Record<string, any>, demon?: bo
 
       core.appConfig = core.projectConfig[pascalCaseName] || core.projectConfig[paramCaseName]
       core.appInstance = new core.App(core.appConfig, args, core.logger, core.coreModules)
+      if(core.appInstance.prepare) await core.appInstance.prepare()
     } catch (error) {
       core.logger.publish('ERROR', 'There was an error loading the app', null, 'CORE', {
         error: error,
@@ -160,7 +162,7 @@ export async function runApp(name: string, args: Record<string, any>, demon?: bo
         await Core.releaseInternalModules(core.coreModules)
         core.logger.publish('DEBUG', 'Core modules unloaded', null, 'CORE')
       } catch (error) {
-        core.logger.publish('ERROR', core.App.appName || core.App.name, 'There was an error while relaasing app', 'CORE', { error })
+        core.logger.publish('ERROR', core.App.appName || core.App.name, 'There was an error while unloading modules', 'CORE', { error })
         await core.logger.await()
         process.exit(1)
       }
@@ -176,7 +178,7 @@ export async function runApp(name: string, args: Record<string, any>, demon?: bo
       process.addListener('SIGTERM', stopApp.bind(null, false))
     }
 
-    core.logger.publish('INFO', `${core.App.appName || core.App.name} staring...`, core.App.description, 'CORE')
+    core.logger.publish('INFO', `${core.App.appName || core.App.name} running...`, core.App.description, 'CORE')
 
     try {
       await core.appInstance.run()

@@ -1,5 +1,7 @@
 import yargs, { ArgumentsCamelCase, Argv } from 'yargs'
+import { execTask } from '../execTask'
 import { runApp } from '../runApp'
+import { runConsole } from '../runConsole'
 
 interface ArgvExtract {
   appName: string
@@ -32,7 +34,7 @@ yargs
         .positional('directive-options', { description: 'Any options usported by the task directive' }),
     handler: (argv: ArgumentsCamelCase) => {
       const argvExtract = processArgv(argv)
-      // CoreTask.exec(argvExtract.taskName, argvExtract.taskDirective, argvExtract.directiveOptions, argvExtract.options)
+      execTask(argvExtract.taskName, argvExtract.taskDirective, argvExtract.directiveOptions, argvExtract.options)
     }
   })
   .command({
@@ -40,8 +42,8 @@ yargs
     aliases: 'c',
     describe: 'Runs a ts console with all relevant globals',
     handler: (argv: ArgumentsCamelCase) => {
-      const argvExtract = processArgv(argv)
-      // Core.console(argvExtract.options)
+      processArgv(argv)
+      runConsole()
     }
   })
   .options('env', { alias: ['environment'], description: 'Set node env environment', type: 'string', default: 'development' })
