@@ -1,4 +1,9 @@
 import Core from '../src/Core'
+import UnloadedTestModule from './__fixtures__/core-testing/modules-error/Unloaded.module'
+import ReleaseTestModule from './__fixtures__/core-testing/modules-to-release/test.module'
+import ReleaseTest2Module from './__fixtures__/core-testing/modules-to-release/test2.module'
+import TestModule from './__fixtures__/core-testing/modules/test.module'
+import Test2Module from './__fixtures__/core-testing/modules/test2.module'
 
 describe('Core', (): void => {
   describe('.getCoreConfig', (): void => {
@@ -71,8 +76,8 @@ logger.localFile.location - Directory is not accesible`)
 
       expect(config).toEqual({
         'test-app': { doStuff: true, test: true },
-        test: { isLocal: true, test: true },
-        'test2-module': { isSecond: true, test: true }
+        'test-module': { isLocal: true, test: true },
+        Test2Module: { isSecond: true, test: true }
       })
     })
   })
@@ -83,11 +88,11 @@ logger.localFile.location - Directory is not accesible`)
       const projectConfig = await Core.getProjectConfig({ configDirectory: './tests/__fixtures__/core-testing/config' })
       const [modules, warnings] = await Core.getCoreModules({ modulesDirectory: './tests/__fixtures__/core-testing/modules' }, projectConfig, logger)
 
-      expect(modules).toMatchObject({ test: { config: { isLocal: true, test: true }, logger }, 'test2-module': { config: { isSecond: true, test: true }, logger } })
+      expect(modules).toMatchObject({ 'test-module': { config: { isLocal: true, test: true }, logger }, 'test2-module': { config: { isSecond: true, test: true }, logger } })
       expect(warnings).toEqual([])
     })
 
-    it('throws as soon as a module throws', async (): Promise<void> => {
+    it('throws as soon as a module preapration throws and unloads previously loaded ones', async (): Promise<void> => {
       let error: Error
       try {
         const logger = Core.getCoreLogger()
@@ -98,6 +103,33 @@ logger.localFile.location - Directory is not accesible`)
       }
 
       expect(error).toEqual('Error')
+      expect(UnloadedTestModule.wasUnloaded).toBeTruthy()
+    })
+
+    it('throws if it finds module with errors', async (): Promise<void> => {
+      let error: Error
+      try {
+        const logger = Core.getCoreLogger()
+        const projectConfig = await Core.getProjectConfig({ configDirectory: './tests/__fixtures__/core-testing/config' })
+        await Core.getCoreModules({ modulesDirectory: './tests/__fixtures__/core-testing/modules-error-3' }, projectConfig, logger)
+      } catch (err) {
+        error = err
+      }
+
+      expect(error.message).toMatch(/Module does not implements CoreModule.*/)
+    })
+
+    it('throws if it finds module dows not extends CoreModule', async (): Promise<void> => {
+      let error: Error
+      try {
+        const logger = Core.getCoreLogger()
+        const projectConfig = await Core.getProjectConfig({ configDirectory: './tests/__fixtures__/core-testing/config' })
+        await Core.getCoreModules({ modulesDirectory: './tests/__fixtures__/core-testing/modules-error-2' }, projectConfig, logger)
+      } catch (err) {
+        error = err
+      }
+
+      expect(error).toEqual('Load Error')
     })
 
     it('returns warnings about repeated modules (named intentionaly the same)', async (): Promise<void> => {
@@ -105,13 +137,63 @@ logger.localFile.location - Directory is not accesible`)
       const projectConfig = await Core.getProjectConfig({ configDirectory: './tests/__fixtures__/core-testing/config' })
       const [modules, warnings] = await Core.getCoreModules({ modulesDirectory: './tests/__fixtures__/core-testing/modules-warnings' }, projectConfig, logger)
 
-      expect(modules).toMatchObject({ test: { config: { isLocal: true, test: true }, logger } })
+      expect(modules).toMatchObject({ 'test-module': { config: { isLocal: true, test: true }, logger } })
       expect(warnings).toEqual([
         {
-          title: 'Two modules have the same name: test',
+          title: 'Two modules have the same name: test-module',
           message: expect.stringMatching(/^First loaded will take presedence.*/)
         }
       ])
+    })
+
+    it('sets modules as globals', async (): Promise<void> => {
+      const logger = Core.getCoreLogger()
+      const projectConfig = await Core.getProjectConfig({ configDirectory: './tests/__fixtures__/core-testing/config' })
+      await Core.getCoreModules({ modulesDirectory: './tests/__fixtures__/core-testing/modules', modulesAsGlobals: true }, projectConfig, logger)
+
+      expect(global['testModule']).toBeInstanceOf(TestModule)
+      expect(global['test2Module']).toBeInstanceOf(Test2Module)
+    })
+  })
+
+  describe('.getCoreLogger', (): void => {
+    it('creates and setups a logger and its basiv transports', async (): Promise<void> => {
+      const logger = Core.getCoreLogger({
+        logger: { level: 'ERROR', silence: true, terminal: { enable: false, clear: false, withHeader: true }, localFile: { enable: false, asJson: true } }
+      })
+
+      expect(logger).toMatchObject({
+        level: 'ERROR',
+        silence: true,
+        transports: { terminal: { enabled: false, options: { clear: false, withHeader: true } }, localFile: { enabled: false, options: { asJson: true } } }
+      })
+    })
+  })
+
+  describe('.getCoreLogger', (): void => {
+    it('creates and setups a logger and its basiv transports', async (): Promise<void> => {
+      const logger = Core.getCoreLogger({
+        logger: { level: 'ERROR', silence: true, terminal: { enable: false, clear: false, withHeader: true }, localFile: { enable: false, asJson: true } }
+      })
+
+      expect(logger).toMatchObject({
+        level: 'ERROR',
+        silence: true,
+        transports: { terminal: { enabled: false, options: { clear: false, withHeader: true } }, localFile: { enabled: false, options: { asJson: true } } }
+      })
+    })
+  })
+
+  describe('.releaseInternalModules', (): void => {
+    it('calls the release method in all modules', async (): Promise<void> => {
+      const logger = Core.getCoreLogger()
+      const projectConfig = await Core.getProjectConfig({ configDirectory: './tests/__fixtures__/core-testing/config' })
+      const [modules] = await Core.getCoreModules({ modulesDirectory: './tests/__fixtures__/core-testing/modules-to-release' }, projectConfig, logger)
+
+      await Core.releaseInternalModules(modules)
+
+      expect(ReleaseTestModule.released).toBeTruthy()
+      expect(ReleaseTest2Module.released).toBeTruthy()
     })
   })
 })

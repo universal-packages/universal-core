@@ -8,3 +8,5 @@ export default class TestModule extends CoreModule {
 
   public async release(): Promise<void> {}
 }
+
+throw 'Load Error'

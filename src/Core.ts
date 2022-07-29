@@ -72,7 +72,13 @@ export default class Core {
       } else {
         const moduleInstance: CoreModule = new currentModule.exports(moduleConfig, logger)
 
-        await moduleInstance.prepare()
+        try {
+          await moduleInstance.prepare()
+        } catch (error) {
+          // Release already loaded modules
+          await Core.releaseInternalModules(coreModules)
+          throw error
+        }
 
         coreModules[moduleParamCaseName] = moduleInstance
 
