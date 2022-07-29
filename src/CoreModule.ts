@@ -1,15 +1,14 @@
 import Logger from '@universal-packages/logger'
 
-export default class CoreModule<O = any> {
+export default class CoreModule<C = any> {
   public static readonly moduleName: string
   public static readonly description: string
 
-  public readonly options: O
+  public readonly config: C
+  public readonly logger: Logger
 
-  protected readonly logger: Logger
-
-  public constructor(options: O, logger: Logger) {
-    this.options = options
+  public constructor(config: C, logger: Logger) {
+    this.config = config
     this.logger = logger
   }
 

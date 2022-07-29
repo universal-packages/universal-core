@@ -1,0 +1,5 @@
+default:
+  doStuff: true
+
+test:
+  test: true

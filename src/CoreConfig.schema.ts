@@ -64,11 +64,6 @@ export const coreConfigSchema = new Schema(
       message: 'Directory is not accesible'
     },
     logger: {
-      transportsDirectory: {
-        type: String,
-        use: { directoryCheckOptional },
-        message: 'Directory is not accesible'
-      },
       level: {
         type: String,
         enum: ['FATAL', 'ERROR', 'WARNING', 'QUERY', 'INFO', 'DEBUG', 'TRACE'],

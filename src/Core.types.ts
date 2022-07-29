@@ -16,7 +16,6 @@ export interface CoreConfig {
   modulesAsGlobals?: boolean
   tasksDirectory?: string
   logger?: {
-    transportsDirectory?: string
     level?: LogLevel
     silence?: boolean
     terminal?: {

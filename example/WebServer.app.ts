@@ -11,7 +11,7 @@ export default class WebServerApp extends CoreApp {
     await sleep(1000)
   }
 
-  public async start(): Promise<void> {
+  public async run(): Promise<void> {
     this.timeout = setTimeout((): void => {}, 999999999)
     // throw new Error('what')
   }

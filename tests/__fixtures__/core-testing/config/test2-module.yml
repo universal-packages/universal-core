@@ -1,0 +1,5 @@
+default:
+  isSecond: true
+
+test:
+  test: true

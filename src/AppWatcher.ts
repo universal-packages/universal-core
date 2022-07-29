@@ -11,7 +11,6 @@ export default class AppWatcher extends EventEmitter {
   private watcher: FSWatcher
   private currentChildProcess: ChildProcessWithoutNullStreams
   private stopping: boolean
-  private restarting: boolean
 
   public constructor(appName: string, args: Record<string, any>, ignore: string[] = []) {
     super()
@@ -38,7 +37,11 @@ export default class AppWatcher extends EventEmitter {
         ]
       })
       .on('all', (event: 'add' | 'addDir' | 'change' | 'unlink' | 'unlinkDir', path: string): void => {
-        if (this.currentChildProcess && !this.restarting) {
+        if (this.currentChildProcess) {
+          // if the forked app is still in a state that can be terminated we just terminated its
+          this.currentChildProcess.kill('SIGTERM')
+
+          // Internally ALRM will recognize we try to reload
           this.currentChildProcess.kill('SIGALRM')
           this.emit('restart', [`${event} ${path}`])
         }
@@ -56,14 +59,15 @@ export default class AppWatcher extends EventEmitter {
     this.watcher.close()
 
     if (this.currentChildProcess) {
+      this.currentChildProcess.kill('SIGTERM')
       this.currentChildProcess.kill('SIGABRT')
     }
   }
 
-
   /** Sends the ABRT signal */
   public kill(): void {
     if (this.currentChildProcess) {
+      this.currentChildProcess.kill('SIGTERM')
       this.currentChildProcess.kill('SIGABRT')
     }
   }
@@ -81,7 +85,6 @@ export default class AppWatcher extends EventEmitter {
 
     this.currentChildProcess.on('exit', (): void => {
       if (!this.stopping) {
-        this.restarting = false
         this.spawnSubProcess()
       }
     })
