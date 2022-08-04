@@ -15,7 +15,8 @@ export async function execTask(name: string, directive: string, directiveOptions
     coreModules: null,
     logger: null,
     projectConfig: null,
-    stopping: null,
+    running: false,
+    stopping: false,
     Task: null,
     taskConfig: null,
     taskInstance: null

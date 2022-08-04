@@ -38,7 +38,7 @@ export default class AppWatcher extends EventEmitter {
       })
       .on('all', (event: 'add' | 'addDir' | 'change' | 'unlink' | 'unlinkDir', path: string): void => {
         if (this.currentChildProcess) {
-          // if the forked app is still in a state that can be terminated we just terminated its
+          // if the forked app is still in a state that can be terminated send the signal that do so
           this.currentChildProcess.kill('SIGTERM')
 
           // Internally ALRM will recognize we try to reload

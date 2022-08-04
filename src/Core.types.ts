@@ -48,6 +48,7 @@ export interface CoreGlobal {
   coreModules: CoreModules
   logger: Logger
   projectConfig: ProjectConfig
+  running: boolean
   stopping: boolean
   Task: typeof CoreTask
   taskConfig: Record<string, any>

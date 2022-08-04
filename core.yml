@@ -8,12 +8,12 @@ appWatcher:
   ignore:
     - .github
 logger:
-  level: TRACE
+  level: INFO
   silence: false
   terminal:
     enable: true
     clear: false
-    withHeader: true
+    withHeader: false
   localFile:
     enable: true
     asJson: false

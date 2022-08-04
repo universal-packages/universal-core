@@ -1,4 +1,4 @@
-import TimeMeasurer, { startMeasurement } from '@universal-packages/time-measurer'
+import TimeMeasurer, { sleep, startMeasurement } from '@universal-packages/time-measurer'
 import { paramCase, pascalCase } from 'change-case'
 import Core from './Core'
 import { CoreConfig } from './Core.types'
@@ -16,7 +16,8 @@ export async function runApp(name: string, args: Record<string, any>, demon?: bo
     coreModules: null,
     logger: null,
     projectConfig: null,
-    stopping: null,
+    running: false,
+    stopping: false,
     Task: null,
     taskConfig: null,
     taskInstance: null
@@ -53,7 +54,7 @@ export async function runApp(name: string, args: Record<string, any>, demon?: bo
     appWatcher.run()
 
     appWatcher.on('restart', (files: string[]): void => {
-      core.logger.publish('INFO', 'Reloading..', files.join('\n'), 'CORE')
+      core.logger.publish('QUERY', 'Reloading..', files.join('\n'), 'CORE')
     })
 
     const stopWatcher = (): void => {
@@ -88,48 +89,11 @@ export async function runApp(name: string, args: Record<string, any>, demon?: bo
       process.exit(1)
     }
 
-    try {
-      measurer = startMeasurement()
-      const [loadedCoreModules, warnings] = await CoreApp.getCoreModules(core.coreConfig, core.projectConfig, core.logger)
-
-      core.coreModules = loadedCoreModules
-
-      for (let i = 0; i < warnings.length; i++) {
-        const currentWarning = warnings[i]
-        core.logger.publish('WARNING', currentWarning.title, currentWarning.message, 'CORE')
-      }
-
-      core.logger.publish('DEBUG', 'Core modules loaded', null, 'CORE', { measurement: measurer.finish().toString() })
-    } catch (error) {
-      core.logger.publish('ERROR', 'There was an error loading core modules', null, 'CORE', {
-        error: error,
-        measurement: measurer.finish().toString()
-      })
-
-      await core.logger.await()
-      process.exit(1)
-    }
-
-    try {
-      const pascalCaseName = pascalCase(name)
-      const paramCaseName = paramCase(name)
-
-      core.App = await CoreApp.find(name, core.coreConfig)
-
-      core.appConfig = core.projectConfig[pascalCaseName] || core.projectConfig[paramCaseName]
-      core.appInstance = new core.App(core.appConfig, args, core.logger, core.coreModules)
-      if(core.appInstance.prepare) await core.appInstance.prepare()
-    } catch (error) {
-      core.logger.publish('ERROR', 'There was an error loading the app', null, 'CORE', {
-        error: error,
-        measurement: measurer.finish().toString()
-      })
-
-      await core.logger.await()
-      process.exit(1)
-    }
-
     const stopApp = async (restarting: boolean = false): Promise<void> => {
+      // We are already restating-stopping
+      //  we only exit the process at ctrl+c
+      if (restarting && core.stopping) return
+
       process.stdout.clearLine(0)
       process.stdout.cursorTo(0)
 
@@ -140,6 +104,11 @@ export async function runApp(name: string, args: Record<string, any>, demon?: bo
       }
 
       core.stopping = true
+
+      // To trully stop the app gracefully we need to whait for it be running and the start releasing everything
+      // King od come to my mind that DB connections and stuff like that will get wird if we just exit the process
+      // but who know I am going safe for now, if this is to much we can change later
+      while (!core.running) sleep(100)
 
       try {
         await core.appInstance.stop()
@@ -178,6 +147,47 @@ export async function runApp(name: string, args: Record<string, any>, demon?: bo
       process.addListener('SIGTERM', stopApp.bind(null, false))
     }
 
+    try {
+      measurer = startMeasurement()
+      const [loadedCoreModules, warnings] = await CoreApp.getCoreModules(core.coreConfig, core.projectConfig, core.logger)
+
+      core.coreModules = loadedCoreModules
+
+      for (let i = 0; i < warnings.length; i++) {
+        const currentWarning = warnings[i]
+        core.logger.publish('WARNING', currentWarning.title, currentWarning.message, 'CORE')
+      }
+
+      core.logger.publish('DEBUG', 'Core modules loaded', null, 'CORE', { measurement: measurer.finish().toString() })
+    } catch (error) {
+      core.logger.publish('ERROR', 'There was an error loading core modules', null, 'CORE', {
+        error: error,
+        measurement: measurer.finish().toString()
+      })
+
+      await core.logger.await()
+      process.exit(1)
+    }
+
+    try {
+      const pascalCaseName = pascalCase(name)
+      const paramCaseName = paramCase(name)
+
+      core.App = await CoreApp.find(name, core.coreConfig)
+
+      core.appConfig = core.projectConfig[pascalCaseName] || core.projectConfig[paramCaseName]
+      core.appInstance = new core.App(core.appConfig, args, core.logger, core.coreModules)
+      if (core.appInstance.prepare) await core.appInstance.prepare()
+    } catch (error) {
+      core.logger.publish('ERROR', 'There was an error loading the app', null, 'CORE', {
+        error: error,
+        measurement: measurer.finish().toString()
+      })
+
+      await core.logger.await()
+      process.exit(1)
+    }
+
     core.logger.publish('INFO', `${core.App.appName || core.App.name} running...`, core.App.description, 'CORE')
 
     try {
@@ -185,8 +195,13 @@ export async function runApp(name: string, args: Record<string, any>, demon?: bo
     } catch (error) {
       core.logger.publish('ERROR', core.App.appName || core.App.name, 'There was an error while running app', 'CORE', { error })
 
+      await CoreApp.releaseInternalModules(core.coreModules)
       await core.logger.await()
+
       process.exit(1)
     }
+
+    // Now we are running
+    core.running = true
   }
 }
