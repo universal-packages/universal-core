@@ -106,8 +106,8 @@ export async function runApp(name: string, args: Record<string, any>, demon?: bo
       core.stopping = true
 
       // To trully stop the app gracefully we need to whait for it be running and the start releasing everything
-      // King od come to my mind that DB connections and stuff like that will get wird if we just exit the process
-      // but who know I am going safe for now, if this is to much we can change later
+      // Im just thinkind about the children and DB connections and stuff like that will end dirty if we just exit the process
+      // but who knows, I am going safe for now, if this is too much we can change later
       while (!core.running) sleep(100)
 
       try {
@@ -184,7 +184,9 @@ export async function runApp(name: string, args: Record<string, any>, demon?: bo
         measurement: measurer.finish().toString()
       })
 
+      await CoreApp.releaseInternalModules(core.coreModules)
       await core.logger.await()
+
       process.exit(1)
     }
 
