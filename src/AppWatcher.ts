@@ -10,7 +10,7 @@ export default class AppWatcher extends EventEmitter {
 
   private watcher: FSWatcher
   private currentChildProcess: ChildProcessWithoutNullStreams
-  private stopping: boolean
+  private stopping: boolean = false
   private fileEventsBuffer: string[] = []
   private restartTimeout: NodeJS.Timeout
   private ready: boolean
@@ -53,7 +53,7 @@ export default class AppWatcher extends EventEmitter {
               // Internally ALRM will recognize we try to reload
               this.currentChildProcess.kill('SIGALRM')
 
-              // Emit teh changes
+              // Emit the changes
               this.emit('restart', this.fileEventsBuffer)
               this.fileEventsBuffer = []
             }
@@ -67,7 +67,7 @@ export default class AppWatcher extends EventEmitter {
       })
   }
 
-  /** Stops watcher and sends the ABRT signal */
+  /**    */
   public stop(): void {
     this.stopping = true
 
