@@ -11,6 +11,9 @@ export default class AppWatcher extends EventEmitter {
   private watcher: FSWatcher
   private currentChildProcess: ChildProcessWithoutNullStreams
   private stopping: boolean
+  private fileEventsBuffer: string[] = []
+  private restartTimeout: NodeJS.Timeout
+  private ready: boolean
 
   public constructor(appName: string, args: Record<string, any>, ignore: string[] = []) {
     super()
@@ -37,16 +40,28 @@ export default class AppWatcher extends EventEmitter {
         ]
       })
       .on('all', (event: 'add' | 'addDir' | 'change' | 'unlink' | 'unlinkDir', path: string): void => {
-        if (this.currentChildProcess) {
-          // if the forked app is still in a state that can be terminated send the signal that do so
-          this.currentChildProcess.kill('SIGTERM')
+        if (this.ready) {
+          this.fileEventsBuffer.push(`${event} ${path}`)
 
-          // Internally ALRM will recognize we try to reload
-          this.currentChildProcess.kill('SIGALRM')
-          this.emit('restart', [`${event} ${path}`])
+          clearTimeout(this.restartTimeout)
+
+          this.restartTimeout = setTimeout((): void => {
+            if (this.currentChildProcess && !this.stopping) {
+              // if the forked app is still in a state that can be terminated send the signal that do so
+              this.currentChildProcess.kill('SIGTERM')
+
+              // Internally ALRM will recognize we try to reload
+              this.currentChildProcess.kill('SIGALRM')
+
+              // Emit teh changes
+              this.emit('restart', this.fileEventsBuffer)
+              this.fileEventsBuffer = []
+            }
+          }, 1000)
         }
       })
       .on('ready', (): void => {
+        this.ready = true
         this.spawnSubProcess()
         this.emit('ready')
       })
@@ -57,6 +72,7 @@ export default class AppWatcher extends EventEmitter {
     this.stopping = true
 
     this.watcher.close()
+    clearTimeout(this.restartTimeout)
 
     if (this.currentChildProcess) {
       this.currentChildProcess.kill('SIGTERM')
