@@ -35,7 +35,7 @@ export default class CoreTask<C = any, A = any> extends Core {
     })
 
     if (!taskModuleRegistry) {
-      return
+      throw new Error(`Task "${name}" can't be found anywhere in\n${coreConfig.tasksDirectory}`)
     } else if (taskModuleRegistry.error) {
       throw taskModuleRegistry.error
     } else if (!(taskModuleRegistry.exports.prototype instanceof CoreTask)) {
@@ -45,11 +45,11 @@ export default class CoreTask<C = any, A = any> extends Core {
     return taskModuleRegistry.exports
   }
 
-  public async prepare(): Promise<void> {}
+  public prepare(): Promise<void> | void {}
 
-  public async exec(): Promise<void> {
+  public exec(): Promise<void> | void {
     throw 'Implement me: Tasks should implement the exec method'
   }
 
-  public async abort(): Promise<void> {}
+  public abort(): Promise<void> | void {}
 }

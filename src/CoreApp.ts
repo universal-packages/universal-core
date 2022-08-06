@@ -27,29 +27,29 @@ export default class CoreApp<C = any, A = any> extends Core {
     const appModuleRegistry = finalApps.find((module: ModuleRegistry): boolean => {
       const fileMatches = !!module.location.match(new RegExp(`(${pascalCaseName}|${paramCaseName}).(app|universal-core-app)\..*$`))
 
-      return module.exports ? module.exports.appName === name || module.exports.name === name || fileMatches : fileMatches
+      return module.exports ? module.exports?.appName === name || module.exports?.name === name || fileMatches : fileMatches
     })
 
     if (!appModuleRegistry) {
-      return
+      throw new Error(`App "${name}" can't be found anywhere in\n${coreConfig.appsDirectory}`)
     } else if (appModuleRegistry.error) {
       throw appModuleRegistry.error
     } else if (!(appModuleRegistry.exports.prototype instanceof CoreApp)) {
-      throw new Error(`App does not implements CoreApp\n${appModuleRegistry.location}`)
+      throw new Error(`Module does not implements CoreApp\n${appModuleRegistry.location}`)
     }
 
     return appModuleRegistry.exports
   }
 
-  public async prepare(): Promise<void> {}
+  public prepare(): Promise<void> | void {}
 
-  public async run(): Promise<void> {
+  public run(): Promise<void> | void {
     throw 'Implement me: Apps should implement the run method'
   }
 
-  public async stop(): Promise<void> {
+  public stop(): Promise<void> | void {
     throw 'Implement me: Apps should implement the stop method'
   }
 
-  public async release(): Promise<void> {}
+  public release(): Promise<void> | void {}
 }

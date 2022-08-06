@@ -1,0 +1,102 @@
+import CoreApp from '../src/CoreApp'
+import TestApp from './__fixtures__/core-app-testing/apps/Test.app'
+
+describe('CoreApp', (): void => {
+  it('requires configuration, args, logger and modules to be set', async (): Promise<void> => {
+    const app = new CoreApp({}, {}, {} as any, {})
+
+    expect(app).toMatchObject({ config: {}, args: {}, logger: {}, coreModules: {} })
+  })
+
+  describe('.find', (): void => {
+    it('finds an app by name', async (): Promise<void> => {
+      const App = await CoreApp.find('TestApp', {
+        appsDirectory: './tests/__fixtures__/core-app-testing/apps',
+        configDirectory: './tests/__fixtures__/core-app-testing/config',
+        tasksDirectory: './tests/__fixtures__/core-app-testing/tasks'
+      })
+
+      expect(App).toBe(TestApp)
+    })
+
+    it('throws if no app can be found', async (): Promise<void> => {
+      let error: Error
+
+      try {
+        await CoreApp.find('notinthere', {
+          appsDirectory: './tests/__fixtures__/core-app-testing/apps',
+          configDirectory: './tests/__fixtures__/core-app-testing/config',
+          tasksDirectory: './tests/__fixtures__/core-app-testing/tasks'
+        })
+      } catch (err) {
+        error = err
+      }
+
+      expect(error.message).toEqual(`App \"notinthere\" can't be found anywhere in\n./tests/__fixtures__/core-app-testing/apps`)
+    })
+
+    it('throws if app can not be loaded because of errors', async (): Promise<void> => {
+      let error: Error
+
+      try {
+        await CoreApp.find('test', {
+          appsDirectory: './tests/__fixtures__/core-app-testing/apps-errors',
+          configDirectory: './tests/__fixtures__/core-app-testing/config',
+          tasksDirectory: './tests/__fixtures__/core-app-testing/tasks'
+        })
+      } catch (err) {
+        error = err
+      }
+
+      expect(error.message).toEqual('Errored')
+    })
+
+    it('throws if app does not implements CoreApp', async (): Promise<void> => {
+      let error: Error
+
+      try {
+        await CoreApp.find('test-app-for-sho', {
+          appsDirectory: './tests/__fixtures__/core-app-testing/apps-not-implements',
+          configDirectory: './tests/__fixtures__/core-app-testing/config',
+          tasksDirectory: './tests/__fixtures__/core-app-testing/tasks'
+        })
+      } catch (err) {
+        error = err
+      }
+
+      expect(error.message).toMatch(/Module does not implements CoreApp\n\/.*__fixtures__\/core-app-testing\/apps-not-implements\/Test.app.ts/)
+    })
+  })
+
+  describe('#prepare', (): void => {
+    it('does not thow if not implemented', async (): Promise<void> => {
+      const app = new CoreApp({}, {}, {} as any, {})
+
+      expect((): unknown => app.prepare()).not.toThrow()
+    })
+  })
+
+  describe('#run', (): void => {
+    it('thows if not implemented', async (): Promise<void> => {
+      const app = new CoreApp({}, {}, {} as any, {})
+
+      expect((): unknown => app.run()).toThrow('Implement me: Apps should implement the run method')
+    })
+  })
+
+  describe('#stop', (): void => {
+    it('thows if not implemented', async (): Promise<void> => {
+      const app = new CoreApp({}, {}, {} as any, {})
+
+      expect((): unknown => app.stop()).toThrow('Implement me: Apps should implement the stop method')
+    })
+  })
+
+  describe('#release', (): void => {
+    it('does not thow if not implemented', async (): Promise<void> => {
+      const app = new CoreApp({}, {}, {} as any, {})
+
+      expect((): unknown => app.release()).not.toThrow()
+    })
+  })
+})

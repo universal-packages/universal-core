@@ -12,11 +12,11 @@ export default class CoreModule<C = any> {
     this.logger = logger
   }
 
-  public async prepare(): Promise<void> {
-    throw 'Implement me: Modules should implement the prepare amethod'
+  public prepare(): Promise<void> | void {
+    throw 'Implement me: Modules should implement the prepare method'
   }
 
-  public async release(): Promise<void> {
-    throw 'Implement me: Modules should implement the release amethod'
+  public release(): Promise<void> | void {
+    throw 'Implement me: Modules should implement the release method'
   }
 }
