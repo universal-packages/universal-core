@@ -42,7 +42,7 @@ describe('CoreApp', (): void => {
         await CoreApp.find('LoadError', {
           appsDirectory: './tests/__fixtures__/apps-load-error',
           configDirectory: './tests/__fixtures__/config',
-          tasksDirectory: './tests/__fixtures__/tasks-load-Error'
+          tasksDirectory: './tests/__fixtures__/tasks'
         })
       } catch (err) {
         error = err
