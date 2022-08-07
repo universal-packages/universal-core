@@ -118,14 +118,21 @@ export default class Core {
 
   public static async releaseInternalModules(internalModules: CoreModules = {}): Promise<void> {
     const modulesKeys = Object.keys(internalModules)
+    let error: Error
 
     for (let i = 0; i < modulesKeys.length; i++) {
       const currentModuleName = modulesKeys[i]
       const currentModule = internalModules[currentModuleName]
 
-      await currentModule.release()
+      try {
+        await currentModule.release()
+      } catch (err) {
+        error = err
+      }
 
       delete internalModules[currentModuleName]
     }
+
+    if (error) throw error
   }
 }

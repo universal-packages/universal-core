@@ -1,4 +1,4 @@
-import TimeMeasurer, { startMeasurement } from '@universal-packages/time-measurer'
+import TimeMeasurer, { sleep, startMeasurement } from '@universal-packages/time-measurer'
 import { paramCase, pascalCase } from 'change-case'
 import Core from './Core'
 import { CoreConfig } from './Core.types'
@@ -56,6 +56,41 @@ export async function execTask(name: string, directive: string, directiveOptions
     process.exit(1)
   }
 
+  const abortTask = async (): Promise<void> => {
+    process.stdout.clearLine(0)
+    process.stdout.cursorTo(0)
+
+    if (core.stopping) process.exit(0)
+
+    core.logger.publish('INFO', 'Aborting task gracefully', 'press CTRL+C again to kill', 'CORE')
+
+    core.stopping = true
+
+    while (!core.running) sleep(100)
+
+    try {
+      await core.taskInstance.abort()
+    } catch (error) {
+      core.logger.publish('ERROR', core.Task.appName || core.Task.name, 'There was an error while aborting task', 'CORE', { error })
+      await core.logger.await()
+      process.exit(1)
+    }
+
+    try {
+      await Core.releaseInternalModules(core.coreModules)
+      core.logger.publish('DEBUG', 'Core modules unloaded', null, 'CORE')
+    } catch (error) {
+      core.logger.publish('ERROR', core.Task.appName || core.Task.name, 'There was an error while unloading modules', 'CORE', { error })
+
+      await core.logger.await()
+
+      process.exit(1)
+    }
+  }
+
+  process.addListener('SIGINT', abortTask)
+  process.addListener('SIGTERM', abortTask)
+
   try {
     measurer = startMeasurement()
     const [loadedCoreModules, warnings] = await CoreTask.getCoreModules(core.coreConfig, core.projectConfig, core.logger)
@@ -93,40 +128,11 @@ export async function execTask(name: string, directive: string, directiveOptions
       measurement: measurer.finish().toString()
     })
 
+    await CoreTask.releaseInternalModules(core.coreModules)
     await core.logger.await()
+
     process.exit(1)
   }
-
-  const abortTask = async (): Promise<void> => {
-    process.stdout.clearLine(0)
-    process.stdout.cursorTo(0)
-
-    if (core.stopping) process.exit(0)
-
-    core.logger.publish('INFO', 'Aborting task gracefully', 'press CTRL+C again to kill', 'CORE')
-
-    core.stopping = true
-
-    try {
-      await core.taskInstance.abort()
-    } catch (error) {
-      core.logger.publish('ERROR', core.Task.appName || core.Task.name, 'There was an error while aborting task', 'CORE', { error })
-      await core.logger.await()
-      process.exit(1)
-    }
-
-    try {
-      await Core.releaseInternalModules(core.coreModules)
-      core.logger.publish('DEBUG', 'Core modules unloaded', null, 'CORE')
-    } catch (error) {
-      core.logger.publish('ERROR', core.Task.appName || core.Task.name, 'There was an error while unloading modules', 'CORE', { error })
-      await core.logger.await()
-      process.exit(1)
-    }
-  }
-
-  process.addListener('SIGINT', abortTask)
-  process.addListener('SIGTERM', abortTask)
 
   core.logger.publish('INFO', `${core.Task.appName || core.Task.name} executing...`, core.Task.description, 'CORE')
 
@@ -135,7 +141,12 @@ export async function execTask(name: string, directive: string, directiveOptions
   } catch (error) {
     core.logger.publish('ERROR', core.Task.appName || core.Task.name, 'There was an error while executing task', 'CORE', { error })
 
+    await CoreTask.releaseInternalModules(core.coreModules)
     await core.logger.await()
+
     process.exit(1)
   }
+
+  // Now we are running
+  core.running = true
 }

@@ -1,5 +1,5 @@
 import CoreTask from '../src/CoreTask'
-import TestTask from './__fixtures__/core-task-testing/tasks/Test.task'
+import GoodTask from './__fixtures__/tasks/Good.task'
 
 describe('CoreTask', (): void => {
   it('requires configuration, args, logger and modules to be set', async (): Promise<void> => {
@@ -10,13 +10,13 @@ describe('CoreTask', (): void => {
 
   describe('.find', (): void => {
     it('finds a task by name', async (): Promise<void> => {
-      const Task = await CoreTask.find('TestTask', {
-        appsDirectory: './tests/__fixtures__/core-task-testing/apps',
-        configDirectory: './tests/__fixtures__/core-task-testing/config',
-        tasksDirectory: './tests/__fixtures__/core-task-testing/tasks'
+      const Task = await CoreTask.find('Good', {
+        appsDirectory: './tests/__fixtures__/apps',
+        configDirectory: './tests/__fixtures__/config',
+        tasksDirectory: './tests/__fixtures__/tasks'
       })
 
-      expect(Task).toBe(TestTask)
+      expect(Task).toBe(GoodTask)
     })
 
     it('throws if no app can be found', async (): Promise<void> => {
@@ -24,25 +24,25 @@ describe('CoreTask', (): void => {
 
       try {
         await CoreTask.find('notinthere', {
-          appsDirectory: './tests/__fixtures__/core-task-testing/apps',
-          configDirectory: './tests/__fixtures__/core-task-testing/config',
-          tasksDirectory: './tests/__fixtures__/core-task-testing/tasks'
+          appsDirectory: './tests/__fixtures__/apps',
+          configDirectory: './tests/__fixtures__/config',
+          tasksDirectory: './tests/__fixtures__/tasks'
         })
       } catch (err) {
         error = err
       }
 
-      expect(error.message).toEqual(`Task \"notinthere\" can't be found anywhere in\n./tests/__fixtures__/core-task-testing/tasks`)
+      expect(error.message).toEqual(`Task \"notinthere\" can't be found anywhere in\n./tests/__fixtures__/tasks`)
     })
 
     it('throws if task can not be loaded because of errors', async (): Promise<void> => {
       let error: Error
 
       try {
-        await CoreTask.find('test', {
-          appsDirectory: './tests/__fixtures__/core-task-testing/apps',
-          configDirectory: './tests/__fixtures__/core-task-testing/config',
-          tasksDirectory: './tests/__fixtures__/core-task-testing/tasks-errors'
+        await CoreTask.find('LoadError', {
+          appsDirectory: './tests/__fixtures__/apps',
+          configDirectory: './tests/__fixtures__/config',
+          tasksDirectory: './tests/__fixtures__/tasks-load-error'
         })
       } catch (err) {
         error = err
@@ -55,16 +55,16 @@ describe('CoreTask', (): void => {
       let error: Error
 
       try {
-        await CoreTask.find('test-task-for-sho', {
-          appsDirectory: './tests/__fixtures__/core-task-testing/apps',
-          configDirectory: './tests/__fixtures__/core-task-testing/config',
-          tasksDirectory: './tests/__fixtures__/core-task-testing/tasks-not-implements'
+        await CoreTask.find('implementation-error-task', {
+          appsDirectory: './tests/__fixtures__/apps',
+          configDirectory: './tests/__fixtures__/config',
+          tasksDirectory: './tests/__fixtures__/tasks-implementation-error'
         })
       } catch (err) {
         error = err
       }
 
-      expect(error.message).toMatch(/Module does not implements CoreTask\n\/.*__fixtures__\/core-task-testing\/tasks-not-implements\/Test.task.ts/)
+      expect(error.message).toMatch(/Module does not implements CoreTask\n\/.*__fixtures__\/tasks-implementation-error\/ImplementationError.task.ts/)
     })
   })
 
