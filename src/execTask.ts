@@ -1,5 +1,4 @@
 import TimeMeasurer, { sleep, startMeasurement } from '@universal-packages/time-measurer'
-import { paramCase, pascalCase } from 'change-case'
 import Core from './Core'
 import { CoreConfig } from './Core.types'
 import CoreTask from './CoreTask'
@@ -13,12 +12,12 @@ export async function execTask(name: string, directive: string, directiveOptions
     appInstance: null,
     coreConfig: null,
     coreModules: null,
+    loaded: false,
     logger: null,
     projectConfig: null,
     running: false,
     stopping: false,
     Task: null,
-    taskConfig: null,
     taskInstance: null
   }
 
@@ -38,7 +37,7 @@ export async function execTask(name: string, directive: string, directiveOptions
     })
 
     await core.logger.await()
-    process.exit(1)
+    return process.exit(1)
   }
 
   try {
@@ -53,38 +52,33 @@ export async function execTask(name: string, directive: string, directiveOptions
     })
 
     await core.logger.await()
-    process.exit(1)
+    return process.exit(1)
   }
 
   const abortTask = async (): Promise<void> => {
-    process.stdout.clearLine(0)
-    process.stdout.cursorTo(0)
+    if (process.stdout.clearLine) process.stdout.clearLine(0)
+    if (process.stdout.cursorTo) process.stdout.cursorTo(0)
 
-    if (core.stopping) process.exit(0)
+    if (core.stopping) return process.exit(0)
+    core.stopping = true
 
     core.logger.publish('INFO', 'Aborting task gracefully', 'press CTRL+C again to kill', 'CORE')
 
-    core.stopping = true
-
-    while (!core.running) sleep(100)
+    while (!core.loaded) await sleep(100)
 
     try {
       await core.taskInstance.abort()
     } catch (error) {
       core.logger.publish('ERROR', core.Task.appName || core.Task.name, 'There was an error while aborting task', 'CORE', { error })
-      await core.logger.await()
-      process.exit(1)
-    }
 
-    try {
-      await Core.releaseInternalModules(core.coreModules)
-      core.logger.publish('DEBUG', 'Core modules unloaded', null, 'CORE')
-    } catch (error) {
-      core.logger.publish('ERROR', core.Task.appName || core.Task.name, 'There was an error while unloading modules', 'CORE', { error })
+      try {
+        await CoreTask.releaseInternalModules(core.coreModules)
+      } catch (err) {
+        // We prioritize higher error
+      }
 
       await core.logger.await()
-
-      process.exit(1)
+      return process.exit(1)
     }
   }
 
@@ -110,17 +104,13 @@ export async function execTask(name: string, directive: string, directiveOptions
     })
 
     await core.logger.await()
-    process.exit(1)
+    return process.exit(1)
   }
 
   try {
-    const pascalCaseName = pascalCase(name)
-    const paramCaseName = paramCase(name)
-
     core.Task = await CoreTask.find(name, core.coreConfig)
 
-    core.taskConfig = core.projectConfig[pascalCaseName] || core.projectConfig[paramCaseName]
-    core.taskInstance = new core.Task(core.appConfig, directive, directiveOptions, args, core.logger, core.coreModules)
+    core.taskInstance = new core.Task(directive, directiveOptions, args, core.logger, core.coreModules)
     if (core.taskInstance.prepare) await core.taskInstance.prepare()
   } catch (error) {
     core.logger.publish('ERROR', 'There was an error loading the app', null, 'CORE', {
@@ -128,25 +118,43 @@ export async function execTask(name: string, directive: string, directiveOptions
       measurement: measurer.finish().toString()
     })
 
-    await CoreTask.releaseInternalModules(core.coreModules)
-    await core.logger.await()
+    try {
+      await CoreTask.releaseInternalModules(core.coreModules)
+    } catch (err) {
+      // We prioritize higher error
+    }
 
-    process.exit(1)
+    await core.logger.await()
+    return process.exit(1)
   }
+
+  core.loaded = true
 
   core.logger.publish('INFO', `${core.Task.appName || core.Task.name} executing...`, core.Task.description, 'CORE')
 
   try {
     await core.taskInstance.exec()
+
+    // We release here since the aborting will ultimatelly end the execution
+    try {
+      await Core.releaseInternalModules(core.coreModules)
+      core.logger.publish('DEBUG', 'Core modules unloaded', null, 'CORE')
+    } catch (error) {
+      core.logger.publish('ERROR', core.Task.appName || core.Task.name, 'There was an error while unloading modules', 'CORE', { error })
+
+      await core.logger.await()
+      return process.exit(1)
+    }
   } catch (error) {
     core.logger.publish('ERROR', core.Task.appName || core.Task.name, 'There was an error while executing task', 'CORE', { error })
 
-    await CoreTask.releaseInternalModules(core.coreModules)
+    try {
+      await CoreTask.releaseInternalModules(core.coreModules)
+    } catch (err) {
+      // We prioritize higher error
+    }
+
     await core.logger.await()
-
-    process.exit(1)
+    return process.exit(1)
   }
-
-  // Now we are running
-  core.running = true
 }

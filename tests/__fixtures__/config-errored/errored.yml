@@ -1,0 +1,4 @@
+default:
+  isLocal: true
+- nop
+   yes

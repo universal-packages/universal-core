@@ -14,12 +14,12 @@ export async function runApp(name: string, args: Record<string, any>, demon?: bo
     appInstance: null,
     coreConfig: null,
     coreModules: null,
+    loaded: false,
     logger: null,
     projectConfig: null,
     running: false,
     stopping: false,
     Task: null,
-    taskConfig: null,
     taskInstance: null
   }
 

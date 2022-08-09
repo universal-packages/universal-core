@@ -76,7 +76,10 @@ export default class Core {
           await moduleInstance.prepare()
         } catch (error) {
           // Release already loaded modules
-          await Core.releaseInternalModules(coreModules)
+          try {
+            await Core.releaseInternalModules(coreModules)
+          } catch (err) {}
+
           throw error
         }
 
@@ -90,7 +93,7 @@ export default class Core {
   }
 
   public static getCoreLogger(coreConfig?: CoreConfig): Logger {
-    const logger = new Logger()
+    const logger = new Logger({ silence: process.env['NODE_ENV'] === 'test' })
     const termianlTransport = logger.getTransport('terminal') as TerminalTransport
     const localFileTrasnport = logger.getTransport('localFile') as LocalFileTransport
 

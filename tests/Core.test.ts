@@ -74,7 +74,7 @@ logger.localFile.location - Directory is not accesible`)
       const config = await Core.getProjectConfig({ configDirectory: './tests/__fixtures__/config' })
 
       expect(config).toEqual({
-        'test-app': { doStuff: true, test: true },
+        'good-app': { doStuff: true, test: true },
         'good-module': { isLocal: true, test: true },
         ExcelentModule: { isSecond: true, test: true }
       })

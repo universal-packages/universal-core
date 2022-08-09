@@ -4,20 +4,18 @@ import { paramCase, pascalCase } from 'change-case'
 import Core from './Core'
 import { CoreConfig, CoreModules } from './Core.types'
 
-export default class CoreTask<C = any, A = any> extends Core {
+export default class CoreTask<A = any> extends Core {
   public static readonly appName: string
   public static readonly description: string
 
-  public readonly config: C
   public readonly directive: string
   public readonly directiveOptions: string[]
   public readonly args: A
 
-  public constructor(config: C, directive: string, directiveOptions: string[], args: A, logger: Logger, coreModules: CoreModules) {
+  public constructor(directive: string, directiveOptions: string[], args: A, logger: Logger, coreModules: CoreModules) {
     super(logger, coreModules)
     this.directive = directive
     this.directiveOptions = directiveOptions
-    this.config = config
     this.args = args
   }
 

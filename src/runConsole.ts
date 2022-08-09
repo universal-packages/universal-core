@@ -11,12 +11,12 @@ export async function runConsole(coreConfigOveride?: CoreConfig): Promise<void> 
     appInstance: null,
     coreConfig: null,
     coreModules: null,
+    loaded: false,
     logger: null,
     projectConfig: null,
     running: false,
     stopping: false,
     Task: null,
-    taskConfig: null,
     taskInstance: null
   }
 

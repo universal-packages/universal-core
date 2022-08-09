@@ -46,11 +46,11 @@ export interface CoreGlobal {
   appInstance: CoreApp
   coreConfig: CoreConfig
   coreModules: CoreModules
+  loaded: boolean
   logger: Logger
   projectConfig: ProjectConfig
   running: boolean
   stopping: boolean
   Task: typeof CoreTask
-  taskConfig: Record<string, any>
   taskInstance: CoreTask
 }
