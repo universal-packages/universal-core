@@ -1,14 +1,14 @@
 {
-  "name": "{{appName}}",
+  "name": "{{projectName}}",
   "version": "1.0.0",
-  "description": "universal-core-app project",
+  "description": "universal-core project",
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
     "test": "jest --watch"
   },
   "dependencies": {
-    "@universal-packages/core-app": "{{coreAppVersion}}"
+    "@universal-packages/core": "{{coreVersion}}"
   },
   "devDependencies": {
     "@types/jest": "^28.1.0",

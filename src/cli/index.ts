@@ -1,5 +1,6 @@
 import yargs, { ArgumentsCamelCase, Argv } from 'yargs'
 import { execTask } from '../execTask'
+import { initProyect } from '../initProject'
 import { runApp } from '../runApp'
 import { runConsole } from '../runConsole'
 
@@ -9,6 +10,7 @@ interface ArgvExtract {
   taskDirective: string
   directiveOptions: string[]
   options: ArgumentsCamelCase
+  projectName: string
 }
 
 yargs
@@ -46,6 +48,19 @@ yargs
       runConsole()
     }
   })
+  .command({
+    command: 'init <project-name>',
+    aliases: 'i',
+    describe: 'Inits a new core project',
+    builder: (yargs: Argv) =>
+      yargs
+        .positional('project-name', { description: 'Name to give to the core project', type: 'string', demandOption: true })
+        .options('typescript', { alias: ['ts'], description: 'Inits the core proyect using the typescript template', type: 'boolean', default: false }),
+    handler: (argv: ArgumentsCamelCase) => {
+      const argvExtract = processArgv(argv)
+      initProyect(argvExtract.projectName, argvExtract.options)
+    }
+  })
   .options('env', { alias: ['environment'], description: 'Set node env environment', type: 'string', default: 'development' })
   .demandCommand(1, '')
   .help('h')
@@ -64,6 +79,7 @@ function processArgv(argv: ArgumentsCamelCase): ArgvExtract {
   const taskName = argv['taskName'] as string
   const taskDirective = argv['taskDirective'] as string
   const directiveOptions = argv['directiveOptions'] as string[]
+  const projectName = argv['projectName'] as string
 
   // Just so options are clean from not relevant args
   const options = { ...argv }
@@ -80,6 +96,8 @@ function processArgv(argv: ArgumentsCamelCase): ArgvExtract {
   delete options['task-options']
   delete options['directiveOptions']
   delete options['directive-options']
+  delete options['projectName']
+  delete options['project-name']
 
-  return { appName, taskName, taskDirective, directiveOptions, options }
+  return { appName, taskName, taskDirective, directiveOptions, options, projectName }
 }

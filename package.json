@@ -1,6 +1,6 @@
 {
   "name": "@universal-packages/core",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "Agnostic and conventional node executions wrap",
   "author": "David De Anda <david@universal-packages.com> (https://github.com/universal-packages)",
   "license": "MIT",
@@ -8,7 +8,7 @@
   "types": "index.d.ts",
   "repository": "git://git@github.com/universal-packages/universal-core.git",
   "bin": {
-    "uca": "./src/cli/entry"
+    "ucore": "./src/cli/entry"
   },
   "scripts": {
     "build": "tsc --p tsconfig.dis.json",
@@ -20,6 +20,7 @@
     "@universal-packages/logger": "^1.6.1",
     "@universal-packages/module-loader": "^1.0.0",
     "@universal-packages/plugin-config-loader": "^1.0.0",
+    "@universal-packages/template-populator": "^1.0.0",
     "@universal-packages/time-measurer": "^1.2.0",
     "change-case": "^4.1.2",
     "chokidar": "^3.5.3",
