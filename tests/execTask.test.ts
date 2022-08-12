@@ -57,10 +57,7 @@ describe('execTask', (): void => {
         appsDirectory: './tests/__fixtures__/apps',
         configDirectory: './tests/__fixtures__/config',
         tasksDirectory: './tests/__fixtures__/nonexistent',
-        modulesDirectory: './tests/__fixtures__/modules',
-        logger: {
-          silence: true
-        }
+        modulesDirectory: './tests/__fixtures__/modules'
       }
     )
 

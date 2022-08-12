@@ -31,7 +31,7 @@ describe('runApp', (): void => {
       App: GoodApp,
       appConfig: { doStuff: true, test: true },
       appInstance: expect.any(GoodApp),
-      coreConfig: expect.objectContaining({ tasksDirectory: './tests/__fixtures__/tasks' }),
+      coreConfig: expect.objectContaining({ appsDirectory: './tests/__fixtures__/apps' }),
       coreModules: { 'excelent-module': expect.any(ExcelentModule), 'good-module': expect.any(GoodModule) },
       loaded: true,
       logger: expect.any(Logger),
@@ -74,10 +74,7 @@ describe('runApp', (): void => {
       appsDirectory: './tests/__fixtures__/apps',
       configDirectory: './tests/__fixtures__/config',
       tasksDirectory: './tests/__fixtures__/tasks',
-      modulesDirectory: './tests/__fixtures__/modules-load-error',
-      logger: {
-        silence: true
-      }
+      modulesDirectory: './tests/__fixtures__/modules-load-error'
     })
 
     expect(process.exit).toHaveBeenCalledWith(1)

@@ -1,6 +1,7 @@
 import TimeMeasurer, { startMeasurement } from '@universal-packages/time-measurer'
 import Core from './Core'
 import { CoreConfig } from './Core.types'
+import repl from 'repl'
 
 export async function runConsole(coreConfigOveride?: CoreConfig): Promise<void> {
   let measurer: TimeMeasurer
@@ -36,7 +37,7 @@ export async function runConsole(coreConfigOveride?: CoreConfig): Promise<void> 
     })
 
     await core.logger.await()
-    process.exit(1)
+    return process.exit(1)
   }
 
   try {
@@ -51,7 +52,7 @@ export async function runConsole(coreConfigOveride?: CoreConfig): Promise<void> 
     })
 
     await core.logger.await()
-    process.exit(1)
+    return process.exit(1)
   }
 
   try {
@@ -73,14 +74,14 @@ export async function runConsole(coreConfigOveride?: CoreConfig): Promise<void> 
     })
 
     await core.logger.await()
-    process.exit(1)
+    return process.exit(1)
   }
+
+  core.loaded = true
 
   core.logger.publish('DEBUG', 'running console...', null, 'CORE')
 
   try {
-    const repl = await import('repl')
-
     await core.logger.await()
 
     // We just start a repl server it even has its own termination CTRL+C
@@ -88,6 +89,8 @@ export async function runConsole(coreConfigOveride?: CoreConfig): Promise<void> 
     replServer.setupHistory('./.console_history', (error: Error): void => {
       if (error) throw error
     })
+
+    core.running = true
 
     // We emit this so the Core knows the user basically sent those signals
     replServer.on('exit', async (): Promise<void> => {
@@ -97,15 +100,21 @@ export async function runConsole(coreConfigOveride?: CoreConfig): Promise<void> 
         await Core.releaseInternalModules(core.coreModules)
         core.logger.publish('DEBUG', 'Core modules unloaded', null, 'CORE')
       } catch (error) {
-        core.logger.publish('ERROR', core.App.appName || core.App.name, 'There was an error while unloading modules', 'CORE', { error })
+        core.logger.publish('ERROR', 'Console', 'There was an error while unloading modules', 'CORE', { error })
         await core.logger.await()
-        process.exit(1)
+        return process.exit(1)
       }
     })
   } catch (error) {
     core.logger.publish('ERROR', 'Console', 'There was an error while running the console', 'CORE', { error })
 
+    try {
+      await Core.releaseInternalModules(core.coreModules)
+    } catch (err) {
+      // We prioritize higher error
+    }
+
     await core.logger.await()
-    process.exit(1)
+    return process.exit(1)
   }
 }
