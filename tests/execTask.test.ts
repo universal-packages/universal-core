@@ -10,6 +10,7 @@ beforeEach((): void => {
   jest.clearAllMocks()
   GoodTask.iWasPrepared = false
   GoodTask.iWasExecuted = false
+  GoodTask.iWasAborted = false
   process.removeAllListeners()
 })
 
@@ -78,10 +79,7 @@ describe('execTask', (): void => {
         appsDirectory: './tests/__fixtures__/apps',
         configDirectory: './tests/__fixtures__/config-errored',
         tasksDirectory: './tests/__fixtures__/tasks',
-        modulesDirectory: './tests/__fixtures__/modules',
-        logger: {
-          silence: true
-        }
+        modulesDirectory: './tests/__fixtures__/modules'
       }
     )
 
@@ -100,10 +98,7 @@ describe('execTask', (): void => {
         appsDirectory: './tests/__fixtures__/apps',
         configDirectory: './tests/__fixtures__/config',
         tasksDirectory: './tests/__fixtures__/tasks',
-        modulesDirectory: './tests/__fixtures__/modules-load-error',
-        logger: {
-          silence: true
-        }
+        modulesDirectory: './tests/__fixtures__/modules-load-error'
       }
     )
 
@@ -122,10 +117,7 @@ describe('execTask', (): void => {
         appsDirectory: './tests/__fixtures__/apps',
         configDirectory: './tests/__fixtures__/config',
         tasksDirectory: './tests/__fixtures__/tasks',
-        modulesDirectory: './tests/__fixtures__/modules-warnings',
-        logger: {
-          silence: true
-        }
+        modulesDirectory: './tests/__fixtures__/modules-warnings'
       }
     )
 
@@ -143,10 +135,7 @@ describe('execTask', (): void => {
         appsDirectory: './tests/__fixtures__/apps',
         configDirectory: './tests/__fixtures__/config',
         tasksDirectory: './tests/__fixtures__/tasks-prepare-error',
-        modulesDirectory: './tests/__fixtures__/modules',
-        logger: {
-          silence: true
-        }
+        modulesDirectory: './tests/__fixtures__/modules'
       }
     )
 
@@ -164,10 +153,7 @@ describe('execTask', (): void => {
         appsDirectory: './tests/__fixtures__/apps',
         configDirectory: './tests/__fixtures__/config',
         tasksDirectory: './tests/__fixtures__/tasks-exec-error',
-        modulesDirectory: './tests/__fixtures__/modules',
-        logger: {
-          silence: true
-        }
+        modulesDirectory: './tests/__fixtures__/modules'
       }
     )
 
@@ -185,10 +171,7 @@ describe('execTask', (): void => {
         appsDirectory: './tests/__fixtures__/apps',
         configDirectory: './tests/__fixtures__/config',
         tasksDirectory: './tests/__fixtures__/tasks',
-        modulesDirectory: './tests/__fixtures__/modules-release-error',
-        logger: {
-          silence: true
-        }
+        modulesDirectory: './tests/__fixtures__/modules-release-error'
       }
     )
 

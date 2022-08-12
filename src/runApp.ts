@@ -39,7 +39,7 @@ export async function runApp(name: string, args: Record<string, any>, demon?: bo
     })
 
     await core.logger.await()
-    process.exit(1)
+    return process.exit(1)
   }
 
   if (!demon && core.coreConfig.appWatcher?.enabled) {
@@ -58,8 +58,8 @@ export async function runApp(name: string, args: Record<string, any>, demon?: bo
     })
 
     const stopWatcher = (): void => {
-      process.stdout.clearLine(0)
-      process.stdout.cursorTo(0)
+      if (process.stdout.clearLine) process.stdout.clearLine(0)
+      if (process.stdout.cursorTo) process.stdout.cursorTo(0)
 
       if (core.stopping) {
         appWatcher.kill()
@@ -86,18 +86,18 @@ export async function runApp(name: string, args: Record<string, any>, demon?: bo
       })
 
       await core.logger.await()
-      process.exit(1)
+      return process.exit(1)
     }
 
     const stopApp = async (restarting: boolean = false): Promise<void> => {
       // We are already restating-stopping
-      //  we only exit the process at ctrl+c
+      // we only exit the process at ctrl+c (SIGABRT)
       if (restarting && core.stopping) return
 
-      process.stdout.clearLine(0)
-      process.stdout.cursorTo(0)
+      if (process.stdout.clearLine) process.stdout.clearLine(0)
+      if (process.stdout.cursorTo) process.stdout.cursorTo(0)
 
-      if (core.stopping) process.exit(0)
+      if (core.stopping) return process.exit(0)
 
       if (!restarting) {
         core.logger.publish('INFO', 'Stopping app gracefully', 'press CTRL+C again to kill', 'CORE')
@@ -108,22 +108,36 @@ export async function runApp(name: string, args: Record<string, any>, demon?: bo
       // To trully stop the app gracefully we need to whait for it be running and the start releasing everything
       // Im just thinkind about the children and DB connections and stuff like that will end dirty if we just exit the process
       // but who knows, I am going safe for now, if this is too much we can change later
-      while (!core.running) sleep(100)
+      while (!core.running) await sleep(100)
 
       try {
         await core.appInstance.stop()
       } catch (error) {
         core.logger.publish('ERROR', core.App.appName || core.App.name, 'There was an error while stoppig app', 'CORE', { error })
+
+        try {
+          await CoreApp.releaseInternalModules(core.coreModules)
+        } catch (err) {
+          // We prioritize higher error
+        }
+
         await core.logger.await()
-        process.exit(1)
+        return process.exit(1)
       }
       if (core.appInstance.release) {
         try {
           await core.appInstance.release()
         } catch (error) {
           core.logger.publish('ERROR', core.App.appName || core.App.name, 'There was an error while relaasing app', 'CORE', { error })
+
+          try {
+            await CoreApp.releaseInternalModules(core.coreModules)
+          } catch (err) {
+            // We prioritize higher error
+          }
+
           await core.logger.await()
-          process.exit(1)
+          return process.exit(1)
         }
       }
 
@@ -133,7 +147,7 @@ export async function runApp(name: string, args: Record<string, any>, demon?: bo
       } catch (error) {
         core.logger.publish('ERROR', core.App.appName || core.App.name, 'There was an error while unloading modules', 'CORE', { error })
         await core.logger.await()
-        process.exit(1)
+        return process.exit(1)
       }
     }
 
@@ -166,7 +180,7 @@ export async function runApp(name: string, args: Record<string, any>, demon?: bo
       })
 
       await core.logger.await()
-      process.exit(1)
+      return process.exit(1)
     }
 
     try {
@@ -175,7 +189,7 @@ export async function runApp(name: string, args: Record<string, any>, demon?: bo
 
       core.App = await CoreApp.find(name, core.coreConfig)
 
-      core.appConfig = core.projectConfig[pascalCaseName] || core.projectConfig[paramCaseName]
+      core.appConfig = core.projectConfig[pascalCaseName] || core.projectConfig[paramCaseName] || core.projectConfig[core.App.appName]
       core.appInstance = new core.App(core.appConfig, args, core.logger, core.coreModules)
       if (core.appInstance.prepare) await core.appInstance.prepare()
     } catch (error) {
@@ -184,11 +198,17 @@ export async function runApp(name: string, args: Record<string, any>, demon?: bo
         measurement: measurer.finish().toString()
       })
 
-      await CoreApp.releaseInternalModules(core.coreModules)
-      await core.logger.await()
+      try {
+        await CoreApp.releaseInternalModules(core.coreModules)
+      } catch (err) {
+        // We prioritize higher error
+      }
 
-      process.exit(1)
+      await core.logger.await()
+      return process.exit(1)
     }
+
+    core.loaded = true
 
     core.logger.publish('INFO', `${core.App.appName || core.App.name} running...`, core.App.description, 'CORE')
 
@@ -197,10 +217,15 @@ export async function runApp(name: string, args: Record<string, any>, demon?: bo
     } catch (error) {
       core.logger.publish('ERROR', core.App.appName || core.App.name, 'There was an error while running app', 'CORE', { error })
 
-      await CoreApp.releaseInternalModules(core.coreModules)
+      try {
+        await CoreApp.releaseInternalModules(core.coreModules)
+      } catch (err) {
+        // We prioritize higher error
+      }
+
       await core.logger.await()
 
-      process.exit(1)
+      return process.exit(1)
     }
 
     // Now we are running
