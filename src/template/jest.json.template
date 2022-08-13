@@ -1,0 +1,4 @@
+{
+  "testRegex": "(/tests/.*\\.test\\.ts?)$",
+  "collectCoverageFrom": ["src/**/*.ts"]
+}

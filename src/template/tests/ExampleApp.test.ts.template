@@ -1,0 +1,16 @@
+import ExampleApp from '../src/Example.app'
+
+describe('ExampleApp', (): void => {
+  it('works', async (): Promise<void> => {
+    const app = new ExampleApp({ cores: 2, ram: 200 }, { p: 8080 })
+
+    await app.preapre()
+    await app.start()
+
+    // test stuff the app responds to
+
+    await app.stop()
+    await app.release()
+
+  })
+})

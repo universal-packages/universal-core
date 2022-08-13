@@ -1,0 +1,7 @@
+logger:
+  level: INFO
+  terminal:
+    clear: true
+    withHeader: false
+  localFile:
+    asJson: false

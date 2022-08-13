@@ -1,11 +1,6 @@
 import { CoreTask } from '@universal-packages/core-app'
 
-interface ExampleTaskArgs {
-  f: boolean
-  fast: boolean
-}
-
-export default class ExampleTask extends CoreTask<ExampleTaskArgs> {
+export default class ExampleTask extends CoreTask {
   public static readonly taskName = 'example-task'
   public static readonly description = 'Tasks are meant to ran, do their job and finish by themselves'
 
@@ -17,7 +12,7 @@ export default class ExampleTask extends CoreTask<ExampleTaskArgs> {
    * used here.
    *
    * */
-  public async prepare(): Promise<void> {}
+  public async prepare() {}
 
   /**
    * REQUIRED
@@ -44,7 +39,7 @@ export default class ExampleTask extends CoreTask<ExampleTaskArgs> {
    * this.args
    *
    * */
-  public async exec(): Promise<void> {}
+  public async exec() {}
 
   /**
    * OPTIONAL
@@ -62,5 +57,5 @@ export default class ExampleTask extends CoreTask<ExampleTaskArgs> {
    * }
    * 
    * */
-  public async abort(): Promise<void> {}
+  public async abort() {}
 }

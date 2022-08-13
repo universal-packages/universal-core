@@ -1,16 +1,6 @@
 import { CoreApp } from '@universal-packages/core-app'
 
-interface ExampleAppConfig {
-  cores: number
-  ram: number
-}
-
-interface ExampleAppArgs {
-  p: string
-  port: string
-}
-
-export default class ExampleApp extends CoreApp<ExampleAppConfig, ExampleAppArgs> {
+export default class ExampleApp extends CoreApp {
   public static readonly appName = 'example-app' // Name your app so you have a closer relationship
   public static readonly description = 'This app exemplify how the life cycle of a core app goes'
 
@@ -40,7 +30,7 @@ export default class ExampleApp extends CoreApp<ExampleAppConfig, ExampleAppArgs
    *
    *
    * */
-  public async prepare(): Promise<void> {
+  public async prepare() {
     // Be sure to handle any expected error
     // If this function throws an error the app will not initialize
   }
@@ -60,7 +50,7 @@ export default class ExampleApp extends CoreApp<ExampleAppConfig, ExampleAppArgs
    * to publish any kind of relevant log entries in your app
    *
    * */
-  public async start(): Promise<void> {
+  public async start() {
     // Be sure to handle any expected error
     // If this function throws an error the app will not initialize
     this.logger.publish('INFO', `Example app has started in port ${this.args.p || this.args.port}`)
@@ -73,7 +63,7 @@ export default class ExampleApp extends CoreApp<ExampleAppConfig, ExampleAppArgs
    * shuting down your app gracefully, starting draining sockets or whatever.
    *
    * */
-  public async stop(): Promise<void> {}
+  public async stop() {}
 
   /**
    * OPTIONAL
@@ -83,5 +73,5 @@ export default class ExampleApp extends CoreApp<ExampleAppConfig, ExampleAppArgs
    * has all setup to finish the process
    *
    * */
-  public async release(): Promise<void> {}
+  public async release() {}
 }
