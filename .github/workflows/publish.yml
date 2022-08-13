@@ -19,6 +19,7 @@ jobs:
       - run: cp package.json dist
       - run: cp README.md dist
       - run: cp -a bin dist
+      - run: rsync -a --prune-empty-dirs --include '*/' --exclude '*.ts' src/ dist/
 
       - uses: JS-DevTools/npm-publish@v1
         with:

@@ -1,8 +1,8 @@
 import yargs, { ArgumentsCamelCase, Argv } from 'yargs'
-import { execTask } from '../execTask'
-import { initProyect } from '../initProject'
-import { runApp } from '../runApp'
-import { runConsole } from '../runConsole'
+import { execTask } from './execTask'
+import { initProyect } from './initProject'
+import { runApp } from './runApp'
+import { runConsole } from './runConsole'
 
 interface ArgvExtract {
   appName: string

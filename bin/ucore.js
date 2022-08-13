@@ -3,12 +3,20 @@
 require('ts-node').register()
 
 try {
-  require('../src/cli/index.ts')
+  try {
+    require('../src/cli')
+  } catch (_) {
+    require('../cli')
+  }
 } catch (error) {
   // There was an actual error in this TS library
   if (process[Symbol.for('ts-node.register.instance')] !== undefined) {
     console.log(error)
   } else {
-    require('../src/cli/index.js')
+    try {
+      require('../src/cli')
+    } catch (_) {
+      require('../cli')
+    }
   }
 }
