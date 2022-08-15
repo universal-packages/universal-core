@@ -8,7 +8,8 @@
   "types": "index.d.ts",
   "repository": "git://git@github.com/universal-packages/universal-core.git",
   "bin": {
-    "ucore": "./bin/ucore.js"
+    "ucore": "./bin/ucore.js",
+    "@universal-packages/core": "./bin/ucore.js"
   },
   "scripts": {
     "build": "tsc --p tsconfig.dis.json",
