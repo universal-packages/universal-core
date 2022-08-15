@@ -1,4 +1,4 @@
-import Logger from '@universal-packages/logger'
+import { Logger } from '@universal-packages/logger'
 import { runApp } from '../src/runApp'
 import GoodApp from './__fixtures__/apps/Good.app'
 import ExcelentModule from './__fixtures__/modules/Excelent.module'

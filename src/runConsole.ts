@@ -1,4 +1,4 @@
-import TimeMeasurer, { startMeasurement } from '@universal-packages/time-measurer'
+import { startMeasurement, TimeMeasurer } from '@universal-packages/time-measurer'
 import Core from './Core'
 import { CoreConfig } from './Core.types'
 import repl from 'repl'

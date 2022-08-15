@@ -1,4 +1,4 @@
-import Logger from '@universal-packages/logger'
+import { Logger } from '@universal-packages/logger'
 import EventEmitter from 'events'
 import repl from 'repl'
 import { runConsole } from '../src/runConsole'

@@ -1,4 +1,4 @@
-import Logger from '@universal-packages/logger'
+import { Logger } from '@universal-packages/logger'
 import { loadModules, ModuleRegistry } from '@universal-packages/module-loader'
 import { paramCase, pascalCase } from 'change-case'
 import Core from './Core'

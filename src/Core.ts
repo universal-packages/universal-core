@@ -1,5 +1,5 @@
 import { loadConfig } from '@universal-packages/config-loader'
-import Logger, { LocalFileTransport, TerminalTransport } from '@universal-packages/logger'
+import { LocalFileTransport, Logger, TerminalTransport } from '@universal-packages/logger'
 import { loadModules } from '@universal-packages/module-loader'
 import { loadPluginConfig } from '@universal-packages/plugin-config-loader'
 import { camelCase, paramCase, pascalCase } from 'change-case'
@@ -17,13 +17,13 @@ export default class Core {
   }
 
   public static async getCoreConfig(coreConfigOveride?: CoreConfig): Promise<CoreConfig> {
-    const loadedCoreConfig = coreConfigOveride || (await loadPluginConfig('core'))
+    const loadedCoreConfig = coreConfigOveride || (await loadPluginConfig('core', { selectEnvironment: true }))
     const finalCoreConfig: CoreConfig = {
       appsDirectory: './srs',
       configDirectory: './src/config',
       modulesDirectory: './src',
       modulesAsGlobals: true,
-      tasksDirectory: '.src',
+      tasksDirectory: './src',
       ...loadedCoreConfig,
       logger: { silence: false, ...loadedCoreConfig.logger }
     }

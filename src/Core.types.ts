@@ -1,4 +1,4 @@
-import Logger, { LogLevel } from '@universal-packages/logger'
+import { Logger, LogLevel } from '@universal-packages/logger'
 import CoreApp from './CoreApp'
 import CoreModule from './CoreModule'
 import CoreTask from './CoreTask'

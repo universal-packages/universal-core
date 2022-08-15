@@ -1,4 +1,4 @@
-import Logger from '@universal-packages/logger'
+import { Logger } from '@universal-packages/logger'
 
 export default class CoreModule<C = any> {
   public static readonly moduleName: string

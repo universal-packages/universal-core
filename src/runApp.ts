@@ -1,4 +1,4 @@
-import TimeMeasurer, { sleep, startMeasurement } from '@universal-packages/time-measurer'
+import { sleep, startMeasurement, TimeMeasurer } from '@universal-packages/time-measurer'
 import { paramCase, pascalCase } from 'change-case'
 import Core from './Core'
 import { CoreConfig } from './Core.types'

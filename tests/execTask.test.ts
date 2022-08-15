@@ -1,4 +1,4 @@
-import Logger from '@universal-packages/logger'
+import { Logger } from '@universal-packages/logger'
 import { execTask } from '../src/execTask'
 import AbortableTask from './__fixtures__/tasks-abortable/Abortable.task'
 import HackyLoadTask from './__fixtures__/tasks-hacky-load/HackyLoad.task'
