@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 
-require('ts-node').register()
+try {
+  require('@babel/register')
+} catch (_) {
+  require('ts-node').register()
+}
 
 try {
   try {
