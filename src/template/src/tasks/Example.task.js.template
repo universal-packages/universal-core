@@ -1,8 +1,8 @@
-import { CoreTask } from '@universal-packages/core-app'
+import { CoreTask } from '@universal-packages/core'
 
 export default class ExampleTask extends CoreTask {
-  public static readonly taskName = 'example-task'
-  public static readonly description = 'Tasks are meant to ran, do their job and finish by themselves'
+  static taskName = 'example-task'
+  static description = 'Tasks are meant to ran, do their job and finish by themselves'
 
   /**
    * OPTIONAL
@@ -12,7 +12,7 @@ export default class ExampleTask extends CoreTask {
    * used here.
    *
    * */
-  public async prepare() {}
+  async prepare() {}
 
   /**
    * REQUIRED
@@ -39,7 +39,7 @@ export default class ExampleTask extends CoreTask {
    * this.args
    *
    * */
-  public async exec() {}
+  async exec() {}
 
   /**
    * OPTIONAL
@@ -57,5 +57,5 @@ export default class ExampleTask extends CoreTask {
    * }
    * 
    * */
-  public async abort() {}
+  async abort() {}
 }

@@ -1,8 +1,8 @@
-import { CoreApp } from '@universal-packages/core-app'
+import { CoreApp } from '@universal-packages/core'
 
 export default class ExampleApp extends CoreApp {
-  public static readonly appName = 'example-app' // Name your app so you have a closer relationship
-  public static readonly description = 'This app exemplify how the life cycle of a core app goes'
+  static appName = 'example-app' // Name your app so you have a closer relationship
+  static description = 'This app exemplify how the life cycle of a core app goes'
 
   /**
    * OPTIONAL
@@ -30,7 +30,7 @@ export default class ExampleApp extends CoreApp {
    *
    *
    * */
-  public async prepare() {
+  async prepare() {
     // Be sure to handle any expected error
     // If this function throws an error the app will not initialize
   }
@@ -50,7 +50,7 @@ export default class ExampleApp extends CoreApp {
    * to publish any kind of relevant log entries in your app
    *
    * */
-  public async start() {
+  async start() {
     // Be sure to handle any expected error
     // If this function throws an error the app will not initialize
     this.logger.publish('INFO', `Example app has started in port ${this.args.p || this.args.port}`)
@@ -63,7 +63,7 @@ export default class ExampleApp extends CoreApp {
    * shuting down your app gracefully, starting draining sockets or whatever.
    *
    * */
-  public async stop() {}
+  async stop() {}
 
   /**
    * OPTIONAL
@@ -73,5 +73,5 @@ export default class ExampleApp extends CoreApp {
    * has all setup to finish the process
    *
    * */
-  public async release() {}
+  async release() {}
 }

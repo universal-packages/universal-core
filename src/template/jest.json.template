@@ -1,4 +1,7 @@
 {
-  "testRegex": "(/tests/.*\\.test\\.ts?)$",
-  "collectCoverageFrom": ["src/**/*.ts"]
+  "transform": {
+    "^.+\\.(js|jsx)$": "babel-jest"
+  },
+  "testRegex": "(/tests/.*\\.test\\.js?)$",
+  "collectCoverageFrom": ["src/**/*.js"]
 }
