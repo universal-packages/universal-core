@@ -19,15 +19,15 @@ export default class Core {
   public static async getCoreConfig(coreConfigOveride?: CoreConfig): Promise<CoreConfig> {
     const loadedCoreConfig = coreConfigOveride || (await loadPluginConfig('core', { selectEnvironment: true }))
     const finalCoreConfig: CoreConfig = {
-      appsDirectory: './srs',
+      appsDirectory: './src',
       configDirectory: './src/config',
       modulesDirectory: './src',
       modulesAsGlobals: true,
       tasksDirectory: './src',
       ...loadedCoreConfig,
-      logger: { silence: false, ...loadedCoreConfig.logger }
+      logger: { silence: false, ...loadedCoreConfig?.logger }
     }
-    const errors = coreConfigSchema.validate(loadedCoreConfig)
+    const errors = coreConfigSchema.validate(finalCoreConfig)
 
     if (errors.length > 0) {
       const errorMessages = errors.map((error: any): string => `${error.path} - ${error.message}`)
