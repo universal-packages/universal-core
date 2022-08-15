@@ -5,7 +5,13 @@ import Core from './Core'
 
 export async function initProyect(name: string, args: Record<string, any>): Promise<void> {
   const logger = Core.getCoreLogger()
-  const coreVersion = (await import(path.resolve(__dirname, '..', 'package.json'))).version
+  let coreVersion = '1.0.0'
+
+  try {
+    coreVersion = (await import(path.resolve(__dirname, 'package.json'))).version
+  } catch (_) {
+    coreVersion = (await import(path.resolve(__dirname, '..', 'package.json'))).version
+  }
 
   logger.publish('INFO', 'initializing project', `./${name}`)
 
