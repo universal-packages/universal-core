@@ -96,8 +96,10 @@ export default class AppWatcher extends EventEmitter {
       CORE_APP_ARGS: JSON.stringify(this.args),
       CORE_DEMON: 'true'
     }
+    const isTSOrJest = process.env.JEST_WORKER_ID !== undefined || process[Symbol.for('ts-node.register.instance')] !== undefined
+    const extension = isTSOrJest ? 'ts' : 'js'
 
-    this.currentChildProcess = fork(path.resolve(__dirname, 'runApp.script.ts'), { env, stdio: ['ipc', 'inherit', 'inherit'] })
+    this.currentChildProcess = fork(path.resolve(__dirname, `runApp.script.${extension}`), { env, stdio: ['ipc', 'inherit', 'inherit'] })
 
     this.currentChildProcess.on('exit', (): void => {
       if (!this.stopping) {
