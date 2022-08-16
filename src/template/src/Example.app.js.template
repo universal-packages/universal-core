@@ -1,8 +1,11 @@
-import { CoreApp } from '@universal-packages/core'
+import { CoreApp } from "@universal-packages/core";
 
 export default class ExampleApp extends CoreApp {
-  static appName = 'example-app' // Name your app so you have a closer relationship
-  static description = 'This app exemplify how the life cycle of a core app goes'
+  static appName = "example-app"; // Name your app so you have a closer relationship
+  static description =
+    "This app exemplify how the life cycle of a core app goes";
+
+  timeout = 0;
 
   /**
    * OPTIONAL
@@ -50,10 +53,17 @@ export default class ExampleApp extends CoreApp {
    * to publish any kind of relevant log entries in your app
    *
    * */
-  async start() {
+  async run() {
     // Be sure to handle any expected error
     // If this function throws an error the app will not initialize
-    this.logger.publish('INFO', `Example app has started in port ${this.args.p || this.args.port}`)
+    this.timeout = setTimeout(() => {}, 999999999);
+    this.logger.publish(
+      "INFO",
+      `Example app has started in port`,
+      null,
+      "APP",
+      { metadata: this.config }
+    );
   }
 
   /**
@@ -63,7 +73,9 @@ export default class ExampleApp extends CoreApp {
    * shuting down your app gracefully, starting draining sockets or whatever.
    *
    * */
-  async stop() {}
+  async stop() {
+    clearTimeout(this.timeout);
+  }
 
   /**
    * OPTIONAL

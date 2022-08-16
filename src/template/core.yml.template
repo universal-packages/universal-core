@@ -1,7 +1,13 @@
-logger:
-  level: INFO
-  terminal:
-    clear: true
-    withHeader: false
-  localFile:
-    asJson: false
+development:
+  appWatcher:
+    enabled: true
+    ignore:
+      - tests
+  logger:
+    level: TRACE
+    terminal:
+      clear: true
+
+test:
+  logger:
+    silence: true

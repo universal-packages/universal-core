@@ -5,6 +5,10 @@
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
+    "sync-files": "rsync -a --prune-empty-dirs --include '*/' --exclude '*.js' src/ build/",
+    "babel-build": "babel src -d build",
+    "build": "npm run babel-build && npm run sync-files",
+    "start": "ucore run example-app",
     "test": "jest --watch"
   },
   "dependencies": {
