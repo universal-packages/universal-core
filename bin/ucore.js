@@ -12,7 +12,7 @@ try {
 }
 
 try {
-  const compiledCli = fs.existsSync('../cli.js')
+  const compiledCli = fs.existsSync(path.resolve(__dirname, '..', 'cli.js'))
 
   if (compiledCli) {
     require('../cli')
