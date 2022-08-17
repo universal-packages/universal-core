@@ -64,64 +64,102 @@ describe('AppWatcher', (): void => {
       })
     })
 
-    it('acumulates changes and only applies a restart if the timeout is called, (not if stopping)', async (): Promise<void> => {
-      const watcher = new AppWatcher('app', {}, ['somefile'])
-      const watchMock = chokidar.watch as jest.Mock
-      const forkMock = fork as jest.Mock
-      const restartMock = jest.fn()
-      const chokidarEmitter = new EventEmitter()
-      const forkEmitter = new EventEmitter()
-      forkEmitter['kill'] = jest.fn()
+    describe('when restarting', (): void => {
+      it('acumulates changes and only applies a restart if the timeout is called', async (): Promise<void> => {
+        const watcher = new AppWatcher('app', {}, ['somefile'])
+        const watchMock = chokidar.watch as jest.Mock
+        const forkMock = fork as jest.Mock
+        const restartMock = jest.fn()
+        const chokidarEmitter = new EventEmitter()
+        const forkEmitter = new EventEmitter()
+        forkEmitter['kill'] = jest.fn()
 
-      watchMock.mockImplementationOnce((): EventEmitter => chokidarEmitter)
-      forkMock.mockImplementationOnce((): EventEmitter => forkEmitter)
+        watchMock.mockImplementationOnce((): EventEmitter => chokidarEmitter)
+        forkMock.mockImplementationOnce((): EventEmitter => forkEmitter)
 
-      watcher.on('restart', restartMock)
+        watcher.on('restart', restartMock)
 
-      watcher.run()
+        watcher.run()
 
-      expect(restartMock).not.toHaveBeenCalled()
-      expect(forkMock).not.toHaveBeenCalled()
+        expect(restartMock).not.toHaveBeenCalled()
+        expect(forkMock).not.toHaveBeenCalled()
 
-      chokidarEmitter.emit('ready')
+        chokidarEmitter.emit('ready')
 
-      expect(restartMock).not.toHaveBeenCalled()
-      expect(forkMock).toHaveBeenCalledTimes(1)
+        expect(restartMock).not.toHaveBeenCalled()
+        expect(forkMock).toHaveBeenCalledTimes(1)
 
-      chokidarEmitter.emit('all', 'add', 'file.js')
-      chokidarEmitter.emit('all', 'addDir', 'dir')
-      chokidarEmitter.emit('all', 'change', 'test.js')
-      chokidarEmitter.emit('all', 'unlink', 'file.js')
-      chokidarEmitter.emit('all', 'unlinkDir', 'dir')
+        chokidarEmitter.emit('all', 'add', 'file.js')
+        chokidarEmitter.emit('all', 'addDir', 'dir')
+        chokidarEmitter.emit('all', 'change', 'test.js')
+        chokidarEmitter.emit('all', 'unlink', 'file.js')
+        chokidarEmitter.emit('all', 'unlinkDir', 'dir')
 
-      expect(setTimeout).toHaveBeenCalledTimes(5)
-      expect(restartMock).toHaveBeenCalledTimes(0)
-      expect(forkMock).toHaveBeenCalledTimes(1)
-      expect(forkEmitter['kill']).toHaveBeenCalledTimes(0)
-      expect(watcher).toMatchObject({ fileEventsBuffer: ['add file.js', 'addDir dir', 'change test.js', 'unlink file.js', 'unlinkDir dir'] })
+        expect(setTimeout).toHaveBeenCalledTimes(5)
+        expect(restartMock).toHaveBeenCalledTimes(0)
+        expect(forkMock).toHaveBeenCalledTimes(1)
+        expect(forkEmitter['kill']).toHaveBeenCalledTimes(0)
+        expect(watcher).toMatchObject({ fileEventsBuffer: ['add file.js', 'addDir dir', 'change test.js', 'unlink file.js', 'unlinkDir dir'] })
 
-      jest.runAllTimers()
+        jest.runAllTimers()
 
-      expect(forkEmitter['kill']).toHaveBeenCalledTimes(2)
-      expect(forkEmitter['kill']).toHaveBeenCalledWith('SIGTERM')
-      expect(forkEmitter['kill']).toHaveBeenCalledWith('SIGALRM')
-      expect(watcher).toMatchObject({ fileEventsBuffer: [] })
-      expect(restartMock).toBeCalledTimes(1)
-      expect(restartMock).toBeCalledWith(['add file.js', 'addDir dir', 'change test.js', 'unlink file.js', 'unlinkDir dir'])
+        expect(forkEmitter['kill']).toHaveBeenCalledTimes(2)
+        expect(forkEmitter['kill']).toHaveBeenCalledWith('SIGTERM')
+        expect(forkEmitter['kill']).toHaveBeenCalledWith('SIGALRM')
+        expect(watcher).toMatchObject({ fileEventsBuffer: [] })
+        expect(restartMock).toBeCalledTimes(1)
+        expect(restartMock).toBeCalledWith(['add file.js', 'addDir dir', 'change test.js', 'unlink file.js', 'unlinkDir dir'])
+      })
 
-      chokidarEmitter.emit('all', 'add', 'file.js')
-      chokidarEmitter.emit('all', 'addDir', 'dir')
-      chokidarEmitter.emit('all', 'change', 'test.js')
-      chokidarEmitter.emit('all', 'unlink', 'file.js')
-      chokidarEmitter.emit('all', 'unlinkDir', 'dir')
+      it('restarts by spawing again if last time child failed', async (): Promise<void> => {
+        const watcher = new AppWatcher('app', {}, ['somefile'])
+        const watchMock = chokidar.watch as jest.Mock
+        const forkMock = fork as jest.Mock
+        const chokidarEmitter = new EventEmitter()
+        const forkEmitter = new EventEmitter()
+        forkEmitter['kill'] = jest.fn()
 
-      watcher['stopping'] = true
+        watchMock.mockImplementationOnce((): EventEmitter => chokidarEmitter)
+        forkMock.mockImplementation((): EventEmitter => forkEmitter)
 
-      jest.runAllTimers()
+        watcher.run()
 
-      expect(watcher).toMatchObject({ fileEventsBuffer: ['add file.js', 'addDir dir', 'change test.js', 'unlink file.js', 'unlinkDir dir'] })
-      expect(forkEmitter['kill']).toHaveBeenCalledTimes(2)
-      expect(restartMock).toBeCalledTimes(1)
+        expect(forkMock).not.toHaveBeenCalled()
+
+        chokidarEmitter.emit('ready')
+
+        expect(forkMock).toHaveBeenCalledTimes(1)
+
+        chokidarEmitter.emit('all', 'add', 'file.js')
+        forkEmitter.emit('exit', 1)
+
+        jest.runAllTimers()
+
+        expect(forkEmitter['kill']).not.toHaveBeenCalled()
+        expect(forkMock).toHaveBeenCalledTimes(2)
+      })
+
+      it('does not restart if stopping', async (): Promise<void> => {
+        const watcher = new AppWatcher('app', {}, ['somefile'])
+        const watchMock = chokidar.watch as jest.Mock
+        const forkMock = fork as jest.Mock
+        const chokidarEmitter = new EventEmitter()
+        const forkEmitter = new EventEmitter()
+        forkEmitter['kill'] = jest.fn()
+
+        watchMock.mockImplementationOnce((): EventEmitter => chokidarEmitter)
+        forkMock.mockImplementationOnce((): EventEmitter => forkEmitter)
+
+        watcher.run()
+
+        chokidarEmitter.emit('ready')
+        chokidarEmitter.emit('all', 'add', 'file.js')
+        watcher['stopping'] = true
+
+        jest.runAllTimers()
+
+        expect(forkEmitter['kill']).not.toHaveBeenCalled()
+      })
     })
   })
 

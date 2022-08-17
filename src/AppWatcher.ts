@@ -47,13 +47,16 @@ export default class AppWatcher extends EventEmitter {
           clearTimeout(this.restartTimeout)
 
           this.restartTimeout = setTimeout((): void => {
-            if (this.currentChildProcess && !this.stopping) {
-              // if the forked app is still in a state that can be terminated send the signal that do so
-              this.currentChildProcess.kill('SIGTERM')
+            if (!this.stopping) {
+              if (this.currentChildProcess) {
+                // if the forked app is still in a state that can be terminated send the signal that do so
+                this.currentChildProcess.kill('SIGTERM')
 
-              // Internally ALRM will recognize we try to reload
-              this.currentChildProcess.kill('SIGALRM')
-
+                // Internally ALRM will recognize we try to reload
+                this.currentChildProcess.kill('SIGALRM')
+              } else {
+                this.spawnSubProcess()
+              }
               // Emit the changes
               this.emit('restart', this.fileEventsBuffer)
               this.fileEventsBuffer = []
@@ -103,6 +106,7 @@ export default class AppWatcher extends EventEmitter {
     this.currentChildProcess = fork(path.resolve(__dirname, `runApp.script.${extension}`), { env, stdio: ['ipc', 'inherit', 'inherit'] })
 
     this.currentChildProcess.on('exit', (code: number): void => {
+      this.currentChildProcess = null
       // Only restart if not failed
       if (!this.stopping && code === 0) {
         this.spawnSubProcess()
