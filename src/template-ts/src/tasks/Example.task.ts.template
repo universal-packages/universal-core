@@ -1,13 +1,14 @@
-import { CoreTask } from '@universal-packages/core-app'
+import { CoreTask } from "@universal-packages/core";
 
 interface ExampleTaskArgs {
-  f: boolean
-  fast: boolean
+  f: boolean;
+  fast: boolean;
 }
 
 export default class ExampleTask extends CoreTask<ExampleTaskArgs> {
-  public static readonly taskName = 'example-task'
-  public static readonly description = 'Tasks are meant to ran, do their job and finish by themselves'
+  public static readonly taskName = "example-task";
+  public static readonly description =
+    "Tasks are meant to ran, do their job and finish by themselves";
 
   /**
    * OPTIONAL
@@ -51,16 +52,16 @@ export default class ExampleTask extends CoreTask<ExampleTaskArgs> {
    *
    * If you have a way to stop your task do it here
    * so the execution can be stoped gracefully.
-   * 
+   *
    * Example, if your exec method is just a loop you can set here a
    * this.stop = true property
-   * 
+   *
    * and in your loop
-   * 
+   *
    * for(...) {
    *   if(this.stop) return
    * }
-   * 
+   *
    * */
   public async abort(): Promise<void> {}
 }

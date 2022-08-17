@@ -6,7 +6,8 @@ describe("ExampleApp", () => {
     const app = new ExampleApp(
       { cores: 2, ram: 200 },
       { p: 8080 },
-      new Logger()
+      new Logger({ silence: true }),
+      {}
     );
 
     await app.prepare();

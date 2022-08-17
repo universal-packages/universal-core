@@ -6,7 +6,7 @@
     "noImplicitAny": false,
     "noImplicitReturns": false,
     "noUnusedLocals": false,
-    "outDir": "./dist",
+    "outDir": "./build",
     "removeComments": false,
     "sourceMap": true,
     "strictNullChecks": false,

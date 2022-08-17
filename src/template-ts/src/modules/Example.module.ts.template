@@ -1,8 +1,9 @@
-import { CoreModule } from '@universal-packages/core-app'
+import { CoreModule } from "@universal-packages/core";
 
 export default class ExampleModule extends CoreModule {
-  public static readonly moduleName = 'example-module'
-  public static readonly description = 'A module normally wrapps a thrid party module into being compatible with Core App'
+  public static readonly moduleName = "example-module";
+  public static readonly description =
+    "A module normally wrapps a thrid party module into being compatible with Core App";
 
   /**
    * REQUIRED
@@ -15,7 +16,7 @@ export default class ExampleModule extends CoreModule {
    * the module reary to be used accross the project
    *
    * configuration file for this module should be named the same as this module 'example-module'
-   * in the config directory and accessed here with `this.config` 
+   * in the config directory and accessed here with `this.config`
    *
    * ./src/config/example-module.yaml|js|json|ts
    *
@@ -36,6 +37,5 @@ export default class ExampleModule extends CoreModule {
    * such as data bases, that can be done here.
    *
    * */
-  public async release(): Promise<void> {
-  }
+  public async release(): Promise<void> {}
 }
