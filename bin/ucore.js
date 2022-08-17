@@ -12,12 +12,16 @@ try {
 }
 
 try {
-  require('../src/cli')
+  const compiledCli = fs.existsSync('../cli.js')
+
+  if (compiledCli) {
+    require('../cli')
+  } else {
+    require('../src/cli')
+  }
 } catch (error) {
   // There was an actual error in this TS library
   if (process[Symbol.for('ts-node.register.instance')] !== undefined) {
     console.log(error)
-  } else {
-    require('../cli')
   }
 }
