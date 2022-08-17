@@ -18,6 +18,7 @@ jobs:
       - run: npm run build
       - run: cp package.json dist
       - run: cp README.md dist
+      - run: cp tsconfig.json dist
       - run: cp -a bin dist
       - run: rsync -a --prune-empty-dirs --include '*/' --exclude '*.ts' src/ dist/
 
