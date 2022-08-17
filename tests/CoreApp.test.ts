@@ -50,23 +50,6 @@ describe('CoreApp', (): void => {
 
       expect(error.message).toEqual('Errored')
     })
-
-    it('throws if app does not implements CoreApp', async (): Promise<void> => {
-      let error: Error
-
-      try {
-        await CoreApp.find('implementation-error-app', {
-          appsDirectory: './tests/__fixtures__/apps-implementation-error',
-          configDirectory: './tests/__fixtures__/config',
-          tasksDirectory: './tests/__fixtures__/tasks'
-        })
-      } catch (err) {
-        error = err
-      }
-
-
-      expect(error.message).toMatch(/Module does not implements CoreApp\n\/.*__fixtures__\/apps-implementation-error\/ImplementationError.app.ts/)
-    })
   })
 
   describe('#prepare', (): void => {

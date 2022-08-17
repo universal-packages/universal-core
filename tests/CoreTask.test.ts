@@ -50,22 +50,6 @@ describe('CoreTask', (): void => {
 
       expect(error.message).toEqual('Errored')
     })
-
-    it('throws if task does not implements CoreTask', async (): Promise<void> => {
-      let error: Error
-
-      try {
-        await CoreTask.find('implementation-error-task', {
-          appsDirectory: './tests/__fixtures__/apps',
-          configDirectory: './tests/__fixtures__/config',
-          tasksDirectory: './tests/__fixtures__/tasks-implementation-error'
-        })
-      } catch (err) {
-        error = err
-      }
-
-      expect(error.message).toMatch(/Module does not implements CoreTask\n\/.*__fixtures__\/tasks-implementation-error\/ImplementationError.task.ts/)
-    })
   })
 
   describe('#prepare', (): void => {

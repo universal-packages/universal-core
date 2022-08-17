@@ -121,19 +121,6 @@ logger.localFile.location - Directory is not accesible`)
       expect(error).toEqual('Load Error')
     })
 
-    it('throws if it finds module dows not extends CoreModule', async (): Promise<void> => {
-      let error: Error
-      try {
-        const logger = Core.getCoreLogger()
-        const projectConfig = await Core.getProjectConfig({ configDirectory: './tests/__fixtures__/config' })
-        await Core.getCoreModules({ modulesDirectory: './tests/__fixtures__/modules-implementation-error' }, projectConfig, logger)
-      } catch (err) {
-        error = err
-      }
-
-      expect(error.message).toMatch(/Module does not implements CoreModule.*/)
-    })
-
     it('returns warnings about repeated modules (named intentionaly the same)', async (): Promise<void> => {
       const logger = Core.getCoreLogger()
       const projectConfig = await Core.getProjectConfig({ configDirectory: './tests/__fixtures__/config' })

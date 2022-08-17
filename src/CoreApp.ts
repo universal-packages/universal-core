@@ -34,8 +34,6 @@ export default class CoreApp<C = any, A = any> extends Core {
       throw new Error(`App "${name}" can't be found anywhere in\n${coreConfig.appsDirectory}`)
     } else if (appModuleRegistry.error) {
       throw appModuleRegistry.error
-    } else if (!(appModuleRegistry.exports.prototype instanceof CoreApp)) {
-      throw new Error(`Module does not implements CoreApp\n${appModuleRegistry.location}`)
     }
 
     return appModuleRegistry.exports

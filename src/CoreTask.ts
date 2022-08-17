@@ -36,8 +36,6 @@ export default class CoreTask<A = any> extends Core {
       throw new Error(`Task "${name}" can't be found anywhere in\n${coreConfig.tasksDirectory}`)
     } else if (taskModuleRegistry.error) {
       throw taskModuleRegistry.error
-    } else if (!(taskModuleRegistry.exports.prototype instanceof CoreTask)) {
-      throw new Error(`Module does not implements CoreTask\n${taskModuleRegistry.location}`)
     }
 
     return taskModuleRegistry.exports

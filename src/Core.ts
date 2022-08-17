@@ -54,8 +54,6 @@ export default class Core {
 
       if (currentModule.error) {
         throw currentModule.error
-      } else if (!(currentModule.exports.prototype instanceof CoreModule)) {
-        throw new Error(`Module does not implements CoreModule\n${currentModule.location}`)
       }
     }
 
