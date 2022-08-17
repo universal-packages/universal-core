@@ -139,13 +139,31 @@ describe('AppWatcher', (): void => {
       watcher.run()
 
       chokidarEmitter.emit('ready')
-      forkEmitter.emit('exit')
+      forkEmitter.emit('exit', 0)
 
       expect(forkMock).toHaveBeenCalledTimes(2)
       expect(forkMock).toHaveBeenLastCalledWith(expect.stringMatching(/universal-core\/src\/runApp.script.ts/), {
         env: expect.objectContaining({ CORE_APP_NAME: 'app', CORE_APP_ARGS: '{}', CORE_DEMON: 'true' }),
         stdio: ['ipc', 'inherit', 'inherit']
       })
+    })
+
+    it('does not fork the child process again on exit if child exit code was not 0', async (): Promise<void> => {
+      const watcher = new AppWatcher('app', {}, ['somefile'])
+      const watchMock = chokidar.watch as jest.Mock
+      const forkMock = fork as jest.Mock
+      const chokidarEmitter = new EventEmitter()
+      const forkEmitter = new EventEmitter()
+
+      watchMock.mockImplementationOnce((): EventEmitter => chokidarEmitter)
+      forkMock.mockImplementation((): EventEmitter => forkEmitter)
+
+      watcher.run()
+
+      chokidarEmitter.emit('ready')
+      forkEmitter.emit('exit', 1)
+
+      expect(forkMock).toHaveBeenCalledTimes(1)
     })
 
     it('does not fork the child process again on exit if stopping flag has been set', async (): Promise<void> => {

@@ -102,8 +102,9 @@ export default class AppWatcher extends EventEmitter {
 
     this.currentChildProcess = fork(path.resolve(__dirname, `runApp.script.${extension}`), { env, stdio: ['ipc', 'inherit', 'inherit'] })
 
-    this.currentChildProcess.on('exit', (): void => {
-      if (!this.stopping) {
+    this.currentChildProcess.on('exit', (code: number): void => {
+      // Only restart if not failed
+      if (!this.stopping && code === 0) {
         this.spawnSubProcess()
       }
     })
