@@ -21,7 +21,7 @@ export default class ExampleTask extends CoreTask {
    * Once all is loaded and prepared
    *
    * The diference is that instead of loading a configuraration in the
-   * options instance property the task executioner will pass a directive
+   * config instance property the task executioner will pass a directive
    * and directiveOptions
    *
    * ucore exec example-task migrate users posts
