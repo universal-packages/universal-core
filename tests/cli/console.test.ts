@@ -4,7 +4,7 @@ jest.mock('../../src/runConsole')
 
 describe('cli', (): void => {
   it('runs an app', async (): Promise<void> => {
-    process.argv = ['node', 'uca', 'console']
+    process.argv = ['node', 'ucore', 'console']
     await import('../../src/cli')
 
     expect(runConsole).toHaveBeenCalled()

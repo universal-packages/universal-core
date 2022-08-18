@@ -3,12 +3,12 @@
 const fs = require('fs')
 const path = require('path')
 
-try {
-  require('@babel/register')
-} catch (_) {
-  const spawnerHasTsConfig = fs.existsSync('./tsconfig.json')
+const isTsproject = fs.existsSync('./tsconfig.json')
 
-  require('ts-node').register({ cwd: spawnerHasTsConfig ? './' : path.resolve(__dirname, '..') })
+if (isTsproject) {
+  require('ts-node').register()
+} else {
+  require('@babel/register')
 }
 
 try {
