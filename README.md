@@ -394,6 +394,3 @@ The development of this library in the open on GitHub, and we are grateful to th
 ### License
 
 [MIT licensed](./LICENSE).
-
-
-

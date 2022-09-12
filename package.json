@@ -14,7 +14,8 @@
   "scripts": {
     "build": "tsc --p tsconfig.dis.json",
     "test": "jest --watch",
-    "test:full": "jest --coverage --verbose"
+    "test:full": "jest --coverage --verbose",
+    "test:clear": "jest --clearCache"
   },
   "dependencies": {
     "@babel/register": "^7.18.9",
