@@ -1,4 +1,4 @@
-import CoreApp from '../src/CoreApp'
+import { CoreApp } from '../src'
 import TestApp from './__fixtures__/apps/Good.app'
 
 describe('CoreApp', (): void => {

@@ -1,4 +1,4 @@
-import Core from '../src/Core'
+import { Core } from '../src'
 import AModule from './__fixtures__/modules-prepare-error/A.module'
 import ZModule from './__fixtures__/modules-release-error/Z.module'
 import ExcelentModule from './__fixtures__/modules/Excelent.module'

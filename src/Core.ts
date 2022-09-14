@@ -1,6 +1,6 @@
 import { loadConfig } from '@universal-packages/config-loader'
 import { LocalFileTransport, Logger, TerminalTransport } from '@universal-packages/logger'
-import { loadModules } from '@universal-packages/module-loader'
+import { loadModules, ModuleRegistry } from '@universal-packages/module-loader'
 import { loadPluginConfig } from '@universal-packages/plugin-config-loader'
 import { camelCase, paramCase, pascalCase } from 'change-case'
 import CoreModule from './CoreModule'
@@ -45,7 +45,12 @@ export default class Core {
   public static async getCoreModules(coreConfig: CoreConfig, projectConfig: ProjectConfig, logger: Logger): Promise<[CoreModules, CoreModuleWarning[]]> {
     const localModules = await loadModules(coreConfig.modulesDirectory, { conventionPrefix: 'module' })
     const thridPartyModules = await loadModules('./node_modules', { conventionPrefix: 'universal-core-module' })
-    const finalModules = [...localModules, ...thridPartyModules]
+    const finalModules = [
+      ...localModules,
+      ...thridPartyModules.sort((moduleA: ModuleRegistry, ModuleB: ModuleRegistry): number =>
+        moduleA.location.replace(/^.*(\\|\/|\:)/, '') > ModuleB.location.replace(/^.*(\\|\/|\:)/, '') ? 1 : -1
+      )
+    ]
     const warnings: CoreModuleWarning[] = []
     const coreModules: CoreModules = {}
 

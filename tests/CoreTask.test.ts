@@ -1,4 +1,4 @@
-import CoreTask from '../src/CoreTask'
+import { CoreTask } from '../src'
 import GoodTask from './__fixtures__/tasks/Good.task'
 
 describe('CoreTask', (): void => {

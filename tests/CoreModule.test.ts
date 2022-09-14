@@ -1,4 +1,4 @@
-import CoreModule from '../src/CoreModule'
+import { CoreModule } from '../src'
 
 describe('CoreModule', (): void => {
   it('requires configuration and logger to be set', async (): Promise<void> => {
