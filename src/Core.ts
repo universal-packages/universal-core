@@ -46,10 +46,10 @@ export default class Core {
     const localModules = await loadModules(coreConfig.modulesDirectory, { conventionPrefix: 'module' })
     const thridPartyModules = await loadModules('./node_modules', { conventionPrefix: 'universal-core-module' })
     const finalModules = [
-      ...localModules,
       ...thridPartyModules.sort((moduleA: ModuleRegistry, ModuleB: ModuleRegistry): number =>
         moduleA.location.replace(/^.*(\\|\/|\:)/, '') > ModuleB.location.replace(/^.*(\\|\/|\:)/, '') ? 1 : -1
-      )
+      ),
+      ...localModules
     ]
     const warnings: CoreModuleWarning[] = []
     const coreModules: CoreModules = {}
