@@ -89,6 +89,10 @@ export default class Core {
         coreModules[moduleParamCaseName] = moduleInstance
 
         if (coreConfig.modulesAsGlobals) global[moduleCamelCaseName] = moduleInstance
+
+        // While loading we let other modules know about what core has loaded
+        const globalCore = global.core || ({} as any)
+        globalCore.coreModules = coreModules
       }
     }
 
