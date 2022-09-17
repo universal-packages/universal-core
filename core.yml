@@ -1,7 +1,7 @@
-appsDirectory: './example'
-configDirectory: './example/config'
-modulesDirectory: './example/modules'
-tasksDirectory: './example/tasks'
+appsLocation: './example'
+configLocation: './example/config'
+modulesLocation: './example/modules'
+tasksLocation: './example/tasks'
 modulesAsGlobals: true
 appWatcher:
   enabled: true

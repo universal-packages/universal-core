@@ -19,10 +19,10 @@ beforeEach((): void => {
 describe('runApp', (): void => {
   it('do all the preaprations funds an app and runs it (sets core)', async (): Promise<void> => {
     await runApp('Good', { fast: true }, false, {
-      appsDirectory: './tests/__fixtures__/apps',
-      configDirectory: './tests/__fixtures__/config',
-      tasksDirectory: './tests/__fixtures__/tasks',
-      modulesDirectory: './tests/__fixtures__/modules'
+      appsLocation: './tests/__fixtures__/apps',
+      configLocation: './tests/__fixtures__/config',
+      tasksLocation: './tests/__fixtures__/tasks',
+      modulesLocation: './tests/__fixtures__/modules'
     })
 
     expect(GoodApp.iWasPrepared).toEqual(true)
@@ -31,7 +31,7 @@ describe('runApp', (): void => {
       App: GoodApp,
       appConfig: { doStuff: true, test: true },
       appInstance: expect.any(GoodApp),
-      coreConfig: expect.objectContaining({ appsDirectory: './tests/__fixtures__/apps' }),
+      coreConfig: expect.objectContaining({ appsLocation: './tests/__fixtures__/apps' }),
       coreModules: { 'excelent-module': expect.any(ExcelentModule), 'good-module': expect.any(GoodModule) },
       loaded: true,
       logger: expect.any(Logger),
@@ -45,10 +45,10 @@ describe('runApp', (): void => {
 
   it('exits if core config has errors', async (): Promise<void> => {
     await runApp('Good', { fast: true }, false, {
-      appsDirectory: './tests/__fixtures__/nonexistent',
-      configDirectory: './tests/__fixtures__/config',
-      tasksDirectory: './tests/__fixtures__/tasks',
-      modulesDirectory: './tests/__fixtures__/modules'
+      appsLocation: './tests/__fixtures__/nonexistent',
+      configLocation: './tests/__fixtures__/config',
+      tasksLocation: './tests/__fixtures__/tasks',
+      modulesLocation: './tests/__fixtures__/modules'
     })
 
     expect(process.exit).toHaveBeenCalledWith(1)
@@ -58,10 +58,10 @@ describe('runApp', (): void => {
 
   it('exits if proyect config has errors', async (): Promise<void> => {
     await runApp('Good', { fast: true }, false, {
-      appsDirectory: './tests/__fixtures__/apps',
-      configDirectory: './tests/__fixtures__/config-errored',
-      tasksDirectory: './tests/__fixtures__/tasks',
-      modulesDirectory: './tests/__fixtures__/modules'
+      appsLocation: './tests/__fixtures__/apps',
+      configLocation: './tests/__fixtures__/config-errored',
+      tasksLocation: './tests/__fixtures__/tasks',
+      modulesLocation: './tests/__fixtures__/modules'
     })
 
     expect(process.exit).toHaveBeenCalledWith(1)
@@ -71,10 +71,10 @@ describe('runApp', (): void => {
 
   it('exits if modules has errors', async (): Promise<void> => {
     await runApp('Good', { fast: true }, false, {
-      appsDirectory: './tests/__fixtures__/apps',
-      configDirectory: './tests/__fixtures__/config',
-      tasksDirectory: './tests/__fixtures__/tasks',
-      modulesDirectory: './tests/__fixtures__/modules-load-error'
+      appsLocation: './tests/__fixtures__/apps',
+      configLocation: './tests/__fixtures__/config',
+      tasksLocation: './tests/__fixtures__/tasks',
+      modulesLocation: './tests/__fixtures__/modules-load-error'
     })
 
     expect(process.exit).toHaveBeenCalledWith(1)
@@ -84,10 +84,10 @@ describe('runApp', (): void => {
 
   it('continues if modules warnings are present (log the warnings)', async (): Promise<void> => {
     await runApp('Good', { fast: true }, false, {
-      appsDirectory: './tests/__fixtures__/apps',
-      configDirectory: './tests/__fixtures__/config',
-      tasksDirectory: './tests/__fixtures__/tasks',
-      modulesDirectory: './tests/__fixtures__/modules-warnings'
+      appsLocation: './tests/__fixtures__/apps',
+      configLocation: './tests/__fixtures__/config',
+      tasksLocation: './tests/__fixtures__/tasks',
+      modulesLocation: './tests/__fixtures__/modules-warnings'
     })
 
     expect(GoodApp.iWasPrepared).toEqual(true)
@@ -96,10 +96,10 @@ describe('runApp', (): void => {
 
   it('exits if app preapration fails (unload modules)', async (): Promise<void> => {
     await runApp('preapre-error-app', { fast: true }, false, {
-      appsDirectory: './tests/__fixtures__/apps-prepare-error',
-      configDirectory: './tests/__fixtures__/config',
-      tasksDirectory: './tests/__fixtures__/tasks',
-      modulesDirectory: './tests/__fixtures__/modules'
+      appsLocation: './tests/__fixtures__/apps-prepare-error',
+      configLocation: './tests/__fixtures__/config',
+      tasksLocation: './tests/__fixtures__/tasks',
+      modulesLocation: './tests/__fixtures__/modules'
     })
 
     expect(process.exit).toHaveBeenCalledWith(1)
@@ -108,10 +108,10 @@ describe('runApp', (): void => {
 
   it('exits if running the app fails (unload modules)', async (): Promise<void> => {
     await runApp('run-error-app', { fast: true }, false, {
-      appsDirectory: './tests/__fixtures__/apps-run-error',
-      configDirectory: './tests/__fixtures__/config',
-      tasksDirectory: './tests/__fixtures__/tasks',
-      modulesDirectory: './tests/__fixtures__/modules'
+      appsLocation: './tests/__fixtures__/apps-run-error',
+      configLocation: './tests/__fixtures__/config',
+      tasksLocation: './tests/__fixtures__/tasks',
+      modulesLocation: './tests/__fixtures__/modules'
     })
 
     expect(process.exit).toHaveBeenCalledWith(1)
@@ -120,10 +120,10 @@ describe('runApp', (): void => {
 
   it('aborts the execution when receiving the signal', async (): Promise<void> => {
     await runApp('good-app', { fast: true }, false, {
-      appsDirectory: './tests/__fixtures__/apps',
-      configDirectory: './tests/__fixtures__/config',
-      tasksDirectory: './tests/__fixtures__/tasks',
-      modulesDirectory: './tests/__fixtures__/modules'
+      appsLocation: './tests/__fixtures__/apps',
+      configLocation: './tests/__fixtures__/config',
+      tasksLocation: './tests/__fixtures__/tasks',
+      modulesLocation: './tests/__fixtures__/modules'
     })
 
     await process.listeners('SIGINT')[0]('SIGINT')
@@ -136,10 +136,10 @@ describe('runApp', (): void => {
 
   it('exists if stopping goes wrong', async (): Promise<void> => {
     await runApp('stop-error-app', { fast: true }, false, {
-      appsDirectory: './tests/__fixtures__/apps-stop-error',
-      configDirectory: './tests/__fixtures__/config',
-      tasksDirectory: './tests/__fixtures__/tasks',
-      modulesDirectory: './tests/__fixtures__/modules'
+      appsLocation: './tests/__fixtures__/apps-stop-error',
+      configLocation: './tests/__fixtures__/config',
+      tasksLocation: './tests/__fixtures__/tasks',
+      modulesLocation: './tests/__fixtures__/modules'
     })
 
     await process.listeners('SIGINT')[0]('SIGINT')
@@ -150,10 +150,10 @@ describe('runApp', (): void => {
 
   it('exists if releasing goes wrong', async (): Promise<void> => {
     await runApp('release-error-app', { fast: true }, false, {
-      appsDirectory: './tests/__fixtures__/apps-release-error',
-      configDirectory: './tests/__fixtures__/config',
-      tasksDirectory: './tests/__fixtures__/tasks',
-      modulesDirectory: './tests/__fixtures__/modules'
+      appsLocation: './tests/__fixtures__/apps-release-error',
+      configLocation: './tests/__fixtures__/config',
+      tasksLocation: './tests/__fixtures__/tasks',
+      modulesLocation: './tests/__fixtures__/modules'
     })
 
     await process.listeners('SIGINT')[0]('SIGINT')
@@ -164,10 +164,10 @@ describe('runApp', (): void => {
 
   it('exits if modules unloading goes wrong', async (): Promise<void> => {
     await runApp('good-app', { fast: true }, false, {
-      appsDirectory: './tests/__fixtures__/apps',
-      configDirectory: './tests/__fixtures__/config',
-      tasksDirectory: './tests/__fixtures__/tasks',
-      modulesDirectory: './tests/__fixtures__/modules-release-error'
+      appsLocation: './tests/__fixtures__/apps',
+      configLocation: './tests/__fixtures__/config',
+      tasksLocation: './tests/__fixtures__/tasks',
+      modulesLocation: './tests/__fixtures__/modules-release-error'
     })
 
     await process.listeners('SIGINT')[0]('SIGINT')
@@ -185,10 +185,10 @@ describe('runApp', (): void => {
     }, 500)
 
     await runApp('good-app', { fast: true }, false, {
-      appsDirectory: './tests/__fixtures__/apps',
-      configDirectory: './tests/__fixtures__/config',
-      tasksDirectory: './tests/__fixtures__/tasks',
-      modulesDirectory: './tests/__fixtures__/modules'
+      appsLocation: './tests/__fixtures__/apps',
+      configLocation: './tests/__fixtures__/config',
+      tasksLocation: './tests/__fixtures__/tasks',
+      modulesLocation: './tests/__fixtures__/modules'
     })
 
     core.running = false
@@ -203,10 +203,10 @@ describe('runApp', (): void => {
 
   it('special signals are used for restarting and killing when demonized', async (): Promise<void> => {
     await runApp('good-app', { fast: true }, true, {
-      appsDirectory: './tests/__fixtures__/apps',
-      configDirectory: './tests/__fixtures__/config',
-      tasksDirectory: './tests/__fixtures__/tasks',
-      modulesDirectory: './tests/__fixtures__/modules'
+      appsLocation: './tests/__fixtures__/apps',
+      configLocation: './tests/__fixtures__/config',
+      tasksLocation: './tests/__fixtures__/tasks',
+      modulesLocation: './tests/__fixtures__/modules'
     })
 
     await process.listeners('SIGINT')[0]('SIGINT')
@@ -235,10 +235,10 @@ describe('runApp', (): void => {
 
   it('runs an app watcher if configured', async (): Promise<void> => {
     await runApp('good-app', { fast: true }, false, {
-      appsDirectory: './tests/__fixtures__/apps',
-      configDirectory: './tests/__fixtures__/config',
-      tasksDirectory: './tests/__fixtures__/tasks',
-      modulesDirectory: './tests/__fixtures__/modules',
+      appsLocation: './tests/__fixtures__/apps',
+      configLocation: './tests/__fixtures__/config',
+      tasksLocation: './tests/__fixtures__/tasks',
+      modulesLocation: './tests/__fixtures__/modules',
       appWatcher: {
         enabled: true
       }

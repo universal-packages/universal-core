@@ -22,17 +22,17 @@ beforeEach((): void => {
 describe('runConsole', (): void => {
   it('do all the preaprations and runs a repl server (sets core)', async (): Promise<void> => {
     await runConsole({
-      appsDirectory: './tests/__fixtures__/apps',
-      configDirectory: './tests/__fixtures__/config',
-      tasksDirectory: './tests/__fixtures__/tasks',
-      modulesDirectory: './tests/__fixtures__/modules'
+      appsLocation: './tests/__fixtures__/apps',
+      configLocation: './tests/__fixtures__/config',
+      tasksLocation: './tests/__fixtures__/tasks',
+      modulesLocation: './tests/__fixtures__/modules'
     })
 
     expect(core).toEqual({
       App: null,
       appConfig: null,
       appInstance: null,
-      coreConfig: expect.objectContaining({ modulesDirectory: './tests/__fixtures__/modules' }),
+      coreConfig: expect.objectContaining({ modulesLocation: './tests/__fixtures__/modules' }),
       coreModules: { 'excelent-module': expect.any(ExcelentModule), 'good-module': expect.any(GoodModule) },
       loaded: true,
       logger: expect.any(Logger),
@@ -46,10 +46,10 @@ describe('runConsole', (): void => {
 
   it('exits if core config has errors', async (): Promise<void> => {
     await runConsole({
-      appsDirectory: './tests/__fixtures__/noexistent',
-      configDirectory: './tests/__fixtures__/config',
-      tasksDirectory: './tests/__fixtures__/tasks',
-      modulesDirectory: './tests/__fixtures__/modules'
+      appsLocation: './tests/__fixtures__/noexistent',
+      configLocation: './tests/__fixtures__/config',
+      tasksLocation: './tests/__fixtures__/tasks',
+      modulesLocation: './tests/__fixtures__/modules'
     })
 
     expect(process.exit).toHaveBeenCalledWith(1)
@@ -57,10 +57,10 @@ describe('runConsole', (): void => {
 
   it('exits if proyect config has errors', async (): Promise<void> => {
     await runConsole({
-      appsDirectory: './tests/__fixtures__/apps',
-      configDirectory: './tests/__fixtures__/config-errored',
-      tasksDirectory: './tests/__fixtures__/tasks',
-      modulesDirectory: './tests/__fixtures__/modules'
+      appsLocation: './tests/__fixtures__/apps',
+      configLocation: './tests/__fixtures__/config-errored',
+      tasksLocation: './tests/__fixtures__/tasks',
+      modulesLocation: './tests/__fixtures__/modules'
     })
 
     expect(process.exit).toHaveBeenCalledWith(1)
@@ -68,10 +68,10 @@ describe('runConsole', (): void => {
 
   it('exits if modules has errors', async (): Promise<void> => {
     await runConsole({
-      appsDirectory: './tests/__fixtures__/apps',
-      configDirectory: './tests/__fixtures__/config',
-      tasksDirectory: './tests/__fixtures__/tasks',
-      modulesDirectory: './tests/__fixtures__/modules-load-error'
+      appsLocation: './tests/__fixtures__/apps',
+      configLocation: './tests/__fixtures__/config',
+      tasksLocation: './tests/__fixtures__/tasks',
+      modulesLocation: './tests/__fixtures__/modules-load-error'
     })
 
     expect(process.exit).toHaveBeenCalledWith(1)
@@ -79,10 +79,10 @@ describe('runConsole', (): void => {
 
   it('continues if modules warnings are present (log the warnings)', async (): Promise<void> => {
     await runConsole({
-      appsDirectory: './tests/__fixtures__/apps',
-      configDirectory: './tests/__fixtures__/config',
-      tasksDirectory: './tests/__fixtures__/tasks',
-      modulesDirectory: './tests/__fixtures__/modules-warnings'
+      appsLocation: './tests/__fixtures__/apps',
+      configLocation: './tests/__fixtures__/config',
+      tasksLocation: './tests/__fixtures__/tasks',
+      modulesLocation: './tests/__fixtures__/modules-warnings'
     })
 
     expect(core.running).toBeTruthy()
@@ -94,10 +94,10 @@ describe('runConsole', (): void => {
     })
 
     await runConsole({
-      appsDirectory: './tests/__fixtures__/apps',
-      configDirectory: './tests/__fixtures__/config',
-      tasksDirectory: './tests/__fixtures__/tasks',
-      modulesDirectory: './tests/__fixtures__/modules'
+      appsLocation: './tests/__fixtures__/apps',
+      configLocation: './tests/__fixtures__/config',
+      tasksLocation: './tests/__fixtures__/tasks',
+      modulesLocation: './tests/__fixtures__/modules'
     })
 
     expect(process.exit).toHaveBeenCalledWith(1)
@@ -106,10 +106,10 @@ describe('runConsole', (): void => {
 
   it('unload modules when repl server exists', async (): Promise<void> => {
     await runConsole({
-      appsDirectory: './tests/__fixtures__/apps',
-      configDirectory: './tests/__fixtures__/config',
-      tasksDirectory: './tests/__fixtures__/tasks',
-      modulesDirectory: './tests/__fixtures__/modules'
+      appsLocation: './tests/__fixtures__/apps',
+      configLocation: './tests/__fixtures__/config',
+      tasksLocation: './tests/__fixtures__/tasks',
+      modulesLocation: './tests/__fixtures__/modules'
     })
 
     await replServerMock.listeners('exit')[0]()
@@ -119,10 +119,10 @@ describe('runConsole', (): void => {
 
   it('exists if module releasing fails', async (): Promise<void> => {
     await runConsole({
-      appsDirectory: './tests/__fixtures__/apps',
-      configDirectory: './tests/__fixtures__/config',
-      tasksDirectory: './tests/__fixtures__/tasks',
-      modulesDirectory: './tests/__fixtures__/modules-release-error'
+      appsLocation: './tests/__fixtures__/apps',
+      configLocation: './tests/__fixtures__/config',
+      tasksLocation: './tests/__fixtures__/tasks',
+      modulesLocation: './tests/__fixtures__/modules-release-error'
     })
 
     await replServerMock.listeners('exit')[0]()

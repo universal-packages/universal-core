@@ -100,7 +100,7 @@ Example:
 
 ```
 default:
-  appsDirectory: './src/apps'
+  appsLocation: './src/apps'
 
 development:
   appWatcher:
@@ -121,7 +121,7 @@ As you can see you can provide configuration depending on the environment you ar
 
 ### Config
 
-- **`appsDirectory`** `string` `default: ./src`
+- **`appsLocation`** `string` `default: ./src`
   Where core should look for app modules to load.
 
 - **`appWatcher`** `map`
@@ -131,16 +131,16 @@ As you can see you can provide configuration depending on the environment you ar
   - **`ignore`** `string[]`
     Which files and folders should the watcher ignore.
 
-- **`configDirectory`** `string` `default: ./src/config`
+- **`configLocation`** `string` `default: ./src/config`
   Where all the project config is.
 
-- **`modulesDirectory`** `string` `default: ./src/modules`
+- **`modulesLocation`** `string` `default: ./src/modules`
   Where all your custom modules are.
 
 - **`modulesAsGlobals`** `boolean` `default: true`
   All modules will be available in the global scope like `myCustomModule`.
 
-- **`tasksDirectory`** `boolean` `default: ./src/tasks`
+- **`tasksLocation`** `boolean` `default: ./src/tasks`
   Where all your custom tasks are.
 
 - **`logger`** `map`

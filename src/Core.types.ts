@@ -6,15 +6,15 @@ import CoreTask from './CoreTask'
 export type ProjectConfig = Record<any, any>
 
 export interface CoreConfig {
-  appsDirectory?: string
+  appsLocation?: string
   appWatcher?: {
     enabled?: boolean
     ignore?: string[]
   }
-  configDirectory?: string
-  modulesDirectory?: string
+  configLocation?: string
+  modulesLocation?: string
   modulesAsGlobals?: boolean
-  tasksDirectory?: string
+  tasksLocation?: string
   logger?: {
     level?: LogLevel
     silence?: boolean

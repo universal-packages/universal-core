@@ -19,11 +19,11 @@ export default class Core {
   public static async getCoreConfig(coreConfigOveride?: CoreConfig): Promise<CoreConfig> {
     const loadedCoreConfig = coreConfigOveride || (await loadPluginConfig('core', { selectEnvironment: true }))
     const finalCoreConfig: CoreConfig = {
-      appsDirectory: './src',
-      configDirectory: './src/config',
-      modulesDirectory: './src',
+      appsLocation: './src',
+      configLocation: './src/config',
+      modulesLocation: './src',
       modulesAsGlobals: true,
-      tasksDirectory: './src',
+      tasksLocation: './src',
       ...loadedCoreConfig,
       logger: { silence: false, ...loadedCoreConfig?.logger }
     }
@@ -39,11 +39,11 @@ export default class Core {
   }
 
   public static async getProjectConfig(coreConfig: CoreConfig): Promise<ProjectConfig> {
-    return await loadConfig(coreConfig.configDirectory, { selectEnvironment: true })
+    return await loadConfig(coreConfig.configLocation, { selectEnvironment: true })
   }
 
   public static async getCoreModules(coreConfig: CoreConfig, projectConfig: ProjectConfig, logger: Logger): Promise<[CoreModules, CoreModuleWarning[]]> {
-    const localModules = await loadModules(coreConfig.modulesDirectory, { conventionPrefix: 'module' })
+    const localModules = await loadModules(coreConfig.modulesLocation, { conventionPrefix: 'module' })
     const thridPartyModules = await loadModules('./node_modules', { conventionPrefix: 'universal-core-module' })
     const finalModules = [
       ...thridPartyModules.sort((moduleA: ModuleRegistry, ModuleB: ModuleRegistry): number =>

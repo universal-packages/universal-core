@@ -21,7 +21,7 @@ export default class CoreApp<C = any, A = any> extends Core {
     const coreConfig = await this.getCoreConfig(coreConfigverride)
     const pascalCaseName = pascalCase(name)
     const paramCaseName = paramCase(name)
-    const localApps = await loadModules(coreConfig.appsDirectory, { conventionPrefix: 'app' })
+    const localApps = await loadModules(coreConfig.appsLocation, { conventionPrefix: 'app' })
     const thirdPartyApps = await loadModules('./node_modules', { conventionPrefix: 'universal-core-app' })
     const finalApps = [...localApps, ...thirdPartyApps]
     const appModuleRegistry = finalApps.find((module: ModuleRegistry): boolean => {
@@ -31,7 +31,7 @@ export default class CoreApp<C = any, A = any> extends Core {
     })
 
     if (!appModuleRegistry) {
-      throw new Error(`App "${name}" can't be found anywhere in\n${coreConfig.appsDirectory}`)
+      throw new Error(`App "${name}" can't be found anywhere in\n${coreConfig.appsLocation}`)
     } else if (appModuleRegistry.error) {
       throw appModuleRegistry.error
     }

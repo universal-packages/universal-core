@@ -11,9 +11,9 @@ describe('CoreTask', (): void => {
   describe('.find', (): void => {
     it('finds a task by name', async (): Promise<void> => {
       const Task = await CoreTask.find('Good', {
-        appsDirectory: './tests/__fixtures__/apps',
-        configDirectory: './tests/__fixtures__/config',
-        tasksDirectory: './tests/__fixtures__/tasks'
+        appsLocation: './tests/__fixtures__/apps',
+        configLocation: './tests/__fixtures__/config',
+        tasksLocation: './tests/__fixtures__/tasks'
       })
 
       expect(Task).toBe(GoodTask)
@@ -24,9 +24,9 @@ describe('CoreTask', (): void => {
 
       try {
         await CoreTask.find('notinthere', {
-          appsDirectory: './tests/__fixtures__/apps',
-          configDirectory: './tests/__fixtures__/config',
-          tasksDirectory: './tests/__fixtures__/tasks'
+          appsLocation: './tests/__fixtures__/apps',
+          configLocation: './tests/__fixtures__/config',
+          tasksLocation: './tests/__fixtures__/tasks'
         })
       } catch (err) {
         error = err
@@ -40,9 +40,9 @@ describe('CoreTask', (): void => {
 
       try {
         await CoreTask.find('LoadError', {
-          appsDirectory: './tests/__fixtures__/apps',
-          configDirectory: './tests/__fixtures__/config',
-          tasksDirectory: './tests/__fixtures__/tasks-load-error'
+          appsLocation: './tests/__fixtures__/apps',
+          configLocation: './tests/__fixtures__/config',
+          tasksLocation: './tests/__fixtures__/tasks-load-error'
         })
       } catch (err) {
         error = err
