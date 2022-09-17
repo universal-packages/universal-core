@@ -6,9 +6,10 @@ export default class CoreModule<C = any> {
 
   public readonly config: C
   public readonly logger: Logger
+  public readonly defaultConfig: C
 
   public constructor(config: C, logger: Logger) {
-    this.config = config
+    this.config = { ...this.defaultConfig, ...config }
     this.logger = logger
   }
 

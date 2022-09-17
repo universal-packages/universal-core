@@ -10,10 +10,11 @@ export default class CoreApp<C = any, A = any> extends Core {
 
   public readonly config: C
   public readonly args: A
+  public readonly defaultConfig: C
 
   public constructor(config: C, args: A, logger: Logger, coreModules: CoreModules) {
     super(logger, coreModules)
-    this.config = config
+    this.config = { ...this.defaultConfig, ...config }
     this.args = args
   }
 

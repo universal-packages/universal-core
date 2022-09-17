@@ -175,7 +175,9 @@ export default class RedisModule extends CoreModule {
   static moduleName = 'redis-module'
   static description = 'Redis encapsulation'
 
-  this.actualRedis = null
+  defaultConfig = { port: 3789 }
+
+  actualRedis = null
 
   async prepare() {
     this.actualRedis = new ActualRedis(this.config)
@@ -228,6 +230,8 @@ import { createServer, destroyServer } from 'some-useful-http-server'
 export default class WebServer extends CoreApp {
   static appName = 'web-server'
   static description = 'Http server'
+
+  defaultConfig = { host: 'localhost' }
 
   webServer = null
 
