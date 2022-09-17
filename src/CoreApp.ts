@@ -7,14 +7,14 @@ import { CoreConfig, CoreModules } from './Core.types'
 export default class CoreApp<C = any, A = any> extends Core {
   public static readonly appName: string
   public static readonly description: string
+  public static readonly defaultConfig: any
 
   public readonly config: C
   public readonly args: A
-  public readonly defaultConfig: C
 
   public constructor(config: C, args: A, logger: Logger, coreModules: CoreModules) {
     super(logger, coreModules)
-    this.config = { ...this.defaultConfig, ...config }
+    this.config = config
     this.args = args
   }
 

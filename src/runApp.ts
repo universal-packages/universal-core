@@ -190,7 +190,7 @@ export async function runApp(name: string, args: Record<string, any>, demon?: bo
       core.App = await CoreApp.find(name, core.coreConfig)
 
       core.appConfig = core.projectConfig[pascalCaseName] || core.projectConfig[paramCaseName] || core.projectConfig[core.App.appName]
-      core.appInstance = new core.App(core.appConfig, args, core.logger, core.coreModules)
+      core.appInstance = new core.App({ ...core.App.defaultConfig, ...core.appConfig }, args, core.logger, core.coreModules)
       if (core.appInstance.prepare) await core.appInstance.prepare()
     } catch (error) {
       core.logger.publish('ERROR', 'There was an error loading the app', null, 'CORE', {

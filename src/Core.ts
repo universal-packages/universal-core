@@ -73,7 +73,8 @@ export default class Core {
       if (coreModules[moduleParamCaseName]) {
         warnings.push({ title: `Two modules have the same name: ${moduleName}`, message: `First loaded will take presedence\n${currentModule.location}` })
       } else {
-        const moduleInstance: CoreModule = new currentModule.exports(moduleConfig, logger)
+        const ModuleClass: typeof CoreModule = currentModule.exports
+        const moduleInstance: CoreModule = new ModuleClass({ ...ModuleClass.defaultConfig, ...moduleConfig }, logger)
 
         try {
           await moduleInstance.prepare()
