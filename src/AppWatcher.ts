@@ -29,12 +29,14 @@ export default class AppWatcher extends EventEmitter {
       .watch('.', {
         ignored: [
           ...this.ignore,
-          /^node_modules/g,
-          /^\.git/g,
-          /^coverage/,
-          /^tests/g,
-          /^test/g,
-          (entry: string): boolean => {
+          '**/node_modules/**/*',
+          '**/.git/**/*',
+          '**/coverage/**/*',
+          '**/.tests/**/*',
+          '**/test/**/*',
+          '.console_history',
+          (entry) => {
+            console.log(entry)
             const extension = path.extname(entry)
             return !(!extension || ['.ts', '.js', '.json', '.yaml', '.yml'].includes(extension))
           }
