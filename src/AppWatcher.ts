@@ -36,7 +36,6 @@ export default class AppWatcher extends EventEmitter {
           '**/test/**/*',
           '.console_history',
           (entry) => {
-            console.log(entry)
             const extension = path.extname(entry)
             return !(!extension || ['.ts', '.js', '.json', '.yaml', '.yml'].includes(extension))
           }
