@@ -34,6 +34,8 @@ export default class AppWatcher extends EventEmitter {
           '**/coverage/**/*',
           '**/.tests/**/*',
           '**/test/**/*',
+          '**/logs/**/*',
+          '**/tmp/**/*',
           '.console_history',
           (entry) => {
             const extension = path.extname(entry)

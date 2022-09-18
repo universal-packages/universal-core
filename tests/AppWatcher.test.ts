@@ -29,7 +29,18 @@ describe('AppWatcher', (): void => {
       watcher.run()
 
       expect(chokidar.watch).toHaveBeenCalledWith('.', {
-        ignored: ['somefile', '**/node_modules/**/*', '**/.git/**/*', '**/coverage/**/*', '**/.tests/**/*', '**/test/**/*', '.console_history', expect.any(Function)]
+        ignored: [
+          'somefile',
+          '**/node_modules/**/*',
+          '**/.git/**/*',
+          '**/coverage/**/*',
+          '**/.tests/**/*',
+          '**/test/**/*',
+          '**/logs/**/*',
+          '**/tmp/**/*',
+          '.console_history',
+          expect.any(Function)
+        ]
       })
     })
   })
