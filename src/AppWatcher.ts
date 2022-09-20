@@ -74,7 +74,6 @@ export default class AppWatcher extends EventEmitter {
       })
   }
 
-  /**    */
   public stop(): void {
     this.stopping = true
 

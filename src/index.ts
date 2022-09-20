@@ -5,5 +5,6 @@ export { default as CoreModule } from './CoreModule'
 export { default as CoreTask } from './CoreTask'
 export * from './execTask'
 export * from './runApp'
+export * from './runApp.types'
 
 import './globals'

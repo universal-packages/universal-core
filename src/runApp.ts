@@ -4,8 +4,9 @@ import Core from './Core'
 import { CoreConfig } from './Core.types'
 import CoreApp from './CoreApp'
 import AppWatcher from './AppWatcher'
+import { stopAppFunction } from './runApp.types'
 
-export async function runApp(name: string, args: Record<string, any>, demon?: boolean, coreConfigOveride?: CoreConfig): Promise<void> {
+export async function runApp(name: string, args: Record<string, any>, demon?: boolean, coreConfigOveride?: CoreConfig): Promise<stopAppFunction> {
   let measurer: TimeMeasurer
 
   global.core = {
@@ -57,7 +58,7 @@ export async function runApp(name: string, args: Record<string, any>, demon?: bo
       core.logger.publish('QUERY', 'Reloading..', files.join('\n'), 'CORE')
     })
 
-    const stopWatcher = (): void => {
+    const stopWatcher = async (): Promise<void> => {
       if (process.stdout.clearLine) process.stdout.clearLine(0)
       if (process.stdout.cursorTo) process.stdout.cursorTo(0)
 
@@ -73,6 +74,8 @@ export async function runApp(name: string, args: Record<string, any>, demon?: bo
 
     process.addListener('SIGINT', stopWatcher)
     process.addListener('SIGTERM', stopWatcher)
+
+    return stopWatcher
   } else {
     try {
       measurer = startMeasurement()
@@ -230,5 +233,7 @@ export async function runApp(name: string, args: Record<string, any>, demon?: bo
 
     // Now we are running
     core.running = true
+
+    return stopApp
   }
 }
