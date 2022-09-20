@@ -34,7 +34,7 @@ export const coreConfigSchema = new Schema(
     appsLocation: {
       type: String,
       use: { directoryCheck },
-      message: 'Location is not accesible'
+      message: 'Location is not accessible'
     },
     appWatcher: {
       enabled: {
@@ -48,12 +48,12 @@ export const coreConfigSchema = new Schema(
     configLocation: {
       type: String,
       use: { directoryCheck },
-      message: 'Location is not accesible'
+      message: 'Location is not accessible'
     },
     modulesLocation: {
       type: String,
       use: { directoryCheckOptional },
-      message: 'Location is not accesible'
+      message: 'Location is not accessible'
     },
     modulesAsGlobals: {
       type: Boolean
@@ -61,7 +61,7 @@ export const coreConfigSchema = new Schema(
     tasksLocation: {
       type: String,
       use: { directoryCheck },
-      message: 'Location is not accesible'
+      message: 'Location is not accessible'
     },
     logger: {
       level: {
@@ -93,7 +93,7 @@ export const coreConfigSchema = new Schema(
         location: {
           type: String,
           use: { directoryEnsureOptional },
-          message: 'Location is not accesible'
+          message: 'Location is not accessible'
         }
       }
     }

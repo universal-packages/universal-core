@@ -1,15 +1,15 @@
 import CoreModule from '../../../src/CoreModule'
 
-export default class ExcelentModule extends CoreModule {
+export default class ExcellentModule extends CoreModule {
   public static iWasPrepared = false
   public static iWasReleased = false
-  public static readonly moduleName = 'excelent-module'
+  public static readonly moduleName = 'excellent-module'
 
   public async prepare(): Promise<void> {
-    ExcelentModule.iWasPrepared = true
+    ExcellentModule.iWasPrepared = true
   }
 
   public async release(): Promise<void> {
-    ExcelentModule.iWasReleased = true
+    ExcellentModule.iWasReleased = true
   }
 }

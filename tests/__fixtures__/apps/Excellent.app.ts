@@ -1,25 +1,25 @@
 import CoreApp from '../../../src/CoreApp'
 
-export default class ExcelentApp extends CoreApp {
+export default class ExcellentApp extends CoreApp {
   public static iWasPrepared = false
   public static iWasRan = false
   public static iWasStopped = false
   public static iWasReleased = false
-  public static readonly appName = 'excelent-app'
+  public static readonly appName = 'excellent-app'
 
   public prepare(): Promise<void> | void {
-    ExcelentApp.iWasPrepared = true
+    ExcellentApp.iWasPrepared = true
   }
 
   public run(): Promise<void> | void {
-    ExcelentApp.iWasRan = true
+    ExcellentApp.iWasRan = true
   }
 
   public stop(): Promise<void> | void {
-    ExcelentApp.iWasStopped = true
+    ExcellentApp.iWasStopped = true
   }
 
   public release(): Promise<void> | void {
-    ExcelentApp.iWasReleased = true
+    ExcellentApp.iWasReleased = true
   }
 }

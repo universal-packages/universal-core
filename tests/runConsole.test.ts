@@ -2,7 +2,7 @@ import { Logger } from '@universal-packages/logger'
 import EventEmitter from 'events'
 import repl from 'repl'
 import { runConsole } from '../src/runConsole'
-import ExcelentModule from './__fixtures__/modules/Excelent.module'
+import ExcellentModule from './__fixtures__/modules/Excellent.module'
 import GoodModule from './__fixtures__/modules/Good.module'
 
 class ReplServerMock extends EventEmitter {
@@ -33,10 +33,10 @@ describe('runConsole', (): void => {
       appConfig: null,
       appInstance: null,
       coreConfig: expect.objectContaining({ modulesLocation: './tests/__fixtures__/modules' }),
-      coreModules: { 'excelent-module': expect.any(ExcelentModule), 'good-module': expect.any(GoodModule) },
+      coreModules: { 'excellent-module': expect.any(ExcellentModule), 'good-module': expect.any(GoodModule) },
       loaded: true,
       logger: expect.any(Logger),
-      projectConfig: expect.objectContaining({ ExcelentModule: expect.anything(), 'good-module': expect.anything(), 'good-app': expect.anything() }),
+      projectConfig: expect.objectContaining({ ExcellentModule: expect.anything(), 'good-module': expect.anything(), 'good-app': expect.anything() }),
       running: true,
       stopping: false,
       Task: null,

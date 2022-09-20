@@ -1,7 +1,7 @@
 import { Logger } from '@universal-packages/logger'
 import { runApp } from '../src/runApp'
 import GoodApp from './__fixtures__/apps/Good.app'
-import ExcelentModule from './__fixtures__/modules/Excelent.module'
+import ExcellentModule from './__fixtures__/modules/Excellent.module'
 import GoodModule from './__fixtures__/modules/Good.module'
 
 jest.spyOn(process, 'exit').mockImplementation(((): void => {}) as any)
@@ -32,10 +32,10 @@ describe('runApp', (): void => {
       appConfig: { doStuff: true, test: true },
       appInstance: expect.any(GoodApp),
       coreConfig: expect.objectContaining({ appsLocation: './tests/__fixtures__/apps' }),
-      coreModules: { 'excelent-module': expect.any(ExcelentModule), 'good-module': expect.any(GoodModule) },
+      coreModules: { 'excellent-module': expect.any(ExcellentModule), 'good-module': expect.any(GoodModule) },
       loaded: true,
       logger: expect.any(Logger),
-      projectConfig: expect.objectContaining({ ExcelentModule: expect.anything(), 'good-module': expect.anything(), 'good-app': expect.anything() }),
+      projectConfig: expect.objectContaining({ ExcellentModule: expect.anything(), 'good-module': expect.anything(), 'good-app': expect.anything() }),
       running: true,
       stopping: false,
       Task: null,

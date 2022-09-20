@@ -1,18 +1,18 @@
 import { Core } from '../src'
 import AModule from './__fixtures__/modules-prepare-error/A.module'
 import ZModule from './__fixtures__/modules-release-error/Z.module'
-import ExcelentModule from './__fixtures__/modules/Excelent.module'
+import ExcellentModule from './__fixtures__/modules/Excellent.module'
 import GoodModule from './__fixtures__/modules/Good.module'
 
 describe('Core', (): void => {
   describe('.getCoreConfig', (): void => {
-    it('loads the core config setted up', async (): Promise<void> => {
+    it('loads the core config set up', async (): Promise<void> => {
       const config = await Core.getCoreConfig()
 
       expect(config).not.toBeUndefined()
     })
 
-    it('lets you overide config', async (): Promise<void> => {
+    it('lets you override config', async (): Promise<void> => {
       const config = await Core.getCoreConfig({ appsLocation: './tests', tasksLocation: './tests', configLocation: './tests' })
 
       expect(config).toMatchObject({ appsLocation: './tests', tasksLocation: './tests', configLocation: './tests' })
@@ -51,13 +51,13 @@ describe('Core', (): void => {
         error = err
       }
 
-      expect(error.message).toEqual(`appsLocation - Location is not accesible
+      expect(error.message).toEqual(`appsLocation - Location is not accessible
 appWatcher.enabled - appWatcher.enabled must be of type Boolean.
 appWatcher.ignore.0 - appWatcher.ignore.0 must be of type String.
-configLocation - Location is not accesible
-modulesLocation - Location is not accesible
+configLocation - Location is not accessible
+modulesLocation - Location is not accessible
 modulesAsGlobals - modulesAsGlobals must be of type Boolean.
-tasksLocation - Location is not accesible
+tasksLocation - Location is not accessible
 logger.level - Must be one of: FATAL | ERROR | WARNING | QUERY | INFO | DEBUG | TRACE
 logger.silence - logger.silence must be of type Boolean.
 logger.terminal.enable - logger.terminal.enable must be of type Boolean.
@@ -65,7 +65,7 @@ logger.terminal.clear - logger.terminal.clear must be of type Boolean.
 logger.terminal.withHeader - logger.terminal.withHeader must be of type Boolean.
 logger.localFile.enable - logger.localFile.enable must be of type Boolean.
 logger.localFile.asJson - logger.localFile.asJson must be of type Boolean.
-logger.localFile.location - Location is not accesible`)
+logger.localFile.location - Location is not accessible`)
     })
   })
 
@@ -76,7 +76,7 @@ logger.localFile.location - Location is not accesible`)
       expect(config).toEqual({
         'good-app': { doStuff: true, test: true },
         'good-module': { isLocal: true, test: true },
-        ExcelentModule: { isSecond: true, test: true }
+        ExcellentModule: { isSecond: true, test: true }
       })
     })
   })
@@ -87,10 +87,10 @@ logger.localFile.location - Location is not accesible`)
       const projectConfig = await Core.getProjectConfig({ configLocation: './tests/__fixtures__/config' })
       const [modules, warnings] = await Core.getCoreModules({ modulesLocation: './tests/__fixtures__/modules' }, projectConfig, logger)
 
-      expect(modules).toMatchObject({ 'good-module': { config: { isLocal: true, test: true }, logger }, 'excelent-module': { config: { isSecond: true, test: true }, logger } })
+      expect(modules).toMatchObject({ 'good-module': { config: { isLocal: true, test: true }, logger }, 'excellent-module': { config: { isSecond: true, test: true }, logger } })
       expect(warnings).toEqual([])
       expect(GoodModule.iWasPrepared).toBeTruthy()
-      expect(ExcelentModule.iWasPrepared).toBeTruthy()
+      expect(ExcellentModule.iWasPrepared).toBeTruthy()
     })
 
     it('throws as soon as a module preapration throws and unloads previously loaded ones', async (): Promise<void> => {
@@ -121,7 +121,7 @@ logger.localFile.location - Location is not accesible`)
       expect(error).toEqual('Load Error')
     })
 
-    it('returns warnings about repeated modules (named intentionaly the same)', async (): Promise<void> => {
+    it('returns warnings about repeated modules (named intentionally the same)', async (): Promise<void> => {
       const logger = Core.getCoreLogger()
       const projectConfig = await Core.getProjectConfig({ configLocation: './tests/__fixtures__/config' })
       const [modules, warnings] = await Core.getCoreModules({ modulesLocation: './tests/__fixtures__/modules-warnings' }, projectConfig, logger)
@@ -130,7 +130,7 @@ logger.localFile.location - Location is not accesible`)
       expect(warnings).toEqual([
         {
           title: 'Two modules have the same name: good-module',
-          message: expect.stringMatching(/^First loaded will take presedence.*/)
+          message: expect.stringMatching(/^First loaded will take precedence.*/)
         }
       ])
     })
@@ -141,12 +141,12 @@ logger.localFile.location - Location is not accesible`)
       await Core.getCoreModules({ modulesLocation: './tests/__fixtures__/modules', modulesAsGlobals: true }, projectConfig, logger)
 
       expect(global['goodModule']).toBeInstanceOf(GoodModule)
-      expect(global['excelentModule']).toBeInstanceOf(ExcelentModule)
+      expect(global['excellentModule']).toBeInstanceOf(ExcellentModule)
     })
   })
 
   describe('.getCoreLogger', (): void => {
-    it('creates and setups a logger and its basiv transports', async (): Promise<void> => {
+    it('creates and setups a logger and its basic transports', async (): Promise<void> => {
       const logger = Core.getCoreLogger({
         logger: { level: 'ERROR', silence: true, terminal: { enable: false, clear: false, withHeader: true }, localFile: { enable: false, asJson: true } }
       })
@@ -168,7 +168,7 @@ logger.localFile.location - Location is not accesible`)
       await Core.releaseInternalModules(modules)
 
       expect(GoodModule.iWasReleased).toBeTruthy()
-      expect(ExcelentModule.iWasReleased).toBeTruthy()
+      expect(ExcellentModule.iWasReleased).toBeTruthy()
     })
 
     it('throws at release error but still keep releasing what can be releases', async (): Promise<void> => {

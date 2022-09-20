@@ -39,7 +39,7 @@ describe('execTask', (): void => {
       coreModules: {},
       loaded: true,
       logger: expect.any(Logger),
-      projectConfig: expect.objectContaining({ ExcelentModule: expect.anything(), 'good-module': expect.anything(), 'good-app': expect.anything() }),
+      projectConfig: expect.objectContaining({ ExcellentModule: expect.anything(), 'good-module': expect.anything(), 'good-app': expect.anything() }),
       running: false,
       stopping: false,
       Task: GoodTask,

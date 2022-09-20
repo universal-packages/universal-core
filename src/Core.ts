@@ -71,7 +71,7 @@ export default class Core {
       const moduleConfig = projectConfig[moduleParamCaseName] || projectConfig[modulePascalCaseName] || projectConfig[moduleName]
 
       if (coreModules[moduleParamCaseName]) {
-        warnings.push({ title: `Two modules have the same name: ${moduleName}`, message: `First loaded will take presedence\n${currentModule.location}` })
+        warnings.push({ title: `Two modules have the same name: ${moduleName}`, message: `First loaded will take precedence\n${currentModule.location}` })
       } else {
         const ModuleClass: typeof CoreModule = currentModule.exports
         const moduleInstance: CoreModule = new ModuleClass({ ...ModuleClass.defaultConfig, ...moduleConfig }, logger)
