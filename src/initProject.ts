@@ -3,7 +3,7 @@ import { exec } from 'child_process'
 import path from 'path'
 import Core from './Core'
 
-export async function initProyect(name: string, args: Record<string, any>): Promise<void> {
+export async function initProject(name: string, args: Record<string, any>): Promise<void> {
   const logger = Core.getCoreLogger()
   let coreVersion = '1.0.0'
 

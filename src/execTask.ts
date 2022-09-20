@@ -3,7 +3,7 @@ import Core from './Core'
 import { CoreConfig } from './Core.types'
 import CoreTask from './CoreTask'
 
-export async function execTask(name: string, directive: string, directiveOptions: string[], args: Record<string, any>, coreConfigOveride?: CoreConfig): Promise<void> {
+export async function execTask(name: string, directive?: string, directiveOptions?: string[], args?: Record<string, any>, coreConfigOverride?: CoreConfig): Promise<void> {
   let measurer: TimeMeasurer
 
   global.core = {
@@ -24,7 +24,7 @@ export async function execTask(name: string, directive: string, directiveOptions
   try {
     measurer = startMeasurement()
 
-    core.coreConfig = await CoreTask.getCoreConfig(coreConfigOveride)
+    core.coreConfig = await CoreTask.getCoreConfig(coreConfigOverride)
     core.logger = CoreTask.getCoreLogger(core.coreConfig)
 
     core.logger.publish('DEBUG', 'Core config loaded', null, 'CORE', { metadata: core.coreConfig, measurement: measurer.finish().toString() })
@@ -135,7 +135,7 @@ export async function execTask(name: string, directive: string, directiveOptions
   try {
     await core.taskInstance.exec()
 
-    // We release here since the aborting will ultimatelly end the execution
+    // We release here since the aborting will ultimately end the execution
     try {
       await Core.releaseInternalModules(core.coreModules)
       core.logger.publish('DEBUG', 'Core modules unloaded', null, 'CORE')

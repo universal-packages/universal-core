@@ -1,6 +1,6 @@
 import { populateTemplates } from '@universal-packages/template-populator'
 import { exec } from 'child_process'
-import { initProyect } from '../src/initProject'
+import { initProject } from '../src/initProject'
 
 jest.mock('@universal-packages/template-populator')
 jest.mock('child_process')
@@ -14,7 +14,7 @@ beforeEach((): void => {
 
 describe('initProject', (): void => {
   it('transfer templates and prepares the app', async (): Promise<void> => {
-    await initProyect('app', {})
+    await initProject('app', {})
 
     expect(populateTemplates).toHaveBeenCalledWith(expect.stringMatching(/universal-core\/src\/template/), './app', {
       replacementVariables: { coreVersion: expect.stringMatching(/\d+.\d+.\d+/), projectName: 'app' }
@@ -24,7 +24,7 @@ describe('initProject', (): void => {
   })
 
   it('transfer typescript templates and prepares the app', async (): Promise<void> => {
-    await initProyect('app', { ts: true })
+    await initProject('app', { ts: true })
 
     expect(populateTemplates).toHaveBeenCalledWith(expect.stringMatching(/universal-core\/src\/template-ts/), './app', {
       replacementVariables: { coreVersion: expect.stringMatching(/\d+.\d+.\d+/), projectName: 'app' }

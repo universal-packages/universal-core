@@ -6,7 +6,7 @@ import CoreApp from './CoreApp'
 import AppWatcher from './AppWatcher'
 import { stopAppFunction } from './runApp.types'
 
-export async function runApp(name: string, args: Record<string, any>, demon?: boolean, coreConfigOveride?: CoreConfig): Promise<stopAppFunction> {
+export async function runApp(name: string, args?: Record<string, any>, demon?: boolean, coreConfigOverride?: CoreConfig): Promise<stopAppFunction> {
   let measurer: TimeMeasurer
 
   global.core = {
@@ -27,7 +27,7 @@ export async function runApp(name: string, args: Record<string, any>, demon?: bo
   try {
     measurer = startMeasurement()
 
-    core.coreConfig = await CoreApp.getCoreConfig(coreConfigOveride)
+    core.coreConfig = await CoreApp.getCoreConfig(coreConfigOverride)
     core.logger = CoreApp.getCoreLogger(core.coreConfig)
 
     core.logger.publish('DEBUG', 'Core config loaded', null, 'CORE', { metadata: core.coreConfig, measurement: measurer.finish().toString() })
@@ -108,15 +108,15 @@ export async function runApp(name: string, args: Record<string, any>, demon?: bo
 
       core.stopping = true
 
-      // To trully stop the app gracefully we need to whait for it be running and the start releasing everything
-      // Im just thinkind about the children and DB connections and stuff like that will end dirty if we just exit the process
+      // To truly stop the app gracefully we need to wait for it be running and the start releasing everything
+      // Im just thinking about the children and DB connections and stuff like that will end dirty if we just exit the process
       // but who knows, I am going safe for now, if this is too much we can change later
       while (!core.running) await sleep(100)
 
       try {
         await core.appInstance.stop()
       } catch (error) {
-        core.logger.publish('ERROR', core.App.appName || core.App.name, 'There was an error while stoppig app', 'CORE', { error })
+        core.logger.publish('ERROR', core.App.appName || core.App.name, 'There was an error while stopping app', 'CORE', { error })
 
         try {
           await CoreApp.releaseInternalModules(core.coreModules)
@@ -131,7 +131,7 @@ export async function runApp(name: string, args: Record<string, any>, demon?: bo
         try {
           await core.appInstance.release()
         } catch (error) {
-          core.logger.publish('ERROR', core.App.appName || core.App.name, 'There was an error while relaasing app', 'CORE', { error })
+          core.logger.publish('ERROR', core.App.appName || core.App.name, 'There was an error while releasing app', 'CORE', { error })
 
           try {
             await CoreApp.releaseInternalModules(core.coreModules)

@@ -16,8 +16,8 @@ export default class Core {
     this.coreModules = coreModules
   }
 
-  public static async getCoreConfig(coreConfigOveride?: CoreConfig): Promise<CoreConfig> {
-    const loadedCoreConfig = coreConfigOveride || (await loadPluginConfig('core', { selectEnvironment: true }))
+  public static async getCoreConfig(coreConfigOverride?: CoreConfig): Promise<CoreConfig> {
+    const loadedCoreConfig = coreConfigOverride || (await loadPluginConfig('core', { selectEnvironment: true }))
     const finalCoreConfig: CoreConfig = {
       appsLocation: './src',
       configLocation: './src/config',
@@ -44,9 +44,9 @@ export default class Core {
 
   public static async getCoreModules(coreConfig: CoreConfig, projectConfig: ProjectConfig, logger: Logger): Promise<[CoreModules, CoreModuleWarning[]]> {
     const localModules = await loadModules(coreConfig.modulesLocation, { conventionPrefix: 'module' })
-    const thridPartyModules = await loadModules('./node_modules', { conventionPrefix: 'universal-core-module' })
+    const thirdPartyModules = await loadModules('./node_modules', { conventionPrefix: 'universal-core-module' })
     const finalModules = [
-      ...thridPartyModules.sort((moduleA: ModuleRegistry, ModuleB: ModuleRegistry): number =>
+      ...thirdPartyModules.sort((moduleA: ModuleRegistry, ModuleB: ModuleRegistry): number =>
         moduleA.location.replace(/^.*(\\|\/|\:)/, '') > ModuleB.location.replace(/^.*(\\|\/|\:)/, '') ? 1 : -1
       ),
       ...localModules
@@ -102,25 +102,25 @@ export default class Core {
 
   public static getCoreLogger(coreConfig?: CoreConfig): Logger {
     const logger = new Logger({ silence: process.env['NODE_ENV'] === 'test' })
-    const termianlTransport = logger.getTransport('terminal') as TerminalTransport
-    const localFileTrasnport = logger.getTransport('localFile') as LocalFileTransport
+    const terminalTransport = logger.getTransport('terminal') as TerminalTransport
+    const localFileTransport = logger.getTransport('localFile') as LocalFileTransport
 
-    termianlTransport.options.categoryColors['CORE'] = 'BLACK'
+    terminalTransport.options.categoryColors['CORE'] = 'BLACK'
 
     if (coreConfig) {
       if (coreConfig.logger?.level) logger.level = coreConfig.logger.level
       if (coreConfig.logger?.silence === true) logger.silence = true
 
       if (coreConfig.logger?.terminal) {
-        termianlTransport.enabled = coreConfig.logger?.terminal?.enable !== false
-        termianlTransport.options.clear = coreConfig.logger?.terminal?.clear !== false
-        termianlTransport.options.withHeader = coreConfig.logger?.terminal?.withHeader !== false
+        terminalTransport.enabled = coreConfig.logger?.terminal?.enable !== false
+        terminalTransport.options.clear = coreConfig.logger?.terminal?.clear !== false
+        terminalTransport.options.withHeader = coreConfig.logger?.terminal?.withHeader !== false
       }
 
       if (coreConfig.logger?.localFile) {
-        localFileTrasnport.enabled = coreConfig.logger?.localFile?.enable !== false
-        localFileTrasnport.options.asJson = coreConfig.logger?.localFile?.asJson !== false
-        localFileTrasnport.options.location = coreConfig.logger?.localFile.location || localFileTrasnport.options.location
+        localFileTransport.enabled = coreConfig.logger?.localFile?.enable !== false
+        localFileTransport.options.asJson = coreConfig.logger?.localFile?.asJson !== false
+        localFileTransport.options.location = coreConfig.logger?.localFile.location || localFileTransport.options.location
       }
     }
 

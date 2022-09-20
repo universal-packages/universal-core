@@ -3,7 +3,7 @@ import Core from './Core'
 import { CoreConfig } from './Core.types'
 import repl from 'repl'
 
-export async function runConsole(coreConfigOveride?: CoreConfig): Promise<void> {
+export async function runConsole(coreConfigOverride?: CoreConfig): Promise<void> {
   let measurer: TimeMeasurer
 
   global.core = {
@@ -24,7 +24,7 @@ export async function runConsole(coreConfigOveride?: CoreConfig): Promise<void> 
   try {
     measurer = startMeasurement()
 
-    core.coreConfig = await Core.getCoreConfig(coreConfigOveride)
+    core.coreConfig = await Core.getCoreConfig(coreConfigOverride)
     core.logger = Core.getCoreLogger(core.coreConfig)
 
     core.logger.publish('DEBUG', 'Core config loaded', null, 'CORE', { metadata: core.coreConfig, measurement: measurer.finish().toString() })

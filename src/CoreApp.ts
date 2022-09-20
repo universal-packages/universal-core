@@ -18,8 +18,8 @@ export default class CoreApp<C = any, A = any> extends Core {
     this.args = args
   }
 
-  public static async find(name: string, coreConfigverride?: CoreConfig): Promise<typeof CoreApp> {
-    const coreConfig = await this.getCoreConfig(coreConfigverride)
+  public static async find(name: string, coreConfigOverride?: CoreConfig): Promise<typeof CoreApp> {
+    const coreConfig = await this.getCoreConfig(coreConfigOverride)
     const pascalCaseName = pascalCase(name)
     const paramCaseName = paramCase(name)
     const localApps = await loadModules(coreConfig.appsLocation, { conventionPrefix: 'app' })

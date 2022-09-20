@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 import fs from 'fs'
 
-const isTsproject = fs.existsSync('./tsconfig.json')
+const isTsProject = fs.existsSync('./tsconfig.json')
 
-if (isTsproject) {
+if (isTsProject) {
   require('ts-node').register()
 } else {
   require('@babel/register')

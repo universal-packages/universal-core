@@ -1,6 +1,6 @@
 import yargs, { ArgumentsCamelCase, Argv } from 'yargs'
 import { execTask } from './execTask'
-import { initProyect } from './initProject'
+import { initProject } from './initProject'
 import { runApp } from './runApp'
 import { runConsole } from './runConsole'
 
@@ -33,7 +33,7 @@ yargs
       yargs
         .positional('task-name', { description: 'Name of the task to run', type: 'string', demandOption: true })
         .positional('task-directive', { description: 'Task behavior directive', type: 'string' })
-        .positional('directive-options', { description: 'Any options usported by the task directive' }),
+        .positional('directive-options', { description: 'Any options unsupported by the task directive' }),
     handler: (argv: ArgumentsCamelCase) => {
       const argvExtract = processArgv(argv)
       execTask(argvExtract.taskName, argvExtract.taskDirective, argvExtract.directiveOptions, argvExtract.options)
@@ -55,10 +55,10 @@ yargs
     builder: (yargs: Argv) =>
       yargs
         .positional('project-name', { description: 'Name to give to the core project', type: 'string', demandOption: true })
-        .options('typescript', { alias: ['ts'], description: 'Inits the core proyect using the typescript template', type: 'boolean', default: false }),
+        .options('typescript', { alias: ['ts'], description: 'Inits the core project using the typescript template', type: 'boolean', default: false }),
     handler: (argv: ArgumentsCamelCase) => {
       const argvExtract = processArgv(argv)
-      initProyect(argvExtract.projectName, argvExtract.options)
+      initProject(argvExtract.projectName, argvExtract.options)
     }
   })
   .options('env', { alias: ['environment'], description: 'Set node env environment', type: 'string', default: 'development' })

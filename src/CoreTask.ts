@@ -19,8 +19,8 @@ export default class CoreTask<A = any> extends Core {
     this.args = args
   }
 
-  public static async find(name: string, coreConfigverride?: CoreConfig): Promise<typeof CoreTask> {
-    const coreConfig = await this.getCoreConfig(coreConfigverride)
+  public static async find(name: string, coreConfigOverride?: CoreConfig): Promise<typeof CoreTask> {
+    const coreConfig = await this.getCoreConfig(coreConfigOverride)
     const pascalCaseName = pascalCase(name)
     const paramCaseName = paramCase(name)
     const localTasks = await loadModules(coreConfig.tasksLocation, { conventionPrefix: 'task' })
