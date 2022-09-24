@@ -10,8 +10,8 @@ export default class ExampleApp extends CoreApp {
   /**
    * OPTIONAL
    *
-   * When core loads your app, it will call this method so you can preapre any custom
-   * stuff you need to preapre in order for your app to run smoothly.
+   * When core loads your app, it will call this method so you can prepare any custom
+   * stuff you need to prepare in order for your app to run smoothly.
    *
    * Core modules are already loaded at this point so feel free to use them
    *

@@ -33,7 +33,12 @@ describe('runConsole', (): void => {
       appConfig: null,
       appInstance: null,
       coreConfig: expect.objectContaining({ modulesLocation: './tests/__fixtures__/modules' }),
-      coreModules: { 'excellent-module': expect.any(ExcellentModule), 'good-module': expect.any(GoodModule) },
+      coreModules: {
+        'excellent-module': expect.any(ExcellentModule),
+        'good-module': expect.any(GoodModule),
+        excellentModule: expect.any(ExcellentModule),
+        goodModule: expect.any(GoodModule)
+      },
       loaded: true,
       logger: expect.any(Logger),
       projectConfig: expect.objectContaining({ ExcellentModule: expect.anything(), 'good-module': expect.anything(), 'good-app': expect.anything() }),

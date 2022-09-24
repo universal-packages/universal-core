@@ -11,7 +11,7 @@ export default class ExampleModule extends CoreModule {
    * Modules are loaded before the app or task are loaded, so they
    * can access all modules to prepare itself,
    *
-   * Every time a module is loaded its preapre method will be callled
+   * Every time a module is loaded its prepare method will be callled
    * for instantiation, so all sort of preaprations can be made to leave
    * the module reary to be used accross the project
    *

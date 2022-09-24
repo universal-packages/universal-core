@@ -17,7 +17,7 @@ beforeEach((): void => {
 })
 
 describe('runApp', (): void => {
-  it('do all the preaprations funds an app and runs it (sets core)', async (): Promise<void> => {
+  it('do all the preparations funds an app and runs it (sets core)', async (): Promise<void> => {
     await runApp('Good', { fast: true }, false, {
       appsLocation: './tests/__fixtures__/apps',
       configLocation: './tests/__fixtures__/config',
@@ -32,7 +32,12 @@ describe('runApp', (): void => {
       appConfig: { doStuff: true, test: true },
       appInstance: expect.any(GoodApp),
       coreConfig: expect.objectContaining({ appsLocation: './tests/__fixtures__/apps' }),
-      coreModules: { 'excellent-module': expect.any(ExcellentModule), 'good-module': expect.any(GoodModule) },
+      coreModules: {
+        'excellent-module': expect.any(ExcellentModule),
+        'good-module': expect.any(GoodModule),
+        excellentModule: expect.any(ExcellentModule),
+        goodModule: expect.any(GoodModule)
+      },
       loaded: true,
       logger: expect.any(Logger),
       projectConfig: expect.objectContaining({ ExcellentModule: expect.anything(), 'good-module': expect.anything(), 'good-app': expect.anything() }),
@@ -56,7 +61,7 @@ describe('runApp', (): void => {
     expect(GoodApp.iWasRan).toEqual(false)
   })
 
-  it('exits if proyect config has errors', async (): Promise<void> => {
+  it('exits if project config has errors', async (): Promise<void> => {
     await runApp('Good', { fast: true }, false, {
       appsLocation: './tests/__fixtures__/apps',
       configLocation: './tests/__fixtures__/config-errored',
@@ -94,8 +99,8 @@ describe('runApp', (): void => {
     expect(GoodApp.iWasRan).toEqual(true)
   })
 
-  it('exits if app preapration fails (unload modules)', async (): Promise<void> => {
-    await runApp('preapre-error-app', { fast: true }, false, {
+  it('exits if app preparation fails (unload modules)', async (): Promise<void> => {
+    await runApp('prepare-error-app', { fast: true }, false, {
       appsLocation: './tests/__fixtures__/apps-prepare-error',
       configLocation: './tests/__fixtures__/config',
       tasksLocation: './tests/__fixtures__/tasks',
@@ -175,7 +180,7 @@ describe('runApp', (): void => {
     expect(process.exit).toHaveBeenCalledWith(1)
   })
 
-  it('waits until the running reachs a loaded state to start aborting (so we dont unload at the same time the task is being loaded)', async (): Promise<void> => {
+  it("waits until the running reaches a loaded state to start aborting (so we don't unload at the same time the task is being loaded)", async (): Promise<void> => {
     setTimeout((): void => {
       expect(GoodApp.iWasPrepared).toEqual(true)
       expect(GoodApp.iWasRan).toEqual(true)

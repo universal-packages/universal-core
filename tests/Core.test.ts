@@ -93,7 +93,7 @@ logger.localFile.location - Location is not accessible`)
       expect(ExcellentModule.iWasPrepared).toBeTruthy()
     })
 
-    it('throws as soon as a module preapration throws and unloads previously loaded ones', async (): Promise<void> => {
+    it('throws as soon as a module preparation throws and unloads previously loaded ones', async (): Promise<void> => {
       let error: Error
       try {
         const logger = Core.getCoreLogger()
@@ -140,8 +140,8 @@ logger.localFile.location - Location is not accessible`)
       const projectConfig = await Core.getProjectConfig({ configLocation: './tests/__fixtures__/config' })
       await Core.getCoreModules({ modulesLocation: './tests/__fixtures__/modules', modulesAsGlobals: true }, projectConfig, logger)
 
-      expect(global['goodModule']).toBeInstanceOf(GoodModule)
-      expect(global['excellentModule']).toBeInstanceOf(ExcellentModule)
+      expect(global['goodModule']).toEqual('I am the subject of the good core module')
+      expect(global['excellentModule']).toEqual('I am the subject of the excellent core module')
     })
   })
 

@@ -165,7 +165,7 @@ As you can see you can provide configuration depending on the environment you ar
 
 ## Core Module
 
-Core modules need to be built as a conventional class with some required and optional methods. Modules are meant to be a modularized piece of logic that provides encapsulated capabilities to be used all across the project.
+Core modules need to be built as a conventional class with some required and optional methods. Modules are meant to be a modularized piece of logic that provides encapsulated capabilities to be used all across the project. If possible and in case the user want modules to be shared globally, a `subject` property needs to be set for core to set it as a global, in the example below a `redisModule` global variable equal to the `subject` property will be set.
 
 ```js
 import { CoreModule } from '@universal-packages/core'
@@ -177,17 +177,17 @@ export default class RedisModule extends CoreModule {
 
   defaultConfig = { port: 3789 }
 
-  actualRedis = null
+  subject = null
 
   async prepare() {
-    this.actualRedis = new ActualRedis(this.config)
-    await this.actualRedis.connect()
+    this.subject = new ActualRedis(this.config)
+    await this.subject.connect()
   }
 
   async release() {
-    await this.actualRedis.desconnect()
+    await this.subject.disconnect()
   }
-}
+}s
 ```
 
 Configuration for this module should be in `./src/config/redis-module.json|yaml|js`
@@ -240,7 +240,7 @@ export default class WebServer extends CoreApp {
     const migrated = await databaseModule.checkMigrations()
     if (!migrated) throw new Error('Migrate db before running')
 
-    this.webserver = await createServer(this.config.serverConfig)
+    this.webServer = await createServer(this.config.serverConfig)
   }
 
   async run() {
@@ -316,7 +316,7 @@ Core tasks need to be built as a conventional class with some required and optio
 ```js
 import { CoreTask } from '@universal-packages/core'
 
-export default class SendeEmailsTask extends CoreTask {
+export default class SendEmailsTask extends CoreTask {
   static taskName = 'send-emails-task'
   static description = 'Send an email to all our users'
 
@@ -382,7 +382,7 @@ Once all is loaded and prepared exec any kind of whatever. Some data migration o
 
 After pressing `CTRL+C` universal core will optionally call this method, if you have a way to stop your task do it here so the execution can be stopped gracefully.
 
-Example, if your exec method is just a loop you can set here a `this.stoppig = true` property.
+Example, if your exec method is just a loop you can set here a `this.stopping = true` property.
 
 ## Typescript
 

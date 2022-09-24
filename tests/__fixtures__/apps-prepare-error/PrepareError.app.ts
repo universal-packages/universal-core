@@ -1,7 +1,7 @@
 import CoreApp from '../../../src/CoreApp'
 
 export default class PrepareErrorApp extends CoreApp {
-  public static readonly appName = 'preapre-error-app'
+  public static readonly appName = 'prepare-error-app'
 
   public prepare(): Promise<void> | void {
     throw 'Error'

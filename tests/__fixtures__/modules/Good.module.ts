@@ -6,6 +6,7 @@ export default class GoodModule extends CoreModule {
   public static readonly moduleName = 'good-module'
 
   public async prepare(): Promise<void> {
+    this.subject = 'I am the subject of the good core module'
     GoodModule.iWasPrepared = true
   }
 

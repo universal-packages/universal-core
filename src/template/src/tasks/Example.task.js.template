@@ -8,7 +8,7 @@ export default class ExampleTask extends CoreTask {
   /**
    * OPTIONAL
    *
-   * Tasks load in the same way as an app, the preapre method is called
+   * Tasks load in the same way as an app, the prepare method is called
    * just after instantiation and after all modules are loaded to be
    * used here.
    *
