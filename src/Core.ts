@@ -68,6 +68,7 @@ export default class Core {
       const moduleCamelCaseName = camelCase(moduleName)
       const moduleParamCaseName = paramCase(moduleName)
       const modulePascalCaseName = pascalCase(moduleName)
+      const subjectName = moduleCamelCaseName.replace('Module', 'Subject')
       const moduleConfig = projectConfig[moduleParamCaseName] || projectConfig[modulePascalCaseName] || projectConfig[moduleName]
 
       if (coreModules[moduleParamCaseName]) {
@@ -90,7 +91,7 @@ export default class Core {
         coreModules[moduleParamCaseName] = moduleInstance
         coreModules[moduleCamelCaseName] = moduleInstance
 
-        if (coreConfig.modulesAsGlobals && moduleInstance.subject) global[moduleCamelCaseName] = moduleInstance.subject
+        if (coreConfig.modulesAsGlobals && moduleInstance.subject) global[subjectName] = moduleInstance.subject
 
         // While loading we let other modules know about what core has loaded
         const globalCore = global.core || ({} as any)

@@ -165,7 +165,7 @@ As you can see you can provide configuration depending on the environment you ar
 
 ## Core Module
 
-Core modules need to be built as a conventional class with some required and optional methods. Modules are meant to be a modularized piece of logic that provides encapsulated capabilities to be used all across the project. If possible and in case the user want modules to be shared globally, a `subject` property needs to be set for core to set it as a global, in the example below a `redisModule` global variable equal to the `subject` property will be set.
+Core modules need to be built as a conventional class with some required and optional methods. Modules are meant to be a modularized piece of logic that provides encapsulated capabilities to be used all across the project. If possible and in case the user want modules to be shared globally, a `subject` property needs to be set for core to set it as a global, in the example below a `redisSubject` global variable equal to the `subject` property will be set.
 
 ```js
 import { CoreModule } from '@universal-packages/core'
@@ -187,7 +187,7 @@ export default class RedisModule extends CoreModule {
   async release() {
     await this.subject.disconnect()
   }
-}s
+}
 ```
 
 Configuration for this module should be in `./src/config/redis-module.json|yaml|js`
@@ -236,7 +236,7 @@ export default class WebServer extends CoreApp {
   webServer = null
 
   async prepare() {
-    // posible core module loaded
+    // possible core module loaded
     const migrated = await databaseModule.checkMigrations()
     if (!migrated) throw new Error('Migrate db before running')
 

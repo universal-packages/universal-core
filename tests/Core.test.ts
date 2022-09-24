@@ -140,8 +140,8 @@ logger.localFile.location - Location is not accessible`)
       const projectConfig = await Core.getProjectConfig({ configLocation: './tests/__fixtures__/config' })
       await Core.getCoreModules({ modulesLocation: './tests/__fixtures__/modules', modulesAsGlobals: true }, projectConfig, logger)
 
-      expect(global['goodModule']).toEqual('I am the subject of the good core module')
-      expect(global['excellentModule']).toEqual('I am the subject of the excellent core module')
+      expect(global['goodSubject']).toEqual('I am the subject of the good core module')
+      expect(global['excellentSubject']).toEqual('I am the subject of the excellent core module')
     })
   })
 
