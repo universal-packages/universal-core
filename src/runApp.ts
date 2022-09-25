@@ -5,6 +5,7 @@ import { CoreConfig } from './Core.types'
 import CoreApp from './CoreApp'
 import AppWatcher from './AppWatcher'
 import { stopAppFunction } from './runApp.types'
+import { debounce } from './debouce'
 
 export async function runApp(name: string, args?: Record<string, any>, demon?: boolean, coreConfigOverride?: CoreConfig): Promise<stopAppFunction> {
   let measurer: TimeMeasurer
@@ -67,8 +68,10 @@ export async function runApp(name: string, args?: Record<string, any>, demon?: b
       appWatcher.stop()
     }
 
-    process.addListener('SIGINT', stopWatcher)
-    process.addListener('SIGTERM', stopWatcher)
+    // We debounce signals in case ucore is being executed through npm run
+    // that for some reason is duplicating the signal.
+    process.addListener('SIGINT', debounce(stopWatcher))
+    process.addListener('SIGTERM', debounce(stopWatcher))
 
     return stopWatcher
   } else {
@@ -155,8 +158,10 @@ export async function runApp(name: string, args?: Record<string, any>, demon?: b
       process.addListener('SIGINT', () => {})
       process.addListener('SIGTERM', () => {})
     } else {
-      process.addListener('SIGINT', stopApp.bind(null, false))
-      process.addListener('SIGTERM', stopApp.bind(null, false))
+      // We debounce signals in case ucore is being executed through npm run
+      // that for some reason is duplicating the signal.
+      process.addListener('SIGINT', debounce(stopApp.bind(null, false)))
+      process.addListener('SIGTERM', debounce(stopApp.bind(null, false)))
     }
 
     try {
