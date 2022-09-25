@@ -71,7 +71,7 @@ export default class Core {
       const subjectName = moduleCamelCaseName.replace('Module', 'Subject')
       const moduleConfig = projectConfig[moduleParamCaseName] || projectConfig[modulePascalCaseName] || projectConfig[moduleName]
 
-      if (coreModules[moduleParamCaseName]) {
+      if (coreModules[moduleCamelCaseName]) {
         warnings.push({ title: `Two modules have the same name: ${moduleName}`, message: `First loaded will take precedence\n${currentModule.location}` })
       } else {
         const ModuleClass: typeof CoreModule = currentModule.exports
@@ -88,7 +88,6 @@ export default class Core {
           throw error
         }
 
-        coreModules[moduleParamCaseName] = moduleInstance
         coreModules[moduleCamelCaseName] = moduleInstance
 
         if (coreConfig.modulesAsGlobals && moduleInstance.subject) global[subjectName] = moduleInstance.subject

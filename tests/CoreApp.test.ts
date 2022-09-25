@@ -53,7 +53,7 @@ describe('CoreApp', (): void => {
   })
 
   describe('#prepare', (): void => {
-    it('does not thow if not implemented', async (): Promise<void> => {
+    it('does not throw if not implemented', async (): Promise<void> => {
       const app = new CoreApp({}, {}, {} as any, {})
 
       expect((): unknown => app.prepare()).not.toThrow()
@@ -61,7 +61,7 @@ describe('CoreApp', (): void => {
   })
 
   describe('#run', (): void => {
-    it('thows if not implemented', async (): Promise<void> => {
+    it('throws if not implemented', async (): Promise<void> => {
       const app = new CoreApp({}, {}, {} as any, {})
 
       expect((): unknown => app.run()).toThrow('Implement me: Apps should implement the run method')
@@ -69,7 +69,7 @@ describe('CoreApp', (): void => {
   })
 
   describe('#stop', (): void => {
-    it('thows if not implemented', async (): Promise<void> => {
+    it('throws if not implemented', async (): Promise<void> => {
       const app = new CoreApp({}, {}, {} as any, {})
 
       expect((): unknown => app.stop()).toThrow('Implement me: Apps should implement the stop method')
@@ -77,7 +77,7 @@ describe('CoreApp', (): void => {
   })
 
   describe('#release', (): void => {
-    it('does not thow if not implemented', async (): Promise<void> => {
+    it('does not throw if not implemented', async (): Promise<void> => {
       const app = new CoreApp({}, {}, {} as any, {})
 
       expect((): unknown => app.release()).not.toThrow()

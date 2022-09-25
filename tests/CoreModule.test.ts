@@ -8,7 +8,7 @@ describe('CoreModule', (): void => {
   })
 
   describe('#prepare', (): void => {
-    it('thows if not implemented', async (): Promise<void> => {
+    it('throws if not implemented', async (): Promise<void> => {
       const module = new CoreModule({}, {} as any)
 
       expect((): unknown => module.prepare()).toThrow('Implement me: Modules should implement the prepare method')
@@ -16,7 +16,7 @@ describe('CoreModule', (): void => {
   })
 
   describe('#release', (): void => {
-    it('thows if not implemented', async (): Promise<void> => {
+    it('throws if not implemented', async (): Promise<void> => {
       const module = new CoreModule({}, {} as any)
 
       expect((): unknown => module.release()).toThrow('Implement me: Modules should implement the release method')

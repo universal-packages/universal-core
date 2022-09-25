@@ -87,7 +87,7 @@ logger.localFile.location - Location is not accessible`)
       const projectConfig = await Core.getProjectConfig({ configLocation: './tests/__fixtures__/config' })
       const [modules, warnings] = await Core.getCoreModules({ modulesLocation: './tests/__fixtures__/modules' }, projectConfig, logger)
 
-      expect(modules).toMatchObject({ 'good-module': { config: { isLocal: true, test: true }, logger }, 'excellent-module': { config: { isSecond: true, test: true }, logger } })
+      expect(modules).toMatchObject({ goodModule: { config: { isLocal: true, test: true }, logger }, excellentModule: { config: { isSecond: true, test: true }, logger } })
       expect(warnings).toEqual([])
       expect(GoodModule.iWasPrepared).toBeTruthy()
       expect(ExcellentModule.iWasPrepared).toBeTruthy()
@@ -126,7 +126,7 @@ logger.localFile.location - Location is not accessible`)
       const projectConfig = await Core.getProjectConfig({ configLocation: './tests/__fixtures__/config' })
       const [modules, warnings] = await Core.getCoreModules({ modulesLocation: './tests/__fixtures__/modules-warnings' }, projectConfig, logger)
 
-      expect(modules).toMatchObject({ 'good-module': { config: { isLocal: true, test: true }, logger } })
+      expect(modules).toMatchObject({ goodModule: { config: { isLocal: true, test: true }, logger } })
       expect(warnings).toEqual([
         {
           title: 'Two modules have the same name: good-module',

@@ -46,7 +46,7 @@ describe('AppWatcher', (): void => {
   })
 
   describe('.watcher', (): void => {
-    it('sets ready, forks a child process and emmits once chokidar ready', async (): Promise<void> => {
+    it('sets ready, forks a child process and emits once chokidar ready', async (): Promise<void> => {
       const watcher = new AppWatcher('app', {}, ['somefile'])
       const watchMock = chokidar.watch as jest.Mock
       const forkMock = fork as jest.Mock
@@ -76,7 +76,7 @@ describe('AppWatcher', (): void => {
     })
 
     describe('when restarting', (): void => {
-      it('acumulates changes and only applies a restart if the timeout is called', async (): Promise<void> => {
+      it('accumulates changes and only applies a restart if the timeout is called', async (): Promise<void> => {
         const watcher = new AppWatcher('app', {}, ['somefile'])
         const watchMock = chokidar.watch as jest.Mock
         const forkMock = fork as jest.Mock
@@ -122,7 +122,7 @@ describe('AppWatcher', (): void => {
         expect(restartMock).toBeCalledWith(['add file.js', 'addDir dir', 'change test.js', 'unlink file.js', 'unlinkDir dir'])
       })
 
-      it('restarts by spawing again if last time child failed', async (): Promise<void> => {
+      it('restarts by spawning again if last time child failed', async (): Promise<void> => {
         const watcher = new AppWatcher('app', {}, ['somefile'])
         const watchMock = chokidar.watch as jest.Mock
         const forkMock = fork as jest.Mock

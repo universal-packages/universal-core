@@ -53,7 +53,7 @@ describe('CoreTask', (): void => {
   })
 
   describe('#prepare', (): void => {
-    it('does not thow if not implemented', async (): Promise<void> => {
+    it('does not throw if not implemented', async (): Promise<void> => {
       const task = new CoreTask('directive', [], {}, {} as any, {})
 
       expect((): unknown => task.prepare()).not.toThrow()
@@ -61,7 +61,7 @@ describe('CoreTask', (): void => {
   })
 
   describe('#exec', (): void => {
-    it('thows if not implemented', async (): Promise<void> => {
+    it('throws if not implemented', async (): Promise<void> => {
       const task = new CoreTask('directive', [], {}, {} as any, {})
 
       expect((): unknown => task.exec()).toThrow('Implement me: Tasks should implement the exec method')
@@ -69,7 +69,7 @@ describe('CoreTask', (): void => {
   })
 
   describe('#abort', (): void => {
-    it('does not thow if not implemented', async (): Promise<void> => {
+    it('does not throw if not implemented', async (): Promise<void> => {
       const task = new CoreTask('directive', [], {}, {} as any, {})
 
       expect((): unknown => task.abort()).not.toThrow()

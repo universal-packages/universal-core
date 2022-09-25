@@ -15,7 +15,7 @@ beforeEach((): void => {
 })
 
 describe('execTask', (): void => {
-  it('do all the preaprations funds a task and runs it (sets core)', async (): Promise<void> => {
+  it('do all the preparations funds a task and runs it (sets core)', async (): Promise<void> => {
     await execTask(
       'Good',
       'directive',
@@ -66,7 +66,7 @@ describe('execTask', (): void => {
     expect(GoodTask.iWasExecuted).toEqual(false)
   })
 
-  it('exits if proyect config has errors', async (): Promise<void> => {
+  it('exits if project config has errors', async (): Promise<void> => {
     await execTask(
       'Good',
       'directive',
@@ -122,7 +122,7 @@ describe('execTask', (): void => {
     expect(GoodTask.iWasExecuted).toEqual(true)
   })
 
-  it('exits if task preapration fails (unload modules)', async (): Promise<void> => {
+  it('exits if task preparation fails (unload modules)', async (): Promise<void> => {
     await execTask(
       'prepare-error-task',
       'directive',
@@ -220,7 +220,7 @@ describe('execTask', (): void => {
     expect(process.exit).toHaveBeenCalledWith(1)
   })
 
-  it('waits until the execution reachs a loaded state to start aborting (so we dont unload at the same time the task is being loaded)', async (): Promise<void> => {
+  it('waits until the execution reaches a loaded state to start aborting (so we do not unload at the same time the task is being loaded)', async (): Promise<void> => {
     setTimeout((): void => {
       process.emit('SIGINT')
 

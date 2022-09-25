@@ -20,7 +20,7 @@ beforeEach((): void => {
 })
 
 describe('runConsole', (): void => {
-  it('do all the preaprations and runs a repl server (sets core)', async (): Promise<void> => {
+  it('do all the preparations and runs a repl server (sets core)', async (): Promise<void> => {
     await runConsole({
       appsLocation: './tests/__fixtures__/apps',
       configLocation: './tests/__fixtures__/config',
@@ -33,12 +33,7 @@ describe('runConsole', (): void => {
       appConfig: null,
       appInstance: null,
       coreConfig: expect.objectContaining({ modulesLocation: './tests/__fixtures__/modules' }),
-      coreModules: {
-        'excellent-module': expect.any(ExcellentModule),
-        'good-module': expect.any(GoodModule),
-        excellentModule: expect.any(ExcellentModule),
-        goodModule: expect.any(GoodModule)
-      },
+      coreModules: { excellentModule: expect.any(ExcellentModule), goodModule: expect.any(GoodModule) },
       loaded: true,
       logger: expect.any(Logger),
       projectConfig: expect.objectContaining({ ExcellentModule: expect.anything(), 'good-module': expect.anything(), 'good-app': expect.anything() }),
@@ -60,7 +55,7 @@ describe('runConsole', (): void => {
     expect(process.exit).toHaveBeenCalledWith(1)
   })
 
-  it('exits if proyect config has errors', async (): Promise<void> => {
+  it('exits if project config has errors', async (): Promise<void> => {
     await runConsole({
       appsLocation: './tests/__fixtures__/apps',
       configLocation: './tests/__fixtures__/config-errored',

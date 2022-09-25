@@ -32,12 +32,7 @@ describe('runApp', (): void => {
       appConfig: { doStuff: true, test: true },
       appInstance: expect.any(GoodApp),
       coreConfig: expect.objectContaining({ appsLocation: './tests/__fixtures__/apps' }),
-      coreModules: {
-        'excellent-module': expect.any(ExcellentModule),
-        'good-module': expect.any(GoodModule),
-        excellentModule: expect.any(ExcellentModule),
-        goodModule: expect.any(GoodModule)
-      },
+      coreModules: { excellentModule: expect.any(ExcellentModule), goodModule: expect.any(GoodModule) },
       loaded: true,
       logger: expect.any(Logger),
       projectConfig: expect.objectContaining({ ExcellentModule: expect.anything(), 'good-module': expect.anything(), 'good-app': expect.anything() }),
