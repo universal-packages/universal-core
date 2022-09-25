@@ -1,4 +1,5 @@
 import { Logger } from '@universal-packages/logger'
+import { sleep } from '@universal-packages/time-measurer'
 import { runApp } from '../src/runApp'
 import GoodApp from './__fixtures__/apps/Good.app'
 import ExcellentModule from './__fixtures__/modules/Excellent.module'
@@ -6,6 +7,7 @@ import GoodModule from './__fixtures__/modules/Good.module'
 
 jest.spyOn(process, 'exit').mockImplementation(((): void => {}) as any)
 jest.mock('../src/AppWatcher')
+jest.useFakeTimers()
 
 beforeEach((): void => {
   jest.clearAllMocks()
@@ -142,6 +144,8 @@ describe('runApp', (): void => {
       modulesLocation: './tests/__fixtures__/modules'
     })
 
+    jest.runOnlyPendingTimers()
+
     await process.listeners('SIGINT')[0]('SIGINT')
 
     expect(process.exit).toHaveBeenCalledWith(1)
@@ -156,6 +160,8 @@ describe('runApp', (): void => {
       modulesLocation: './tests/__fixtures__/modules'
     })
 
+    jest.runOnlyPendingTimers()
+
     await process.listeners('SIGINT')[0]('SIGINT')
 
     expect(process.exit).toHaveBeenCalledWith(1)
@@ -169,6 +175,8 @@ describe('runApp', (): void => {
       tasksLocation: './tests/__fixtures__/tasks',
       modulesLocation: './tests/__fixtures__/modules-release-error'
     })
+
+    jest.runOnlyPendingTimers()
 
     await process.listeners('SIGINT')[0]('SIGINT')
 
@@ -193,6 +201,8 @@ describe('runApp', (): void => {
 
     core.running = false
 
+    jest.runOnlyPendingTimers()
+
     await process.listeners('SIGINT')[0]('SIGINT')
 
     expect(GoodApp.iWasPrepared).toEqual(true)
@@ -209,12 +219,18 @@ describe('runApp', (): void => {
       modulesLocation: './tests/__fixtures__/modules'
     })
 
+    jest.runOnlyPendingTimers()
+
     await process.listeners('SIGINT')[0]('SIGINT')
     await process.listeners('SIGTERM')[0]('SIGTERM')
+
+    jest.runOnlyPendingTimers()
 
     expect(process.exit).not.toHaveBeenCalled()
     expect(GoodApp.iWasStopped).toEqual(false)
     expect(GoodApp.iWasReleased).toEqual(false)
+
+    jest.runOnlyPendingTimers()
 
     await process.listeners('SIGABRT')[0]('SIGABRT')
 
@@ -222,11 +238,15 @@ describe('runApp', (): void => {
     expect(GoodApp.iWasStopped).toEqual(true)
     expect(GoodApp.iWasReleased).toEqual(true)
 
+    jest.runOnlyPendingTimers()
+
     await process.listeners('SIGALRM')[0]('SIGALRM')
 
     expect(process.exit).not.toHaveBeenCalled()
     expect(GoodApp.iWasStopped).toEqual(true)
     expect(GoodApp.iWasReleased).toEqual(true)
+
+    jest.runOnlyPendingTimers()
 
     await process.listeners('SIGABRT')[0]('SIGABRT')
 
@@ -243,6 +263,8 @@ describe('runApp', (): void => {
         enabled: true
       }
     })
+
+    jest.runOnlyPendingTimers()
 
     process.listeners('SIGINT')[0]('SIGINT')
 
