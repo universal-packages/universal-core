@@ -249,6 +249,6 @@ describe('runApp', (): void => {
     expect(core.stopping).toBeTruthy()
 
     process.listeners('SIGTERM')[0]('SIGTERM')
-    expect(process.exit).toHaveBeenCalledWith(0)
+    expect(process.exit).not.toHaveBeenCalled()
   })
 })

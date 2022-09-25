@@ -61,14 +61,9 @@ export async function runApp(name: string, args?: Record<string, any>, demon?: b
     const stopWatcher = async (): Promise<void> => {
       if (process.stdout.clearLine) process.stdout.clearLine(0)
       if (process.stdout.cursorTo) process.stdout.cursorTo(0)
-
-      if (core.stopping) {
-        appWatcher.kill()
-        process.exit(0)
-      }
+      if (core.stopping) return appWatcher.kill()
 
       core.stopping = true
-
       appWatcher.stop()
     }
 
