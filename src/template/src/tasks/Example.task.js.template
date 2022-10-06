@@ -4,16 +4,7 @@ export default class ExampleTask extends CoreTask {
   static taskName = "example-task";
   static description =
     "Tasks are meant to ran, do their job and finish by themselves";
-
-  /**
-   * OPTIONAL
-   *
-   * Tasks load in the same way as an app, the prepare method is called
-   * just after instantiation and after all modules are loaded to be
-   * used here.
-   *
-   * */
-  async prepare() {}
+  static defaultConfig = {}
 
   /**
    * REQUIRED

@@ -4,6 +4,7 @@ export default class ExampleApp extends CoreApp {
   static appName = "example-app"; // Name your app so you have a closer relationship
   static description =
     "This app exemplify how the life cycle of a core app goes";
+  static defaultConfig = {}
 
   timeout = 0;
 

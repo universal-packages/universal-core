@@ -1,21 +1,9 @@
-import { Logger } from "@universal-packages/logger";
-import ExampleApp from "../src/Example.app";
+import { runApp } from '@universal-packages/core'
 
-describe("ExampleApp", (): void => {
-  it("works", async (): Promise<void> => {
-    const app = new ExampleApp(
-      { cores: 2, ram: 200 },
-      { p: 8080, port: 8080 },
-      new Logger({ silence: true }),
-      {}
-    );
+describe('ExpressApp', (): void => {
+  it('works', async (): Promise<void> => {
+    const stopApp = await runApp('example-app')
 
-    await app.prepare();
-    await app.run();
-
-    // test stuff the app responds to
-
-    await app.stop();
-    await app.release();
-  });
-});
+    await stopApp()
+  })
+})

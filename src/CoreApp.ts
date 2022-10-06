@@ -2,7 +2,7 @@ import { Logger } from '@universal-packages/logger'
 import { loadModules, ModuleRegistry } from '@universal-packages/module-loader'
 import { paramCase, pascalCase } from 'change-case'
 import Core from './Core'
-import { CoreConfig, CoreModules } from './Core.types'
+import { CoreConfig } from './Core.types'
 
 export default class CoreApp<C = any, A = any> extends Core {
   public static readonly appName: string
@@ -12,8 +12,8 @@ export default class CoreApp<C = any, A = any> extends Core {
   public readonly config: C
   public readonly args: A
 
-  public constructor(config: C, args: A, logger: Logger, coreModules: CoreModules) {
-    super(logger, coreModules)
+  public constructor(config: C, args: A, logger: Logger) {
+    super(logger)
     this.config = config
     this.args = args
   }

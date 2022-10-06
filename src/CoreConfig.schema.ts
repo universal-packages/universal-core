@@ -50,6 +50,11 @@ export const coreConfigSchema = new Schema(
       use: { directoryCheck },
       message: 'Location is not accessible'
     },
+    environmentsLocation: {
+      type: String,
+      use: { directoryCheckOptional },
+      message: 'Location is not accessible'
+    },
     modulesLocation: {
       type: String,
       use: { directoryCheckOptional },

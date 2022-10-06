@@ -2,18 +2,18 @@ import { Logger } from '@universal-packages/logger'
 import { loadModules, ModuleRegistry } from '@universal-packages/module-loader'
 import { paramCase, pascalCase } from 'change-case'
 import Core from './Core'
-import { CoreConfig, CoreModules } from './Core.types'
+import { CoreConfig } from './Core.types'
 
 export default class CoreTask<A = any> extends Core {
-  public static readonly appName: string
+  public static readonly taskName: string
   public static readonly description: string
 
   public readonly directive: string
   public readonly directiveOptions: string[]
   public readonly args: A
 
-  public constructor(directive: string, directiveOptions: string[], args: A, logger: Logger, coreModules: CoreModules) {
-    super(logger, coreModules)
+  public constructor(directive: string, directiveOptions: string[], args: A, logger: Logger) {
+    super(logger)
     this.directive = directive
     this.directiveOptions = directiveOptions
     this.args = args
@@ -40,8 +40,6 @@ export default class CoreTask<A = any> extends Core {
 
     return taskModuleRegistry.exports
   }
-
-  public prepare(): Promise<void> | void {}
 
   public exec(): Promise<void> | void {
     throw 'Implement me: Tasks should implement the exec method'

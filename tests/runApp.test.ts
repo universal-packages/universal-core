@@ -1,7 +1,13 @@
 import { Logger } from '@universal-packages/logger'
-import { sleep } from '@universal-packages/time-measurer'
+import { EnvironmentEvent } from '../src'
 import { runApp } from '../src/runApp'
 import GoodApp from './__fixtures__/apps/Good.app'
+import ControlEnvironment from './__fixtures__/environments-event-error/Control.environment'
+import EventErrorEnvironment from './__fixtures__/environments-event-error/EventError.environment'
+import AppEnvironment from './__fixtures__/environments/App.environment'
+import GoodAppEnvironment from './__fixtures__/environments/GoodApp.environment'
+import TestEnvironment from './__fixtures__/environments/Test.environment'
+import UniversalEnvironment from './__fixtures__/environments/Universal.environment'
 import ExcellentModule from './__fixtures__/modules/Excellent.module'
 import GoodModule from './__fixtures__/modules/Good.module'
 
@@ -15,6 +21,11 @@ beforeEach((): void => {
   GoodApp.iWasRan = false
   GoodApp.iWasStopped = false
   GoodApp.iWasReleased = false
+  AppEnvironment.calls = []
+  GoodAppEnvironment.calls = []
+  TestEnvironment.calls = []
+  UniversalEnvironment.calls = []
+  ControlEnvironment.calls = []
   process.removeAllListeners()
 })
 
@@ -23,6 +34,7 @@ describe('runApp', (): void => {
     await runApp('Good', { fast: true }, false, {
       appsLocation: './tests/__fixtures__/apps',
       configLocation: './tests/__fixtures__/config',
+      environmentsLocation: './tests/__fixtures__/environments',
       tasksLocation: './tests/__fixtures__/tasks',
       modulesLocation: './tests/__fixtures__/modules'
     })
@@ -35,20 +47,25 @@ describe('runApp', (): void => {
       appInstance: expect.any(GoodApp),
       coreConfig: expect.objectContaining({ appsLocation: './tests/__fixtures__/apps' }),
       coreModules: { excellentModule: expect.any(ExcellentModule), goodModule: expect.any(GoodModule) },
-      loaded: true,
+      environments: [expect.any(AppEnvironment), expect.any(GoodAppEnvironment), expect.any(TestEnvironment), expect.any(UniversalEnvironment)],
       logger: expect.any(Logger),
       projectConfig: expect.objectContaining({ ExcellentModule: expect.anything(), 'good-module': expect.anything(), 'good-app': expect.anything() }),
-      running: true,
+      stoppable: true,
       stopping: false,
       Task: null,
       taskInstance: null
     })
+    expect(AppEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeAppPrepare', 'afterAppPrepare', 'beforeAppRuns', 'afterAppRuns'])
+    expect(GoodAppEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeAppPrepare', 'afterAppPrepare', 'beforeAppRuns', 'afterAppRuns'])
+    expect(TestEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeAppPrepare', 'afterAppPrepare', 'beforeAppRuns', 'afterAppRuns'])
+    expect(UniversalEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeAppPrepare', 'afterAppPrepare', 'beforeAppRuns', 'afterAppRuns'])
   })
 
   it('exits if core config has errors', async (): Promise<void> => {
     await runApp('Good', { fast: true }, false, {
       appsLocation: './tests/__fixtures__/nonexistent',
       configLocation: './tests/__fixtures__/config',
+      environmentsLocation: './tests/__fixtures__/environments',
       tasksLocation: './tests/__fixtures__/tasks',
       modulesLocation: './tests/__fixtures__/modules'
     })
@@ -56,12 +73,14 @@ describe('runApp', (): void => {
     expect(process.exit).toHaveBeenCalledWith(1)
     expect(GoodApp.iWasPrepared).toEqual(false)
     expect(GoodApp.iWasRan).toEqual(false)
+    expect(AppEnvironment.calls).toEqual([])
   })
 
   it('exits if project config has errors', async (): Promise<void> => {
     await runApp('Good', { fast: true }, false, {
       appsLocation: './tests/__fixtures__/apps',
       configLocation: './tests/__fixtures__/config-errored',
+      environmentsLocation: './tests/__fixtures__/environments',
       tasksLocation: './tests/__fixtures__/tasks',
       modulesLocation: './tests/__fixtures__/modules'
     })
@@ -69,12 +88,44 @@ describe('runApp', (): void => {
     expect(process.exit).toHaveBeenCalledWith(1)
     expect(GoodApp.iWasPrepared).toEqual(false)
     expect(GoodApp.iWasRan).toEqual(false)
+    expect(AppEnvironment.calls).toEqual([])
+  })
+
+  it('exits if environments load fails', async (): Promise<void> => {
+    await runApp('Good', { fast: true }, false, {
+      appsLocation: './tests/__fixtures__/apps',
+      configLocation: './tests/__fixtures__/config',
+      environmentsLocation: './tests/__fixtures__/environments-load-error',
+      tasksLocation: './tests/__fixtures__/tasks',
+      modulesLocation: './tests/__fixtures__/modules'
+    })
+
+    expect(process.exit).toHaveBeenCalledWith(1)
+    expect(GoodApp.iWasPrepared).toEqual(false)
+    expect(GoodApp.iWasRan).toEqual(false)
+    expect(AppEnvironment.calls).toEqual([])
+  })
+
+  it('exits if app load fails', async (): Promise<void> => {
+    await runApp('load-error-app', { fast: true }, false, {
+      appsLocation: './tests/__fixtures__/apps-load-error',
+      configLocation: './tests/__fixtures__/config',
+      environmentsLocation: './tests/__fixtures__/environments',
+      tasksLocation: './tests/__fixtures__/tasks',
+      modulesLocation: './tests/__fixtures__/modules'
+    })
+
+    expect(process.exit).toHaveBeenCalledWith(1)
+    expect(GoodApp.iWasPrepared).toEqual(false)
+    expect(GoodApp.iWasRan).toEqual(false)
+    expect(AppEnvironment.calls).toEqual([])
   })
 
   it('exits if modules has errors', async (): Promise<void> => {
     await runApp('Good', { fast: true }, false, {
       appsLocation: './tests/__fixtures__/apps',
       configLocation: './tests/__fixtures__/config',
+      environmentsLocation: './tests/__fixtures__/environments',
       tasksLocation: './tests/__fixtures__/tasks',
       modulesLocation: './tests/__fixtures__/modules-load-error'
     })
@@ -82,48 +133,56 @@ describe('runApp', (): void => {
     expect(process.exit).toHaveBeenCalledWith(1)
     expect(GoodApp.iWasPrepared).toEqual(false)
     expect(GoodApp.iWasRan).toEqual(false)
+    expect(AppEnvironment.calls).toEqual(['beforeModulesLoad'])
   })
 
   it('continues if modules warnings are present (log the warnings)', async (): Promise<void> => {
     await runApp('Good', { fast: true }, false, {
       appsLocation: './tests/__fixtures__/apps',
       configLocation: './tests/__fixtures__/config',
+      environmentsLocation: './tests/__fixtures__/environments',
       tasksLocation: './tests/__fixtures__/tasks',
       modulesLocation: './tests/__fixtures__/modules-warnings'
     })
 
     expect(GoodApp.iWasPrepared).toEqual(true)
     expect(GoodApp.iWasRan).toEqual(true)
+    expect(AppEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeAppPrepare', 'afterAppPrepare', 'beforeAppRuns', 'afterAppRuns'])
   })
 
   it('exits if app preparation fails (unload modules)', async (): Promise<void> => {
     await runApp('prepare-error-app', { fast: true }, false, {
       appsLocation: './tests/__fixtures__/apps-prepare-error',
       configLocation: './tests/__fixtures__/config',
+      environmentsLocation: './tests/__fixtures__/environments',
       tasksLocation: './tests/__fixtures__/tasks',
       modulesLocation: './tests/__fixtures__/modules'
     })
 
     expect(process.exit).toHaveBeenCalledWith(1)
     expect(core.coreModules).toEqual({})
+    expect(AppEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeAppPrepare'])
   })
 
   it('exits if running the app fails (unload modules)', async (): Promise<void> => {
     await runApp('run-error-app', { fast: true }, false, {
       appsLocation: './tests/__fixtures__/apps-run-error',
       configLocation: './tests/__fixtures__/config',
+      environmentsLocation: './tests/__fixtures__/environments',
       tasksLocation: './tests/__fixtures__/tasks',
       modulesLocation: './tests/__fixtures__/modules'
     })
 
     expect(process.exit).toHaveBeenCalledWith(1)
     expect(core.coreModules).toEqual({})
+    expect(AppEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeAppPrepare', 'afterAppPrepare', 'beforeAppRuns'])
   })
 
-  it('aborts the execution when receiving the signal', async (): Promise<void> => {
+  it('stops the app when receiving the signal', async (): Promise<void> => {
     await runApp('good-app', { fast: true }, false, {
       appsLocation: './tests/__fixtures__/apps',
       configLocation: './tests/__fixtures__/config',
+      environmentsLocation: './tests/__fixtures__/environments',
       tasksLocation: './tests/__fixtures__/tasks',
       modulesLocation: './tests/__fixtures__/modules'
     })
@@ -134,12 +193,27 @@ describe('runApp', (): void => {
     expect(GoodApp.iWasRan).toEqual(true)
     expect(GoodApp.iWasStopped).toEqual(true)
     expect(GoodApp.iWasReleased).toEqual(true)
+    expect(AppEnvironment.calls).toEqual([
+      'beforeModulesLoad',
+      'afterModulesLoad',
+      'beforeAppPrepare',
+      'afterAppPrepare',
+      'beforeAppRuns',
+      'afterAppRuns',
+      'beforeAppStops',
+      'afterAppStops',
+      'beforeAppRelease',
+      'afterAppRelease',
+      'beforeModulesRelease',
+      'afterModulesRelease'
+    ])
   })
 
   it('exists if stopping goes wrong', async (): Promise<void> => {
     await runApp('stop-error-app', { fast: true }, false, {
       appsLocation: './tests/__fixtures__/apps-stop-error',
       configLocation: './tests/__fixtures__/config',
+      environmentsLocation: './tests/__fixtures__/environments',
       tasksLocation: './tests/__fixtures__/tasks',
       modulesLocation: './tests/__fixtures__/modules'
     })
@@ -150,12 +224,14 @@ describe('runApp', (): void => {
 
     expect(process.exit).toHaveBeenCalledWith(1)
     expect(core.coreModules).toEqual({})
+    expect(AppEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeAppPrepare', 'afterAppPrepare', 'beforeAppRuns', 'afterAppRuns', 'beforeAppStops'])
   })
 
   it('exists if releasing goes wrong', async (): Promise<void> => {
     await runApp('release-error-app', { fast: true }, false, {
       appsLocation: './tests/__fixtures__/apps-release-error',
       configLocation: './tests/__fixtures__/config',
+      environmentsLocation: './tests/__fixtures__/environments',
       tasksLocation: './tests/__fixtures__/tasks',
       modulesLocation: './tests/__fixtures__/modules'
     })
@@ -166,12 +242,24 @@ describe('runApp', (): void => {
 
     expect(process.exit).toHaveBeenCalledWith(1)
     expect(core.coreModules).toEqual({})
+    expect(AppEnvironment.calls).toEqual([
+      'beforeModulesLoad',
+      'afterModulesLoad',
+      'beforeAppPrepare',
+      'afterAppPrepare',
+      'beforeAppRuns',
+      'afterAppRuns',
+      'beforeAppStops',
+      'afterAppStops',
+      'beforeAppRelease'
+    ])
   })
 
   it('exits if modules unloading goes wrong', async (): Promise<void> => {
     await runApp('good-app', { fast: true }, false, {
       appsLocation: './tests/__fixtures__/apps',
       configLocation: './tests/__fixtures__/config',
+      environmentsLocation: './tests/__fixtures__/environments',
       tasksLocation: './tests/__fixtures__/tasks',
       modulesLocation: './tests/__fixtures__/modules-release-error'
     })
@@ -181,25 +269,39 @@ describe('runApp', (): void => {
     await process.listeners('SIGINT')[0]('SIGINT')
 
     expect(process.exit).toHaveBeenCalledWith(1)
+    expect(AppEnvironment.calls).toEqual([
+      'beforeModulesLoad',
+      'afterModulesLoad',
+      'beforeAppPrepare',
+      'afterAppPrepare',
+      'beforeAppRuns',
+      'afterAppRuns',
+      'beforeAppStops',
+      'afterAppStops',
+      'beforeAppRelease',
+      'afterAppRelease',
+      'beforeModulesRelease'
+    ])
   })
 
-  it("waits until the running reaches a loaded state to start aborting (so we don't unload at the same time the task is being loaded)", async (): Promise<void> => {
+  it("waits until the running reaches a stoppable state to start aborting (so we don't unload at the same time the task is being loaded)", async (): Promise<void> => {
     setTimeout((): void => {
       expect(GoodApp.iWasPrepared).toEqual(true)
       expect(GoodApp.iWasRan).toEqual(true)
       expect(GoodApp.iWasStopped).toEqual(false)
       expect(GoodApp.iWasReleased).toEqual(false)
-      core.running = true
+      core.stoppable = true
     }, 500)
 
     await runApp('good-app', { fast: true }, false, {
       appsLocation: './tests/__fixtures__/apps',
       configLocation: './tests/__fixtures__/config',
+      environmentsLocation: './tests/__fixtures__/environments',
       tasksLocation: './tests/__fixtures__/tasks',
       modulesLocation: './tests/__fixtures__/modules'
     })
 
-    core.running = false
+    core.stoppable = false
 
     jest.runOnlyPendingTimers()
 
@@ -215,6 +317,7 @@ describe('runApp', (): void => {
     await runApp('good-app', { fast: true }, true, {
       appsLocation: './tests/__fixtures__/apps',
       configLocation: './tests/__fixtures__/config',
+      environmentsLocation: './tests/__fixtures__/environments',
       tasksLocation: './tests/__fixtures__/tasks',
       modulesLocation: './tests/__fixtures__/modules'
     })
@@ -257,6 +360,7 @@ describe('runApp', (): void => {
     await runApp('good-app', { fast: true }, false, {
       appsLocation: './tests/__fixtures__/apps',
       configLocation: './tests/__fixtures__/config',
+      environmentsLocation: './tests/__fixtures__/environments',
       tasksLocation: './tests/__fixtures__/tasks',
       modulesLocation: './tests/__fixtures__/modules',
       appWatcher: {
@@ -272,5 +376,49 @@ describe('runApp', (): void => {
 
     process.listeners('SIGTERM')[0]('SIGTERM')
     expect(process.exit).not.toHaveBeenCalled()
+    expect(AppEnvironment.calls).toEqual([])
+    expect(TestEnvironment.calls).toEqual([])
+  })
+
+  it('exits if environments events fails', async (): Promise<void> => {
+    const baseEvents: EnvironmentEvent[] = ['beforeModulesLoad', 'afterModulesLoad', 'beforeAppPrepare', 'afterAppPrepare', 'beforeAppRuns', 'afterAppRuns']
+    const stopEvents: EnvironmentEvent[] = ['beforeAppStops', 'afterAppStops', 'beforeAppRelease', 'afterAppRelease', 'beforeModulesRelease', 'afterModulesRelease']
+
+    for (let i = 0; i < baseEvents.length; i++) {
+      const currentEvent = baseEvents[i]
+
+      ControlEnvironment.calls = []
+      EventErrorEnvironment.toError = currentEvent
+
+      await runApp('Good', { fast: true }, false, {
+        appsLocation: './tests/__fixtures__/apps',
+        configLocation: './tests/__fixtures__/config',
+        environmentsLocation: './tests/__fixtures__/environments-event-error',
+        tasksLocation: './tests/__fixtures__/tasks',
+        modulesLocation: './tests/__fixtures__/modules'
+      })
+
+      expect(ControlEnvironment.calls).toEqual(baseEvents.slice(0, i + 1))
+    }
+
+    for (let i = 0; i < stopEvents.length; i++) {
+      const currentEvent = stopEvents[i]
+
+      process.removeAllListeners()
+      ControlEnvironment.calls = []
+      EventErrorEnvironment.toError = currentEvent
+
+      await runApp('Good', { fast: true }, false, {
+        appsLocation: './tests/__fixtures__/apps',
+        configLocation: './tests/__fixtures__/config',
+        environmentsLocation: './tests/__fixtures__/environments-event-error',
+        tasksLocation: './tests/__fixtures__/tasks',
+        modulesLocation: './tests/__fixtures__/modules'
+      })
+
+      await process.listeners('SIGINT')[0]('SIGINT')
+
+      expect(ControlEnvironment.calls).toEqual([...baseEvents, ...stopEvents.slice(0, i + 1)])
+    }
   })
 })

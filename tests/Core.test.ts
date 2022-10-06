@@ -1,4 +1,11 @@
 import { Core } from '../src'
+import AppEnvironment from './__fixtures__/environments/App.environment'
+import ConsoleEnvironment from './__fixtures__/environments/Console.environment'
+import GoodAppEnvironment from './__fixtures__/environments/GoodApp.environment'
+import GoodTaskEnvironment from './__fixtures__/environments/GoodTask.environment'
+import TaskEnvironment from './__fixtures__/environments/Task.environment'
+import TestEnvironment from './__fixtures__/environments/Test.environment'
+import UniversalEnvironment from './__fixtures__/environments/Universal.environment'
 import AModule from './__fixtures__/modules-prepare-error/A.module'
 import ZModule from './__fixtures__/modules-release-error/Z.module'
 import ExcellentModule from './__fixtures__/modules/Excellent.module'
@@ -78,6 +85,50 @@ logger.localFile.location - Location is not accessible`)
         'good-module': { isLocal: true, test: true },
         ExcellentModule: { isSecond: true, test: true }
       })
+    })
+  })
+
+  describe('.getCoreEnvironments', (): void => {
+    it('loads all core environments for NODE_ENV and not constrains specified', async (): Promise<void> => {
+      const logger = Core.getCoreLogger()
+      const environments = await Core.getCoreEnvironments({ environmentsLocation: './tests/__fixtures__/environments' }, logger)
+
+      expect(environments).toEqual([expect.any(TestEnvironment), expect.any(UniversalEnvironment)])
+    })
+
+    it('loads all core environments by process type', async (): Promise<void> => {
+      const logger = Core.getCoreLogger()
+
+      let environments = await Core.getCoreEnvironments({ environmentsLocation: './tests/__fixtures__/environments' }, logger, 'apps')
+      expect(environments).toEqual([expect.any(AppEnvironment), expect.any(TestEnvironment), expect.any(UniversalEnvironment)])
+
+      environments = await Core.getCoreEnvironments({ environmentsLocation: './tests/__fixtures__/environments' }, logger, 'console')
+      expect(environments).toEqual([expect.any(ConsoleEnvironment), expect.any(TestEnvironment), expect.any(UniversalEnvironment)])
+
+      environments = await Core.getCoreEnvironments({ environmentsLocation: './tests/__fixtures__/environments' }, logger, 'tasks')
+      expect(environments).toEqual([expect.any(TaskEnvironment), expect.any(TestEnvironment), expect.any(UniversalEnvironment)])
+    })
+
+    it('loads all core environments by process name', async (): Promise<void> => {
+      const logger = Core.getCoreLogger()
+
+      let environments = await Core.getCoreEnvironments({ environmentsLocation: './tests/__fixtures__/environments' }, logger, null, 'good-app')
+      expect(environments).toEqual([expect.any(GoodAppEnvironment), expect.any(TestEnvironment), expect.any(UniversalEnvironment)])
+
+      environments = await Core.getCoreEnvironments({ environmentsLocation: './tests/__fixtures__/environments' }, logger, null, 'good-task')
+      expect(environments).toEqual([expect.any(GoodTaskEnvironment), expect.any(TestEnvironment), expect.any(UniversalEnvironment)])
+    })
+
+    it('throws if it finds an environment with errors', async (): Promise<void> => {
+      let error: Error
+      try {
+        const logger = Core.getCoreLogger()
+        await Core.getCoreEnvironments({ environmentsLocation: './tests/__fixtures__/environments-load-error' }, logger)
+      } catch (err) {
+        error = err
+      }
+
+      expect(error).toEqual('Load Error')
     })
   })
 

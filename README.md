@@ -134,6 +134,9 @@ As you can see you can provide configuration depending on the environment you ar
 - **`configLocation`** `string` `default: ./src/config`
   Where all the project config is.
 
+- **`environmentsLocation`** `string` `default: ./src`
+  Where all your environments are.
+
 - **`modulesLocation`** `string` `default: ./src/modules`
   Where all your custom modules are.
 
@@ -174,8 +177,7 @@ import ActualRedis from 'some-good-redis-lib'
 export default class RedisModule extends CoreModule {
   static moduleName = 'redis-module'
   static description = 'Redis encapsulation'
-
-  defaultConfig = { port: 3789 }
+  static defaultConfig = { port: 3789 }
 
   subject = null
 
@@ -201,23 +203,32 @@ development:
   port: 6379
 ```
 
-### this.config
+### Static properties
 
-Use the config passed to this instance via this Module's configuration file via `this.config` the configuration file should be named the same as your module's name `./src/config/custom-module.yaml | json | js | ts`
+- **`moduleName`** `String`
+  Name to be used when loading an collecting modules, internally this is preferred before using the class name, module names will be used to name the subject when globals are enabled, try to follow a convention to use `module` at the end of your module name, for example `redis-module`, this way your global subject will be called `redisSubject`, you can still name it what ever you want and `subject` will be appended at the end of the module name.
+- **`description`** `String`
+  Quick explanation of what your modules provides.
+- **`defaultConfig`** `String`
+  Before core passed the configuration loaded to this module it can optionally grab this default configuration and merge it with the loaded one, normally used to avoid errors while configuring the subject.
 
-### this.logger
+### Instance properties
 
-You can use the core project logger passed to the instance via `this.logger`.
+- **`config`** `Object`
+  Use the config passed to this instance via this Module's configuration file via `this.config` the configuration file should be named the same as your module's name `./src/config/custom-module.yaml | json | js | ts`
+- **`logger`** `Logger`
+  A logger will be passed to the environment to be used accessed as `this.logger`
+- **`subject`** `Any`
+  Set this if you want core to set it as a global to use, normally modules abstract a subject and normalize it to shared across the app through a subject.
 
-### prepare() `required`
+### Instance methods (Module life cycle)
 
-Modules are loaded before the app or task are loaded, so they can access all modules to prepare themselves.
+- **`prepare`** `required`
+  Modules are loaded before the app or task are loaded, so they can access all modules to prepare themselves.
+  Every time a module is loaded its prepare method will be called for instantiation, so all sorts of preparations can be made to leave the module ready to be used across the project.
 
-Every time a module is loaded its prepare method will be called for instantiation, so all sorts of preparations can be made to leave the module ready to be used across the project.
-
-### release() `required`
-
-Modules normally will release any connections to local services such as databases.
+- **`release`** `required`
+  Modules normally will release any connections to local services such as databases.
 
 ## Core Apps
 
@@ -230,8 +241,7 @@ import { createServer, destroyServer } from 'some-useful-http-server'
 export default class WebServer extends CoreApp {
   static appName = 'web-server'
   static description = 'Http server'
-
-  defaultConfig = { host: 'localhost' }
+  static defaultConfig = { host: 'localhost' }
 
   webServer = null
 
@@ -273,41 +283,44 @@ development:
   port: 3000
 ```
 
-### this.config
+### Static properties
 
-Use the config passed to this instance via this App's configuration file via `this.config` the configuration file should be named the same as your app's name `./src/config/example-app.yaml | json | js | ts`
+- **`appName`** `String`
+  Name to be used when finding an app to run, internally this is preferred before using the class name.
+- **`description`** `String`
+  Quick explanation of what your app provides.
+- **`defaultConfig`** `String`
+  Before core passed the configuration loaded to this app it can optionally grab this default configuration and merge it with the loaded one, normally used to avoid errors.
 
-### this.args
+### Instance properties
 
-Any params passed via command line will be passed to the app instance and can be accessed via `this.args`
+- **`config`** `Object`
+  Use the config passed to this instance via this App's configuration file via `this.config` the configuration file should be named the same as your app's name `./src/config/example-app.yaml | json | js | ts`
+- **`logger`** `Logger`
+  A logger will be passed to the environment to be used accessed as `this.logger`
+- **`args`** `oBJECT`
+  Any params passed via command line will be passed to the app instance and can be accessed via `this.args`
 
-```
-ucore run example-app -p 80000
-                      |       |
-                         args
-```
+  ```
+  ucore run example-app -p 80000
+                        |       |
+                          args
+  ```
 
-### this.logger
+### Instance methods (App life cycle)
 
-You can use the core project logger passed to the instance via `this.logger`.
+- **`prepare`** `optional`
+  When core loads your app, it will call this method so you can prepare any custom stuff you need to prepare in order for your app to run smoothly. Core modules are already loaded at this point so feel free to use them. Sometimes you just want custom stuff to happen before starting the app.
 
-### prepare() `optional`
+- **`run`** `required`
+  Once all modules have been loaded as well as your app prepared, this method is called, here you can start listening for connections, or start a worker, or any kind of whatever, after all, a core app is meant to be use in a universal
+  way.
 
-When core loads your app, it will call this method so you can prepare any custom
-stuff you need to prepare in order for your app to run smoothly. Core modules are already loaded at this point so feel free to use them. Sometimes you just want custom stuff to happen before starting the app.
+- **`stop`** `required`
+  After pressing `CTRL+C` universal core will call this method so you can start shutting down your app gracefully, starting draining sockets or whatever.
 
-### run() `required`
-
-Once all modules have been loaded as well as your app prepared, this method is called, here you can start listening for connections, or start a worker, or any kind of whatever, after all, a core app is meant to be use in a universal
-way.
-
-### stop() `required`
-
-After pressing `CTRL+C` universal core will call this method so you can start shutting down your app gracefully, starting draining sockets or whatever.
-
-### release() `optional`
-
-This is the counterpart of `prepare`, use this after your app has stopped to release any resources or custom routines to ensure your app has released everything to finish the process.
+- **`release`** `optional`
+  This is the counterpart of `prepare`, use this after your app has stopped to release any resources or custom routines to ensure your app has released everything to finish the process.
 
 ## Core Tasks
 
@@ -323,14 +336,6 @@ export default class SendEmailsTask extends CoreTask {
   allUsers = []
   stopping = false
 
-  async prepare() {
-    if (this.directiveOptions[0] === 'admins') {
-      this.allUsers = await ormModule.models.User.admins()
-    } else {
-      this.allUsers = await ormModule.models.User.all()
-    }
-  }
-
   async exec() {
     for (let i = 0; i < this.allUsers, length; i++) {
       if (this.stopping) return
@@ -344,45 +349,153 @@ export default class SendEmailsTask extends CoreTask {
 }
 ```
 
-### this.directive | this.directiveOptions
+### Static properties
 
-For tasks instead of loading a configuration in the `this.config` instance property the task executioner will pass a directive and directiveOptions and these can be accessed via `this.directive` `this.directiveOptions`.
+- **`taskName`** `String`
+  Name to be used when finding an task to exec, internally this is preferred before using the class name.
+- **`description`** `String`
+  Quick explanation of what your task does.
 
+### Instance properties
+
+- **`this.directive, this.directiveOptions`** `String, String[]`
+  For tasks instead of loading a configuration in the `this.config` instance property the task executioner will pass a directive and directiveOptions and these can be accessed via `this.directive` `this.directiveOptions`.
+
+  ```
+  ucore exec send-emails-task hola admins
+                              |   | |   |
+                              ----- -----
+                              |       |
+                          directive  directiveOptions ['admins']
+  ```
+
+- **`this.args`** `Object`
+  Any params passed via command line will be passed to the app instance and can be accessed via `this.args`
+
+  ```
+  ucore exec send-emails-task hola admins --fast
+                                          |       |
+                                            args
+  ```
+
+- **`this.logger`** `Logger`
+  You can use the core project logger passed to the instance via `this.logger`.
+
+### Instance methods (Task life cycle)
+
+- **`exec`** `required`
+  Once all is loaded and prepared exec any kind of whatever. Some data migration or a bulk email sending or whatever.
+
+- **`abort`** `optional`
+  After pressing `CTRL+C` universal core will optionally call this method, if you have a way to stop your task do it here so the execution can be stopped gracefully.
+  > If your exec method is just a loop you can set here a `this.stopping = true` property.
+
+## CoreEnvironment
+
+Core environment are callback driven pieces of logic, its event callbacks (methods) are going to be called once depending on the sate of the core running or execution process.
+
+```js
+import { CoreEnvironment } from '@universal-packages/core'
+
+export default class MyEnvironment extends CoreEnvironment {
+  static environment = 'production'
+  static onlyFor = 'apps'
+  static tideTo = 'web-server-app'
+
+  beforeModulesLoad() {}
+  afterModulesLoad() {}
+
+  beforeAppPrepare() {}
+  afterAppPrepare() {}
+
+  beforeAppRuns() {}
+  afterAppRuns() {}
+
+  beforeTaskExec() {}
+  afterTaskExec() {}
+
+  beforeConsoleRuns() {}
+  afterConsoleRuns() {}
+
+  beforeAppStops() {}
+  afterAppStops() {}
+
+  beforeTaskAborts() {}
+  afterTaskAborts() {}
+
+  afterConsoleStops() {}
+
+  beforeAppRelease() {}
+  afterAppRelease() {}
+
+  beforeModulesRelease() {}
+  afterModulesRelease() {}
+}
 ```
-ucore exec send-emails-task hola admins
-                            |   | |   |
-                            ----- -----
-                             |       |
-                        directive  directiveOptions ['admins']
-```
 
-### this.args
+### Static properties
 
-Any params passed via command line will be passed to the app instance and can be accessed via `this.args`
+- **`environment`** `String | String[]`
+  If specified the environment will only be loaded if `NODE_ENV` matches one of the values, for instance the example above will only be loaded when `NODE_ENV` is equal to `production`, another example will be to set it like `static environment = ['production', 'staging']` to only be ran in those.
+- **`onlyFor`** `'apps' | 'tasks' | 'console'`
+  If specified the environment will only be loaded if the process type matches, for instance the example above will only be loaded if we are running an app, another example will be to set it like `static onlyFor = ['apps', 'console']` to only be ran in those.
+- **`tideTo`** `String | String[]`
+  If specified the environment will only be loaded if the process name matches, for instance the example above will only be loaded if we are running an app called `web-server-app`, another example will be to set it like `static tideTo = ['web-server-app', 'worker-app']` to only be ran in those.
 
-```
-ucore exec send-emails-task hola admins --fast
-                                        |       |
-                                           args
-```
+### Instance properties
 
-### this.logger
+- **`logger`** `Logger`
+  A logger will be passed to the environment to be used accessed as `this.logger`
 
-You can use the core project logger passed to the instance via `this.logger`.
+### Instance methods (event callbacks)
 
-### prepare() `optional`
+- **`beforeModulesLoad`**
+  Use it when you want to stuff to happen right before modules are loaded.
+- **`afterModulesLoad`**
+  Use it when you want to stuff to happen right after modules were loaded.
 
-Tasks load in the same way as an app, the prepare method is called just after instantiation and after all modules are loaded to be used here.
+- **`beforeAppPrepare`**
+  Use it when you want to stuff to happen right before app prepare method is called.
+- **`afterAppPrepare`**
+  Use it when you want to stuff to happen right after app has been prepared.
 
-### exec() `required`
+- **`beforeAppRuns`**
+  Use it when you want to stuff to happen right before app run method is called.
+- **`afterAppRuns`**
+  Use it when you want to stuff to happen right after app has been ran and is up.
 
-Once all is loaded and prepared exec any kind of whatever. Some data migration or a bulk email sending or whatever.
+- **`beforeTaskExec`**
+  Use it when you want to stuff to happen right before task exec method is called.
+- **`afterTaskExec`**
+  Use it when you want to stuff to happen right after task exec method finishes.
 
-### abort() `optional`
+- **`beforeConsoleRuns`**
+  Use it when you want to stuff to happen right before console starts running.
+- **`afterConsoleRuns`**
+  Use it when you want to stuff to happen right after console has been ran and is active.
 
-After pressing `CTRL+C` universal core will optionally call this method, if you have a way to stop your task do it here so the execution can be stopped gracefully.
+- **`beforeAppStops`**
+  Use it when you want to stuff to happen right before app stop method is called.
+- **`afterAppStops`**
+  Use it when you want to stuff to happen right after app has been stopped.
 
-Example, if your exec method is just a loop you can set here a `this.stopping = true` property.
+- **`beforeTaskAborts`**
+  Use it when you want to stuff to happen right before task abort method is called.
+- **`afterTaskAborts`**
+  Use it when you want to stuff to happen right after task abort method was called (Is stopping probably?).
+
+- **`afterConsoleStops`**
+  Use it when you want to stuff to happen right after console is being exited.
+
+- **`beforeAppRelease`**
+  Use it when you want to stuff to happen right before app release method is called.
+- **`afterAppRelease`**
+  Use it when you want to stuff to happen right after app has been released.
+
+- **`beforeModulesRelease`**
+  Use it when you want to stuff to happen right before modules are released.
+- **`afterModulesRelease`**
+  Use it when you want to stuff to happen right after modules have been released.
 
 ## Typescript
 

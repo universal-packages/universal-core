@@ -5,15 +5,15 @@ import { loadPluginConfig } from '@universal-packages/plugin-config-loader'
 import { camelCase, paramCase, pascalCase } from 'change-case'
 import CoreModule from './CoreModule'
 import { coreConfigSchema } from './CoreConfig.schema'
-import { CoreConfig, CoreModules, CoreModuleWarning, ProjectConfig } from './Core.types'
+import { CoreConfig, CoreModules, CoreModuleWarning, ProcessType, ProjectConfig } from './Core.types'
+import CoreEnvironment from './CoreEnvironment'
 
 export default class Core {
   protected logger: Logger
   protected coreModules: CoreModules
 
-  public constructor(logger: Logger, coreModules: CoreModules) {
+  public constructor(logger: Logger) {
     this.logger = logger
-    this.coreModules = coreModules
   }
 
   public static async getCoreConfig(coreConfigOverride?: CoreConfig): Promise<CoreConfig> {
@@ -21,6 +21,7 @@ export default class Core {
     const finalCoreConfig: CoreConfig = {
       appsLocation: './src',
       configLocation: './src/config',
+      environmentsLocation: './src',
       modulesLocation: './src',
       modulesAsGlobals: true,
       tasksLocation: './src',
@@ -40,6 +41,42 @@ export default class Core {
 
   public static async getProjectConfig(coreConfig: CoreConfig): Promise<ProjectConfig> {
     return await loadConfig(coreConfig.configLocation, { selectEnvironment: true })
+  }
+
+  public static async getCoreEnvironments(coreConfig: CoreConfig, logger: Logger, processType?: ProcessType, processableName?: string): Promise<CoreEnvironment[]> {
+    const localEnvironments = await loadModules(coreConfig.environmentsLocation, { conventionPrefix: 'environment' })
+    const thirdPartyEnvironments = await loadModules('./node_modules', { conventionPrefix: 'universal-core-environment' })
+    const finalEnvironments = [...thirdPartyEnvironments, ...localEnvironments]
+    const environments: CoreEnvironment[] = []
+
+    for (let i = 0; i < finalEnvironments.length; i++) {
+      const currentEnvironment = finalEnvironments[i]
+
+      if (currentEnvironment.error) {
+        throw currentEnvironment.error
+      }
+    }
+
+    for (let i = 0; i < finalEnvironments.length; i++) {
+      const currentEnvironment = finalEnvironments[i]
+      const EnvironmentClass: typeof CoreEnvironment = currentEnvironment.exports
+
+      const configuredNodeEnvironments = [].concat(EnvironmentClass.environment).filter(Boolean)
+      const configuredProcessTypes = [].concat(EnvironmentClass.onlyFor)
+      const configuredProcessNames = [].concat(EnvironmentClass.tideTo)
+
+      const canRunInNodeEnvironment = !EnvironmentClass.environment || configuredNodeEnvironments.includes(process.env['NODE_ENV'])
+      const canRunForProcessType = !EnvironmentClass.onlyFor || configuredProcessTypes.includes(processType)
+      const canRunForProcessName = !EnvironmentClass.tideTo || configuredProcessNames.includes(processableName)
+
+      if (canRunInNodeEnvironment && canRunForProcessType && canRunForProcessName) {
+        const EnvironmentInstance = new EnvironmentClass(logger)
+
+        environments.push(EnvironmentInstance)
+      }
+    }
+
+    return environments
   }
 
   public static async getCoreModules(coreConfig: CoreConfig, projectConfig: ProjectConfig, logger: Logger): Promise<[CoreModules, CoreModuleWarning[]]> {
@@ -75,7 +112,7 @@ export default class Core {
         warnings.push({ title: `Two modules have the same name: ${moduleName}`, message: `First loaded will take precedence\n${currentModule.location}` })
       } else {
         const ModuleClass: typeof CoreModule = currentModule.exports
-        const moduleInstance: CoreModule = new ModuleClass({ ...ModuleClass.defaultConfig, ...moduleConfig }, logger)
+        const moduleInstance = new ModuleClass({ ...ModuleClass.defaultConfig, ...moduleConfig }, logger)
 
         try {
           await moduleInstance.prepare()

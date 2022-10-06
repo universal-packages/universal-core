@@ -5,6 +5,8 @@ export default class ExampleModule extends CoreModule {
   static description =
     "A module normally wrapps a thrid party module into being compatible with Core App";
 
+  subject = null
+
   /**
    * REQUIRED
    *

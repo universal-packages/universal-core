@@ -1,9 +1,43 @@
 import { Logger, LogLevel } from '@universal-packages/logger'
 import CoreApp from './CoreApp'
+import CoreEnvironment from './CoreEnvironment'
 import CoreModule from './CoreModule'
 import CoreTask from './CoreTask'
 
 export type ProjectConfig = Record<any, any>
+export type EnvironmentName = 'production' | 'development' | string
+export type ProcessType = 'apps' | 'tasks' | 'console'
+export type EnvironmentEvent =
+  // Module load events
+  | 'beforeModulesLoad'
+  | 'afterModulesLoad'
+  // App prepare events
+  | 'beforeAppPrepare'
+  | 'afterAppPrepare'
+  // App run events
+  | 'beforeAppRuns'
+  | 'afterAppRuns'
+  // Task exec events
+  | 'beforeTaskExec'
+  | 'afterTaskExec'
+  // Console events
+  | 'beforeConsoleRuns'
+  | 'afterConsoleRuns'
+  // App stop events
+  | 'beforeAppStops'
+  | 'afterAppStops'
+  // Task abort events
+  | 'beforeTaskAborts'
+  | 'afterTaskAborts'
+  // Console stop events
+  | 'afterConsoleStops'
+  // App release events
+  | 'beforeAppRelease'
+  | 'afterAppRelease'
+  // Module release events
+  | 'beforeModulesRelease'
+  | 'afterModulesRelease'
+export type EnvironmentInterface = { [event in EnvironmentEvent]: () => Promise<void> | void }
 
 export interface CoreConfig {
   appsLocation?: string
@@ -12,6 +46,7 @@ export interface CoreConfig {
     ignore?: string[]
   }
   configLocation?: string
+  environmentsLocation?: string
   modulesLocation?: string
   modulesAsGlobals?: boolean
   tasksLocation?: string
@@ -46,10 +81,10 @@ export interface CoreGlobal {
   appInstance: CoreApp
   coreConfig: CoreConfig
   coreModules: CoreModules
-  loaded: boolean
+  environments: CoreEnvironment[]
   logger: Logger
   projectConfig: ProjectConfig
-  running: boolean
+  stoppable: boolean
   stopping: boolean
   Task: typeof CoreTask
   taskInstance: CoreTask

@@ -1,4 +1,14 @@
 import { sleep, startMeasurement, TimeMeasurer } from '@universal-packages/time-measurer'
+import { abortCoreTaskInstance } from './common/abortCoreTaskInstance'
+import { emitEnvironmentEvent } from './common/emitEnvironmentEvent'
+import { execCoreTaskInstance } from './common/execCoreTaskInstance'
+import { loadAndSetCoreConfig } from './common/loadAndSetCoreConfig'
+import { loadAndSetCoreModules } from './common/loadAndSetCoreModules'
+import { loadAndSetCoreTask } from './common/loadAndSetCoreTask'
+import { loadAndSetEnvironments } from './common/loadAndSetEnvironments'
+import { loadAndSetProjectConfig } from './common/loadAndSetProjectConfig'
+import { releaseCoreModules } from './common/releaseCoreModules'
+import { setCoreGlobal } from './common/setCoreGlobal'
 import Core from './Core'
 import { CoreConfig } from './Core.types'
 import CoreTask from './CoreTask'
@@ -6,54 +16,13 @@ import CoreTask from './CoreTask'
 export async function execTask(name: string, directive?: string, directiveOptions?: string[], args?: Record<string, any>, coreConfigOverride?: CoreConfig): Promise<void> {
   let measurer: TimeMeasurer
 
-  global.core = {
-    App: null,
-    appConfig: null,
-    appInstance: null,
-    coreConfig: null,
-    coreModules: null,
-    loaded: false,
-    logger: null,
-    projectConfig: null,
-    running: false,
-    stopping: false,
-    Task: null,
-    taskInstance: null
-  }
+  setCoreGlobal()
 
-  try {
-    measurer = startMeasurement()
-
-    core.coreConfig = await CoreTask.getCoreConfig(coreConfigOverride)
-    core.logger = CoreTask.getCoreLogger(core.coreConfig)
-
-    core.logger.publish('DEBUG', 'Core config loaded', null, 'CORE', { metadata: core.coreConfig, measurement: measurer.finish().toString() })
-  } catch (error) {
-    core.logger = CoreTask.getCoreLogger()
-
-    core.logger.publish('ERROR', 'There was an error loading the core config', null, 'CORE', {
-      error: error,
-      measurement: measurer.finish().toString()
-    })
-
-    await core.logger.await()
-    return process.exit(1)
-  }
-
-  try {
-    measurer = startMeasurement()
-    core.projectConfig = await CoreTask.getProjectConfig(core.coreConfig)
-
-    core.logger.publish('DEBUG', 'Project config loaded', null, 'CORE', { metadata: core.projectConfig, measurement: measurer.finish().toString() })
-  } catch (error) {
-    core.logger.publish('ERROR', 'There was an error loading the project config', null, 'CORE', {
-      error: error,
-      measurement: measurer.finish().toString()
-    })
-
-    await core.logger.await()
-    return process.exit(1)
-  }
+  // Common functions return true if something went wrong and we should exit
+  if (await loadAndSetCoreConfig(coreConfigOverride)) return process.exit(1)
+  if (await loadAndSetProjectConfig()) return process.exit(1)
+  if (await loadAndSetCoreTask(name, directive, directiveOptions, args)) return process.exit(1)
+  if (await loadAndSetEnvironments('tasks', core.Task.taskName || core.Task.name)) return process.exit(1)
 
   const abortTask = async (): Promise<void> => {
     if (process.stdout.clearLine) process.stdout.clearLine(0)
@@ -64,97 +33,29 @@ export async function execTask(name: string, directive?: string, directiveOption
 
     core.logger.publish('INFO', 'Aborting task gracefully', 'press CTRL+C again to kill', 'CORE')
 
-    while (!core.loaded) await sleep(100)
+    while (!core.stoppable) await sleep(100)
 
-    try {
-      await core.taskInstance.abort()
-    } catch (error) {
-      core.logger.publish('ERROR', core.Task.appName || core.Task.name, 'There was an error while aborting task', 'CORE', { error })
-
-      try {
-        await CoreTask.releaseInternalModules(core.coreModules)
-      } catch (err) {
-        // We prioritize higher error
-      }
-
-      await core.logger.await()
-      return process.exit(1)
-    }
+    // Common functions return true if something went wrong and we should exit
+    if (await emitEnvironmentEvent('beforeTaskAborts')) return process.exit(1)
+    if (await abortCoreTaskInstance()) return process.exit(1)
+    if (await emitEnvironmentEvent('afterTaskAborts')) return process.exit(1)
   }
 
   process.addListener('SIGINT', abortTask)
   process.addListener('SIGTERM', abortTask)
 
-  try {
-    measurer = startMeasurement()
-    const [loadedCoreModules, warnings] = await CoreTask.getCoreModules(core.coreConfig, core.projectConfig, core.logger)
+  // Common functions return true if something went wrong and we should exit
+  if (await emitEnvironmentEvent('beforeModulesLoad')) return process.exit(1)
+  if (await loadAndSetCoreModules()) return process.exit(1)
+  if (await emitEnvironmentEvent('afterModulesLoad')) return process.exit(1)
 
-    core.coreModules = loadedCoreModules
+  core.stoppable = true
 
-    for (let i = 0; i < warnings.length; i++) {
-      const currentWarning = warnings[i]
-      core.logger.publish('WARNING', currentWarning.title, currentWarning.message, 'CORE')
-    }
+  if (await emitEnvironmentEvent('beforeTaskExec')) return process.exit(1)
+  if (await execCoreTaskInstance()) return process.exit(1)
+  if (await emitEnvironmentEvent('afterTaskExec')) return process.exit(1)
 
-    core.logger.publish('DEBUG', 'Core modules loaded', null, 'CORE', { measurement: measurer.finish().toString() })
-  } catch (error) {
-    core.logger.publish('ERROR', 'There was an error loading core modules', null, 'CORE', {
-      error: error,
-      measurement: measurer.finish().toString()
-    })
-
-    await core.logger.await()
-    return process.exit(1)
-  }
-
-  try {
-    core.Task = await CoreTask.find(name, core.coreConfig)
-
-    core.taskInstance = new core.Task(directive, directiveOptions, args, core.logger, core.coreModules)
-    if (core.taskInstance.prepare) await core.taskInstance.prepare()
-  } catch (error) {
-    core.logger.publish('ERROR', 'There was an error loading the app', null, 'CORE', {
-      error: error,
-      measurement: measurer.finish().toString()
-    })
-
-    try {
-      await CoreTask.releaseInternalModules(core.coreModules)
-    } catch (err) {
-      // We prioritize higher error
-    }
-
-    await core.logger.await()
-    return process.exit(1)
-  }
-
-  core.loaded = true
-
-  core.logger.publish('INFO', `${core.Task.appName || core.Task.name} executing...`, core.Task.description, 'CORE')
-
-  try {
-    await core.taskInstance.exec()
-
-    // We release here since the aborting will ultimately end the execution
-    try {
-      await Core.releaseInternalModules(core.coreModules)
-      core.logger.publish('DEBUG', 'Core modules unloaded', null, 'CORE')
-    } catch (error) {
-      core.logger.publish('ERROR', core.Task.appName || core.Task.name, 'There was an error while unloading modules', 'CORE', { error })
-
-      await core.logger.await()
-      return process.exit(1)
-    }
-  } catch (error) {
-    core.logger.publish('ERROR', core.Task.appName || core.Task.name, 'There was an error while executing task', 'CORE', { error })
-
-    try {
-      await CoreTask.releaseInternalModules(core.coreModules)
-    } catch (err) {
-      // We prioritize higher error
-    }
-
-    await core.logger.await()
-    return process.exit(1)
-  }
+  if (await emitEnvironmentEvent('beforeModulesRelease')) return process.exit(1)
+  if (await releaseCoreModules()) return process.exit(1)
+  if (await emitEnvironmentEvent('afterModulesRelease')) return process.exit(1)
 }
