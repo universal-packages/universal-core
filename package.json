@@ -21,7 +21,7 @@
     "@babel/register": "^7.18.9",
     "@universal-packages/config-loader": "1.6.1",
     "@universal-packages/logger": "1.9.2",
-    "@universal-packages/module-loader": "^1.0.0",
+    "@universal-packages/module-loader": "1.0.1",
     "@universal-packages/plugin-config-loader": "1.2.1",
     "@universal-packages/template-populator": "^1.0.1",
     "@universal-packages/time-measurer": "1.4.0",
