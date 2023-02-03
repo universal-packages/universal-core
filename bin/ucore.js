@@ -3,9 +3,9 @@
 const fs = require('fs')
 const path = require('path')
 
-const isTsproject = fs.existsSync('./tsconfig.json')
+const isTsProject = fs.existsSync('./tsconfig.json')
 
-if (isTsproject) {
+if (isTsProject) {
   require('ts-node').register()
 } else {
   require('@babel/register')

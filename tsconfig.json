@@ -86,7 +86,7 @@
     // "typeRoots": [],
     "useDefineForClassFields": false
   },
-  "include": ["./src", "./tests", "./example"],
+  "include": ["./src", "./tests", "./example", "bin"],
   "ts-node": {
     "files": true
   },
