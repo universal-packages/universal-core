@@ -1,7 +1,7 @@
 import { sleep } from '@universal-packages/time-measurer'
 import { CoreConfig } from './Core.types'
 import AppWatcher from './AppWatcher'
-import { stopAppFunction } from './runApp.types'
+import { StopAppFunction } from './runApp.types'
 import { debounce } from './debounce'
 import { setCoreGlobal } from './common/setCoreGlobal'
 import { loadAndSetCoreConfig } from './common/loadAndSetCoreConfig'
@@ -16,7 +16,7 @@ import { loadAndSetCoreModules } from './common/loadAndSetCoreModules'
 import { prepareCoreAppInstance } from './common/prepareCoreAppInstance'
 import { runCoreAppInstance } from './common/runCoreAppInstance'
 
-export async function runApp(name: string, args?: Record<string, any>, demon?: boolean, coreConfigOverride?: CoreConfig): Promise<stopAppFunction> {
+export async function runApp(name: string, args?: Record<string, any>, demon?: boolean, coreConfigOverride?: CoreConfig): Promise<StopAppFunction> {
   setCoreGlobal()
 
   // Common functions return true if something went wrong and we should exit

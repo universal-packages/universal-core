@@ -1,1 +1,1 @@
-export type stopAppFunction = (restarting?: boolean) => Promise<void>
+export type StopAppFunction = (restarting?: boolean) => Promise<void>
