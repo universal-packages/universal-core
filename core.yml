@@ -1,19 +1,26 @@
-appsLocation: './example'
-configLocation: './example/config'
-modulesLocation: './example/modules'
-tasksLocation: './example/tasks'
-modulesAsGlobals: true
-appWatcher:
-  enabled: true
-  ignore:
-    - .github
-logger:
-  level: TRACE
-  silence: false
-  terminal:
-    enable: true
-    clear: false
-    withHeader: false
-  localFile:
-    enable: true
-    asJson: false
+default:
+  appsLocation: './example'
+  configLocation: './example/config'
+  modulesLocation: './example/modules'
+  tasksLocation: './example/tasks'
+
+development:
+  modulesAsGlobals: true
+  appWatcher:
+    enabled: true
+    ignore:
+      - .github
+  logger:
+    level: TRACE
+    silence: false
+    terminal:
+      enable: true
+      clear: false
+      withHeader: false
+    localFile:
+      enable: true
+      asJson: false
+
+test:
+  logger:
+    silence: false

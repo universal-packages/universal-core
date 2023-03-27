@@ -17,7 +17,7 @@ export default class Core {
   }
 
   public static async getCoreConfig(coreConfigOverride?: CoreConfig): Promise<CoreConfig> {
-    const loadedCoreConfig = coreConfigOverride || (await loadPluginConfig('core', { selectEnvironment: true }))
+    const loadedCoreConfig = { ...(await loadPluginConfig('core', { selectEnvironment: true })), ...coreConfigOverride }
     const finalCoreConfig: CoreConfig = {
       appsLocation: './src',
       configLocation: './src/config',
@@ -26,7 +26,7 @@ export default class Core {
       modulesAsGlobals: true,
       tasksLocation: './src',
       ...loadedCoreConfig,
-      logger: { silence: false, ...loadedCoreConfig?.logger }
+      logger: { silence: false, ...loadedCoreConfig?.logger, ...coreConfigOverride?.logger }
     }
     const errors = coreConfigSchema.validate(finalCoreConfig)
 
@@ -147,7 +147,7 @@ export default class Core {
 
     if (coreConfig) {
       if (coreConfig.logger?.level) logger.level = coreConfig.logger.level
-      if (coreConfig.logger?.silence === true) logger.silence = true
+      if (coreConfig.logger?.silence !== undefined) logger.silence = coreConfig.logger?.silence
 
       if (coreConfig.logger?.terminal) {
         terminalTransport.enabled = coreConfig.logger?.terminal?.enable !== false
