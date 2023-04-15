@@ -1,4 +1,4 @@
-import CoreModule from "../../../src/CoreModule"
+import CoreModule from '../../../src/CoreModule'
 
 export default class PrepareErrorModule extends CoreModule {
   public static readonly moduleName = 'prepare-error-module'
