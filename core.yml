@@ -23,4 +23,4 @@ development:
 
 test:
   logger:
-    silence: false
+    silence: true

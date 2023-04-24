@@ -36,6 +36,7 @@ describe('AppWatcher', (): void => {
           '**/coverage/**/*',
           '**/.tests/**/*',
           '**/test/**/*',
+          '**/storage/**/*',
           '**/logs/**/*',
           '**/tmp/**/*',
           '.console_history',

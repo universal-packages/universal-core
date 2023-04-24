@@ -34,6 +34,7 @@ export default class AppWatcher extends EventEmitter {
           '**/coverage/**/*',
           '**/.tests/**/*',
           '**/test/**/*',
+          '**/storage/**/*',
           '**/logs/**/*',
           '**/tmp/**/*',
           '.console_history',
