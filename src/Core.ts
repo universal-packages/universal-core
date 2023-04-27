@@ -17,7 +17,7 @@ export default class Core {
   }
 
   public static async getCoreConfig(coreConfigOverride?: CoreConfig): Promise<CoreConfig> {
-    const loadedCoreConfig = { ...(await loadPluginConfig('core', { selectEnvironment: true })), ...coreConfigOverride }
+    const loadedCoreConfig = { ...(await loadPluginConfig('core', { cleanOrphanReplaceable: true, selectEnvironment: true })), ...coreConfigOverride }
     const finalCoreConfig: CoreConfig = {
       appsLocation: './src',
       configLocation: './src/config',
@@ -40,7 +40,7 @@ export default class Core {
   }
 
   public static async getProjectConfig(coreConfig: CoreConfig): Promise<ProjectConfig> {
-    return await loadConfig(coreConfig.configLocation, { selectEnvironment: true })
+    return await loadConfig(coreConfig.configLocation, { cleanOrphanReplaceable: true, selectEnvironment: true })
   }
 
   public static async getCoreEnvironments(coreConfig: CoreConfig, logger: Logger, processType?: ProcessType, processableName?: string): Promise<CoreEnvironment[]> {
