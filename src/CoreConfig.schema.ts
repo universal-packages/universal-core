@@ -1,5 +1,5 @@
+import { checkDirectory, ensureDirectory } from '@universal-packages/fs-utils'
 import Schema from 'validate'
-import { ensureDirectory, checkDirectory } from '@universal-packages/fs-utils'
 
 const directoryCheck = (value: any): boolean => {
   try {

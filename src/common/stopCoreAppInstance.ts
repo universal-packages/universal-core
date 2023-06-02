@@ -1,4 +1,5 @@
 import { startMeasurement } from '@universal-packages/time-measurer'
+
 import CoreApp from '../CoreApp'
 
 export async function stopCoreAppInstance(): Promise<boolean> {

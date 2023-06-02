@@ -1,8 +1,8 @@
-import { fork, ChildProcessWithoutNullStreams } from 'child_process'
+import { ChildProcessWithoutNullStreams, fork } from 'child_process'
 import chokidar, { FSWatcher } from 'chokidar'
+import EventEmitter from 'events'
 import fs from 'fs'
 import path from 'path'
-import EventEmitter from 'events'
 
 export default class AppWatcher extends EventEmitter {
   private appName: string

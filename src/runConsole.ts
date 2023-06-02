@@ -1,13 +1,14 @@
+import repl from 'repl'
+
 import Core from './Core'
 import { CoreConfig } from './Core.types'
-import repl from 'repl'
-import { setCoreGlobal } from './common/setCoreGlobal'
-import { loadAndSetCoreConfig } from './common/loadAndSetCoreConfig'
-import { loadAndSetProjectConfig } from './common/loadAndSetProjectConfig'
-import { loadAndSetEnvironments } from './common/loadAndSetEnvironments'
 import { emitEnvironmentEvent } from './common/emitEnvironmentEvent'
+import { loadAndSetCoreConfig } from './common/loadAndSetCoreConfig'
 import { loadAndSetCoreModules } from './common/loadAndSetCoreModules'
+import { loadAndSetEnvironments } from './common/loadAndSetEnvironments'
+import { loadAndSetProjectConfig } from './common/loadAndSetProjectConfig'
 import { releaseCoreModules } from './common/releaseCoreModules'
+import { setCoreGlobal } from './common/setCoreGlobal'
 
 export async function runConsole(coreConfigOverride?: CoreConfig): Promise<void> {
   setCoreGlobal()

@@ -1,6 +1,7 @@
 import { populateTemplates } from '@universal-packages/template-populator'
 import { exec } from 'child_process'
 import path from 'path'
+
 import Core from './Core'
 
 export async function initProject(name: string, args: Record<string, any>): Promise<void> {

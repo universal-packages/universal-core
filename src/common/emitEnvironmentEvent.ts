@@ -1,4 +1,5 @@
 import { startMeasurement } from '@universal-packages/time-measurer'
+
 import { EnvironmentEvent } from '../Core.types'
 
 export async function emitEnvironmentEvent(event: EnvironmentEvent): Promise<boolean> {

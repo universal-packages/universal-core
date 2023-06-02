@@ -1,7 +1,8 @@
-import AppWatcher from '../src/AppWatcher'
+import { fork } from 'child_process'
 import chokidar from 'chokidar'
 import { EventEmitter } from 'stream'
-import { fork } from 'child_process'
+
+import AppWatcher from '../src/AppWatcher'
 
 jest.mock('chokidar')
 jest.mock('child_process')

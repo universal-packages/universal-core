@@ -1,4 +1,8 @@
-import { sleep, startMeasurement, TimeMeasurer } from '@universal-packages/time-measurer'
+import { TimeMeasurer, sleep, startMeasurement } from '@universal-packages/time-measurer'
+
+import Core from './Core'
+import { CoreConfig } from './Core.types'
+import CoreTask from './CoreTask'
 import { abortCoreTaskInstance } from './common/abortCoreTaskInstance'
 import { emitEnvironmentEvent } from './common/emitEnvironmentEvent'
 import { execCoreTaskInstance } from './common/execCoreTaskInstance'
@@ -9,9 +13,6 @@ import { loadAndSetEnvironments } from './common/loadAndSetEnvironments'
 import { loadAndSetProjectConfig } from './common/loadAndSetProjectConfig'
 import { releaseCoreModules } from './common/releaseCoreModules'
 import { setCoreGlobal } from './common/setCoreGlobal'
-import Core from './Core'
-import { CoreConfig } from './Core.types'
-import CoreTask from './CoreTask'
 
 export async function execTask(name: string, directive?: string, directiveOptions?: string[], args?: Record<string, any>, coreConfigOverride?: CoreConfig): Promise<void> {
   let measurer: TimeMeasurer

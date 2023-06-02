@@ -1,6 +1,7 @@
 import { Logger } from '@universal-packages/logger'
 import EventEmitter from 'events'
 import repl from 'repl'
+
 import { EnvironmentEvent } from '../src'
 import { runConsole } from '../src/runConsole'
 import ControlEnvironment from './__fixtures__/environments-event-error/Control.environment'

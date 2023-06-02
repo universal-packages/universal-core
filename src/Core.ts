@@ -1,12 +1,13 @@
 import { loadConfig } from '@universal-packages/config-loader'
 import { LocalFileTransport, Logger, TerminalTransport } from '@universal-packages/logger'
-import { loadModules, ModuleRegistry } from '@universal-packages/module-loader'
+import { ModuleRegistry, loadModules } from '@universal-packages/module-loader'
 import { loadPluginConfig } from '@universal-packages/plugin-config-loader'
 import { camelCase, paramCase, pascalCase } from 'change-case'
-import CoreModule from './CoreModule'
+
+import { CoreConfig, CoreModuleWarning, CoreModules, ProcessType, ProjectConfig } from './Core.types'
 import { coreConfigSchema } from './CoreConfig.schema'
-import { CoreConfig, CoreModules, CoreModuleWarning, ProcessType, ProjectConfig } from './Core.types'
 import CoreEnvironment from './CoreEnvironment'
+import CoreModule from './CoreModule'
 
 export default class Core {
   protected logger: Logger

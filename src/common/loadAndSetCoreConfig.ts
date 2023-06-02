@@ -1,4 +1,5 @@
 import { startMeasurement } from '@universal-packages/time-measurer'
+
 import Core from '../Core'
 import { CoreConfig } from '../Core.types'
 

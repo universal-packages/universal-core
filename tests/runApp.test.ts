@@ -1,4 +1,5 @@
 import { Logger } from '@universal-packages/logger'
+
 import { EnvironmentEvent } from '../src'
 import { runApp } from '../src/runApp'
 import GoodApp from './__fixtures__/apps/Good.app'

@@ -1,4 +1,5 @@
 import { sleep } from '@universal-packages/time-measurer'
+
 import CoreTask from '../../../src/CoreTask'
 
 export default class GoodTask extends CoreTask {

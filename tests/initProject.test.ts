@@ -1,5 +1,6 @@
 import { populateTemplates } from '@universal-packages/template-populator'
 import { exec } from 'child_process'
+
 import { initProject } from '../src/initProject'
 
 jest.mock('@universal-packages/template-populator')

@@ -1,5 +1,6 @@
 import { startMeasurement } from '@universal-packages/time-measurer'
 import { paramCase, pascalCase } from 'change-case'
+
 import CoreApp from '../CoreApp'
 
 export async function loadAndSetCoreApp(name: string, args: Record<string, any>): Promise<boolean> {

@@ -1,4 +1,5 @@
 import { Logger } from '@universal-packages/logger'
+
 import { EnvironmentInterface, EnvironmentName, ProcessType } from './Core.types'
 
 export default class CoreEnvironment implements EnvironmentInterface {

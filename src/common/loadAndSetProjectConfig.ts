@@ -1,4 +1,5 @@
 import { startMeasurement } from '@universal-packages/time-measurer'
+
 import Core from '../Core'
 
 export async function loadAndSetProjectConfig(): Promise<boolean> {
