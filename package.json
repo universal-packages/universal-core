@@ -6,7 +6,7 @@
   "license": "MIT",
   "main": "index.js",
   "types": "index.d.ts",
-  "repository": "git://git@github.com:universal-packages/universal-core.git",
+  "repository": "git@github.com:universal-packages/universal-core.git",
   "bin": {
     "ucore": "./bin/ucore.js",
     "@universal-packages/core": "./bin/ucore.js"
