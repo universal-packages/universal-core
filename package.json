@@ -20,7 +20,7 @@
     "update-dependents": "umaintenance update-dependents"
   },
   "dependencies": {
-    "@babel/register": "^7.18.9",
+    "@babel/register": "^7.22.15",
     "@universal-packages/config-loader": "^1.7.0",
     "@universal-packages/logger": "^1.9.2",
     "@universal-packages/module-loader": "^1.0.1",
