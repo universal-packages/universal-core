@@ -30,7 +30,7 @@ beforeEach((): void => {
   process.removeAllListeners()
 })
 
-describe('runConsole', (): void => {
+describe(runConsole, (): void => {
   it('do all the preparations and runs a repl server (sets core)', async (): Promise<void> => {
     await runConsole({
       appsLocation: './tests/__fixtures__/apps',

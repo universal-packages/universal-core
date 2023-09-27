@@ -26,7 +26,7 @@ beforeEach((): void => {
   process.removeAllListeners()
 })
 
-describe('execTask', (): void => {
+describe(execTask, (): void => {
   it('do all the preparations funds a task and runs it (sets core)', async (): Promise<void> => {
     await execTask(
       'Good',

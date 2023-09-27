@@ -1,7 +1,7 @@
 import { CoreApp } from '../src'
 import TestApp from './__fixtures__/apps/Good.app'
 
-describe('CoreApp', (): void => {
+describe(CoreApp, (): void => {
   it('requires configuration, args, logger and modules to be set', async (): Promise<void> => {
     const app = new CoreApp({}, {}, {} as any)
 

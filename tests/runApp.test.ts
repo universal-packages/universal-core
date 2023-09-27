@@ -30,7 +30,7 @@ beforeEach((): void => {
   process.removeAllListeners()
 })
 
-describe('runApp', (): void => {
+describe(runApp, (): void => {
   it('do all the preparations funds an app and runs it (sets core)', async (): Promise<void> => {
     await runApp('Good', { fast: true }, false, {
       appsLocation: './tests/__fixtures__/apps',

@@ -1,6 +1,6 @@
 import { CoreModule } from '../src'
 
-describe('CoreModule', (): void => {
+describe(CoreModule, (): void => {
   it('requires configuration and logger to be set', async (): Promise<void> => {
     const module = new CoreModule({}, {} as any)
 

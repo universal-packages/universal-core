@@ -13,7 +13,7 @@ beforeEach((): void => {
   jest.clearAllMocks()
 })
 
-describe('AppWatcher', (): void => {
+describe(AppWatcher, (): void => {
   it('requires appName, args and optionally ignore files array, ', async (): Promise<void> => {
     const watcher = new AppWatcher('app', {}, [])
 

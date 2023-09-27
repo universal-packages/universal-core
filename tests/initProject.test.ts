@@ -13,7 +13,7 @@ beforeEach((): void => {
   jest.clearAllMocks()
 })
 
-describe('initProject', (): void => {
+describe(initProject, (): void => {
   it('transfer templates and prepares the app', async (): Promise<void> => {
     await initProject('app', {})
 

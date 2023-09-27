@@ -1,7 +1,7 @@
 import { CoreTask } from '../src'
 import GoodTask from './__fixtures__/tasks/Good.task'
 
-describe('CoreTask', (): void => {
+describe(CoreTask, (): void => {
   it('requires configuration, args, logger and modules to be set', async (): Promise<void> => {
     const task = new CoreTask('directive', [], {}, {} as any)
 

@@ -11,7 +11,7 @@ import ZModule from './__fixtures__/modules-release-error/Z.module'
 import ExcellentModule from './__fixtures__/modules/Excellent.module'
 import GoodModule from './__fixtures__/modules/Good.module'
 
-describe('Core', (): void => {
+describe(Core, (): void => {
   describe('.getCoreConfig', (): void => {
     it('loads the core config set up', async (): Promise<void> => {
       const config = await Core.getCoreConfig()
