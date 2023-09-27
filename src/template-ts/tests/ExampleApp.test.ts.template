@@ -1,6 +1,6 @@
 import { runApp } from '@universal-packages/core'
 
-describe('ExpressApp', (): void => {
+describe(ExpressApp, (): void => {
   it('works', async (): Promise<void> => {
     const stopApp = await runApp('example-app')
 
