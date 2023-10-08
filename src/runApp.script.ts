@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import fs from 'fs'
+const fs = require('fs')
 
 const isTsProject = fs.existsSync('./tsconfig.json')
 
