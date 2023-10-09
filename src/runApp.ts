@@ -23,14 +23,14 @@ export async function runApp(name: string, args?: Record<string, any>, demon?: b
   // Common functions return true if something went wrong and we should exit
   if (await loadAndSetCoreConfig(coreConfigOverride)) return process.exit(1)
 
-  if (!demon && core.coreConfig.appWatcher?.enabled) {
+  if (!demon && core.coreConfig.apps.watcher?.enabled) {
     core.logger.publish('INFO', 'App Watcher enabled', 'App will be ran in a sub process', 'CORE')
 
     if (process.env['NODE_ENV'] !== 'development') {
       core.logger.publish('WARNING', 'Watch and reload is meant only for development', 'Consider deactivating it for not development environments', 'CORE')
     }
 
-    const appWatcher = new AppWatcher(name, args, core.coreConfig.appWatcher?.ignore)
+    const appWatcher = new AppWatcher(name, args, core.coreConfig.apps.watcher?.ignore)
 
     appWatcher.run()
 

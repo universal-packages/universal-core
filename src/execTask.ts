@@ -1,8 +1,6 @@
-import { TimeMeasurer, sleep, startMeasurement } from '@universal-packages/time-measurer'
+import { sleep } from '@universal-packages/time-measurer'
 
-import Core from './Core'
 import { CoreConfig } from './Core.types'
-import CoreTask from './CoreTask'
 import { abortCoreTaskInstance } from './common/abortCoreTaskInstance'
 import { emitEnvironmentEvent } from './common/emitEnvironmentEvent'
 import { execCoreTaskInstance } from './common/execCoreTaskInstance'
@@ -15,8 +13,6 @@ import { releaseCoreModules } from './common/releaseCoreModules'
 import { setCoreGlobal } from './common/setCoreGlobal'
 
 export async function execTask(name: string, directive?: string, directiveOptions?: string[], args?: Record<string, any>, coreConfigOverride?: CoreConfig): Promise<void> {
-  let measurer: TimeMeasurer
-
   setCoreGlobal()
 
   // Common functions return true if something went wrong and we should exit

@@ -87,7 +87,7 @@ export default class AppWatcher extends EventEmitter {
     }
   }
 
-  /** Sends the ABRT signal */
+  /** Sends the ABORT signal */
   public kill(): void {
     if (this.currentChildProcess) {
       this.currentChildProcess.kill('SIGTERM')

@@ -20,9 +20,9 @@ describe(Core, (): void => {
     })
 
     it('lets you override config', async (): Promise<void> => {
-      const config = await Core.getCoreConfig({ appsLocation: './tests', tasksLocation: './tests', configLocation: './tests' })
+      const config = await Core.getCoreConfig({ apps: { location: './tests' }, tasks: { location: './tests' }, config: { location: './tests' } })
 
-      expect(config).toMatchObject({ appsLocation: './tests', tasksLocation: './tests', configLocation: './tests' })
+      expect(config).toMatchObject({ apps: { location: './tests' }, tasks: { location: './tests' }, config: { location: './tests' } })
     })
 
     it('validates the core config schema', async (): Promise<void> => {
@@ -30,15 +30,10 @@ describe(Core, (): void => {
 
       try {
         const config = await Core.getCoreConfig({
-          appsLocation: './nop',
-          appWatcher: {
-            enabled: 'nop',
-            ignore: [55]
-          },
-          configLocation: './nop',
-          modulesLocation: './nop',
-          modulesAsGlobals: 'nop',
-          tasksLocation: './nop',
+          apps: { location: './nop', watcher: { enabled: 'nop', ignore: [55] } },
+          config: { location: './nop' },
+          modules: { location: './nop', asGlobals: 'nop' },
+          tasks: { location: './nop' },
           logger: {
             level: 'LEVEL',
             silence: 'nop',
@@ -58,13 +53,13 @@ describe(Core, (): void => {
         error = err
       }
 
-      expect(error.message).toEqual(`appsLocation - Location is not accessible
-appWatcher.enabled - appWatcher.enabled must be of type Boolean.
-appWatcher.ignore.0 - appWatcher.ignore.0 must be of type String.
-configLocation - Location is not accessible
-modulesLocation - Location is not accessible
-modulesAsGlobals - modulesAsGlobals must be of type Boolean.
-tasksLocation - Location is not accessible
+      expect(error.message).toEqual(`apps.location - Location is not accessible
+apps.watcher.enabled - apps.watcher.enabled must be of type Boolean.
+apps.watcher.ignore.0 - apps.watcher.ignore.0 must be of type String.
+config.location - Location is not accessible
+modules.asGlobals - modules.asGlobals must be of type Boolean.
+modules.location - Location is not accessible
+tasks.location - Location is not accessible
 logger.level - Must be one of: FATAL | ERROR | WARNING | QUERY | INFO | DEBUG | TRACE
 logger.silence - logger.silence must be of type Boolean.
 logger.terminal.enable - logger.terminal.enable must be of type Boolean.
@@ -78,7 +73,7 @@ logger.localFile.location - Location is not accessible`)
 
   describe('.getProjectConfig', (): void => {
     it('loads the project config in the config directory (whole)', async (): Promise<void> => {
-      const config = await Core.getProjectConfig({ configLocation: './tests/__fixtures__/config' })
+      const config = await Core.getProjectConfig({ config: { location: './tests/__fixtures__/config' } })
 
       expect(config).toEqual({
         'good-app': { doStuff: true, test: true },
@@ -91,7 +86,7 @@ logger.localFile.location - Location is not accessible`)
   describe('.getCoreEnvironments', (): void => {
     it('loads all core environments for NODE_ENV and not constrains specified', async (): Promise<void> => {
       const logger = Core.getCoreLogger()
-      const environments = await Core.getCoreEnvironments({ environmentsLocation: './tests/__fixtures__/environments' }, logger)
+      const environments = await Core.getCoreEnvironments({ environments: { location: './tests/__fixtures__/environments' } }, logger)
 
       expect(environments).toEqual([expect.any(TestEnvironment), expect.any(UniversalEnvironment)])
     })
@@ -99,23 +94,23 @@ logger.localFile.location - Location is not accessible`)
     it('loads all core environments by process type', async (): Promise<void> => {
       const logger = Core.getCoreLogger()
 
-      let environments = await Core.getCoreEnvironments({ environmentsLocation: './tests/__fixtures__/environments' }, logger, 'apps')
+      let environments = await Core.getCoreEnvironments({ environments: { location: './tests/__fixtures__/environments' } }, logger, 'apps')
       expect(environments).toEqual([expect.any(AppEnvironment), expect.any(TestEnvironment), expect.any(UniversalEnvironment)])
 
-      environments = await Core.getCoreEnvironments({ environmentsLocation: './tests/__fixtures__/environments' }, logger, 'console')
+      environments = await Core.getCoreEnvironments({ environments: { location: './tests/__fixtures__/environments' } }, logger, 'console')
       expect(environments).toEqual([expect.any(ConsoleEnvironment), expect.any(TestEnvironment), expect.any(UniversalEnvironment)])
 
-      environments = await Core.getCoreEnvironments({ environmentsLocation: './tests/__fixtures__/environments' }, logger, 'tasks')
+      environments = await Core.getCoreEnvironments({ environments: { location: './tests/__fixtures__/environments' } }, logger, 'tasks')
       expect(environments).toEqual([expect.any(TaskEnvironment), expect.any(TestEnvironment), expect.any(UniversalEnvironment)])
     })
 
     it('loads all core environments by process name', async (): Promise<void> => {
       const logger = Core.getCoreLogger()
 
-      let environments = await Core.getCoreEnvironments({ environmentsLocation: './tests/__fixtures__/environments' }, logger, null, 'good-app')
+      let environments = await Core.getCoreEnvironments({ environments: { location: './tests/__fixtures__/environments' } }, logger, null, 'good-app')
       expect(environments).toEqual([expect.any(GoodAppEnvironment), expect.any(TestEnvironment), expect.any(UniversalEnvironment)])
 
-      environments = await Core.getCoreEnvironments({ environmentsLocation: './tests/__fixtures__/environments' }, logger, null, 'good-task')
+      environments = await Core.getCoreEnvironments({ environments: { location: './tests/__fixtures__/environments' } }, logger, null, 'good-task')
       expect(environments).toEqual([expect.any(GoodTaskEnvironment), expect.any(TestEnvironment), expect.any(UniversalEnvironment)])
     })
 
@@ -123,7 +118,7 @@ logger.localFile.location - Location is not accessible`)
       let error: Error
       try {
         const logger = Core.getCoreLogger()
-        await Core.getCoreEnvironments({ environmentsLocation: './tests/__fixtures__/environments-load-error' }, logger)
+        await Core.getCoreEnvironments({ environments: { location: './tests/__fixtures__/environments-load-error' } }, logger)
       } catch (err) {
         error = err
       }
@@ -135,8 +130,8 @@ logger.localFile.location - Location is not accessible`)
   describe('.getCoreModules', (): void => {
     it('loads all core modules and passes the matching config form project config and a logger', async (): Promise<void> => {
       const logger = Core.getCoreLogger()
-      const projectConfig = await Core.getProjectConfig({ configLocation: './tests/__fixtures__/config' })
-      const [modules, warnings] = await Core.getCoreModules({ modulesLocation: './tests/__fixtures__/modules' }, projectConfig, logger)
+      const projectConfig = await Core.getProjectConfig({ config: { location: './tests/__fixtures__/config' } })
+      const [modules, warnings] = await Core.getCoreModules({ modules: { location: './tests/__fixtures__/modules' } }, projectConfig, logger)
 
       expect(modules).toMatchObject({ goodModule: { config: { isLocal: true, test: true }, logger }, excellentModule: { config: { isSecond: true, test: true }, logger } })
       expect(warnings).toEqual([])
@@ -148,8 +143,8 @@ logger.localFile.location - Location is not accessible`)
       let error: Error
       try {
         const logger = Core.getCoreLogger()
-        const projectConfig = await Core.getProjectConfig({ configLocation: './tests/__fixtures__/config' })
-        await Core.getCoreModules({ modulesLocation: './tests/__fixtures__/modules-prepare-error' }, projectConfig, logger)
+        const projectConfig = await Core.getProjectConfig({ config: { location: './tests/__fixtures__/config' } })
+        await Core.getCoreModules({ modules: { location: './tests/__fixtures__/modules-prepare-error' } }, projectConfig, logger)
       } catch (err) {
         error = err
       }
@@ -163,8 +158,8 @@ logger.localFile.location - Location is not accessible`)
       let error: Error
       try {
         const logger = Core.getCoreLogger()
-        const projectConfig = await Core.getProjectConfig({ configLocation: './tests/__fixtures__/config' })
-        await Core.getCoreModules({ modulesLocation: './tests/__fixtures__/modules-load-error' }, projectConfig, logger)
+        const projectConfig = await Core.getProjectConfig({ config: { location: './tests/__fixtures__/config' } })
+        await Core.getCoreModules({ modules: { location: './tests/__fixtures__/modules-load-error' } }, projectConfig, logger)
       } catch (err) {
         error = err
       }
@@ -174,8 +169,8 @@ logger.localFile.location - Location is not accessible`)
 
     it('returns warnings about repeated modules (named intentionally the same)', async (): Promise<void> => {
       const logger = Core.getCoreLogger()
-      const projectConfig = await Core.getProjectConfig({ configLocation: './tests/__fixtures__/config' })
-      const [modules, warnings] = await Core.getCoreModules({ modulesLocation: './tests/__fixtures__/modules-warnings' }, projectConfig, logger)
+      const projectConfig = await Core.getProjectConfig({ config: { location: './tests/__fixtures__/config' } })
+      const [modules, warnings] = await Core.getCoreModules({ modules: { location: './tests/__fixtures__/modules-warnings' } }, projectConfig, logger)
 
       expect(modules).toMatchObject({ goodModule: { config: { isLocal: true, test: true }, logger } })
       expect(warnings).toEqual([
@@ -188,8 +183,8 @@ logger.localFile.location - Location is not accessible`)
 
     it('sets modules as globals', async (): Promise<void> => {
       const logger = Core.getCoreLogger()
-      const projectConfig = await Core.getProjectConfig({ configLocation: './tests/__fixtures__/config' })
-      await Core.getCoreModules({ modulesLocation: './tests/__fixtures__/modules', modulesAsGlobals: true }, projectConfig, logger)
+      const projectConfig = await Core.getProjectConfig({ config: { location: './tests/__fixtures__/config' } })
+      await Core.getCoreModules({ modules: { location: './tests/__fixtures__/modules', asGlobals: true } }, projectConfig, logger)
 
       expect(global['goodSubject']).toEqual('I am the subject of the good core module')
       expect(global['excellentSubject']).toEqual('I am the subject of the excellent core module')
@@ -213,8 +208,8 @@ logger.localFile.location - Location is not accessible`)
   describe('.releaseInternalModules', (): void => {
     it('calls the release method in all modules', async (): Promise<void> => {
       const logger = Core.getCoreLogger()
-      const projectConfig = await Core.getProjectConfig({ configLocation: './tests/__fixtures__/config' })
-      const [modules] = await Core.getCoreModules({ modulesLocation: './tests/__fixtures__/modules' }, projectConfig, logger)
+      const projectConfig = await Core.getProjectConfig({ config: { location: './tests/__fixtures__/config' } })
+      const [modules] = await Core.getCoreModules({ modules: { location: './tests/__fixtures__/modules' } }, projectConfig, logger)
 
       await Core.releaseInternalModules(modules)
 
@@ -224,8 +219,8 @@ logger.localFile.location - Location is not accessible`)
 
     it('throws at release error but still keep releasing what can be releases', async (): Promise<void> => {
       const logger = Core.getCoreLogger()
-      const projectConfig = await Core.getProjectConfig({ configLocation: './tests/__fixtures__/config' })
-      const [modules] = await Core.getCoreModules({ modulesLocation: './tests/__fixtures__/modules-release-error' }, projectConfig, logger)
+      const projectConfig = await Core.getProjectConfig({ config: { location: './tests/__fixtures__/config' } })
+      const [modules] = await Core.getCoreModules({ modules: { location: './tests/__fixtures__/modules-release-error' } }, projectConfig, logger)
       let error: Error
 
       try {

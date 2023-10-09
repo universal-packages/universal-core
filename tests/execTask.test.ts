@@ -34,11 +34,11 @@ describe(execTask, (): void => {
       ['option'],
       { fast: true },
       {
-        appsLocation: './tests/__fixtures__/apps',
-        configLocation: './tests/__fixtures__/config',
-        environmentsLocation: './tests/__fixtures__/environments',
-        tasksLocation: './tests/__fixtures__/tasks',
-        modulesLocation: './tests/__fixtures__/modules'
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules' }
       }
     )
 
@@ -47,7 +47,7 @@ describe(execTask, (): void => {
       App: null,
       appConfig: null,
       appInstance: null,
-      coreConfig: expect.objectContaining({ tasksLocation: './tests/__fixtures__/tasks' }),
+      coreConfig: expect.objectContaining({ tasks: { location: './tests/__fixtures__/tasks' } }),
       coreModules: {},
       environments: [expect.any(GoodTaskEnvironment), expect.any(TaskEnvironment), expect.any(TestEnvironment), expect.any(UniversalEnvironment)],
       logger: expect.any(Logger),
@@ -70,11 +70,11 @@ describe(execTask, (): void => {
       ['option'],
       { fast: true },
       {
-        appsLocation: './tests/__fixtures__/apps',
-        configLocation: './tests/__fixtures__/config',
-        environmentsLocation: './tests/__fixtures__/environments',
-        tasksLocation: './tests/__fixtures__/nonexistent',
-        modulesLocation: './tests/__fixtures__/modules'
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/nonexistent' },
+        modules: { location: './tests/__fixtures__/modules' }
       }
     )
 
@@ -90,11 +90,11 @@ describe(execTask, (): void => {
       ['option'],
       { fast: true },
       {
-        appsLocation: './tests/__fixtures__/apps',
-        configLocation: './tests/__fixtures__/config-errored',
-        environmentsLocation: './tests/__fixtures__/environments',
-        tasksLocation: './tests/__fixtures__/tasks',
-        modulesLocation: './tests/__fixtures__/modules'
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config-errored' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules' }
       }
     )
 
@@ -110,11 +110,11 @@ describe(execTask, (): void => {
       ['option'],
       { fast: true },
       {
-        appsLocation: './tests/__fixtures__/apps',
-        configLocation: './tests/__fixtures__/config',
-        environmentsLocation: './tests/__fixtures__/environments-load-error',
-        tasksLocation: './tests/__fixtures__/tasks',
-        modulesLocation: './tests/__fixtures__/modules'
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments-load-error' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules' }
       }
     )
 
@@ -130,11 +130,11 @@ describe(execTask, (): void => {
       ['option'],
       { fast: true },
       {
-        appsLocation: './tests/__fixtures__/apps',
-        configLocation: './tests/__fixtures__/config',
-        environmentsLocation: './tests/__fixtures__/environments',
-        tasksLocation: './tests/__fixtures__/tasks-load-error',
-        modulesLocation: './tests/__fixtures__/modules'
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks-load-error' },
+        modules: { location: './tests/__fixtures__/modules' }
       }
     )
 
@@ -150,11 +150,11 @@ describe(execTask, (): void => {
       ['option'],
       { fast: true },
       {
-        appsLocation: './tests/__fixtures__/apps',
-        configLocation: './tests/__fixtures__/config',
-        environmentsLocation: './tests/__fixtures__/environments',
-        tasksLocation: './tests/__fixtures__/tasks',
-        modulesLocation: './tests/__fixtures__/modules-load-error'
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules-load-error' }
       }
     )
 
@@ -170,11 +170,11 @@ describe(execTask, (): void => {
       ['option'],
       { fast: true },
       {
-        appsLocation: './tests/__fixtures__/apps',
-        configLocation: './tests/__fixtures__/config',
-        environmentsLocation: './tests/__fixtures__/environments',
-        tasksLocation: './tests/__fixtures__/tasks',
-        modulesLocation: './tests/__fixtures__/modules-warnings'
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules-warnings' }
       }
     )
 
@@ -189,11 +189,11 @@ describe(execTask, (): void => {
       ['option'],
       { fast: true },
       {
-        appsLocation: './tests/__fixtures__/apps',
-        configLocation: './tests/__fixtures__/config',
-        environmentsLocation: './tests/__fixtures__/environments',
-        tasksLocation: './tests/__fixtures__/tasks-exec-error',
-        modulesLocation: './tests/__fixtures__/modules'
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks-exec-error' },
+        modules: { location: './tests/__fixtures__/modules' }
       }
     )
 
@@ -209,11 +209,11 @@ describe(execTask, (): void => {
       ['option'],
       { fast: true },
       {
-        appsLocation: './tests/__fixtures__/apps',
-        configLocation: './tests/__fixtures__/config',
-        environmentsLocation: './tests/__fixtures__/environments',
-        tasksLocation: './tests/__fixtures__/tasks',
-        modulesLocation: './tests/__fixtures__/modules-release-error'
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules-release-error' }
       }
     )
 
@@ -233,11 +233,11 @@ describe(execTask, (): void => {
       ['option'],
       { fast: true },
       {
-        appsLocation: './tests/__fixtures__/apps',
-        configLocation: './tests/__fixtures__/config',
-        environmentsLocation: './tests/__fixtures__/environments',
-        tasksLocation: './tests/__fixtures__/tasks-abortable',
-        modulesLocation: './tests/__fixtures__/modules'
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks-abortable' },
+        modules: { location: './tests/__fixtures__/modules' }
       }
     )
 
@@ -266,11 +266,11 @@ describe(execTask, (): void => {
       ['option'],
       { fast: true },
       {
-        appsLocation: './tests/__fixtures__/apps',
-        configLocation: './tests/__fixtures__/config',
-        environmentsLocation: './tests/__fixtures__/environments',
-        tasksLocation: './tests/__fixtures__/tasks-abort-error',
-        modulesLocation: './tests/__fixtures__/modules'
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks-abort-error' },
+        modules: { location: './tests/__fixtures__/modules' }
       }
     )
 
@@ -294,11 +294,11 @@ describe(execTask, (): void => {
       ['option'],
       { fast: true },
       {
-        appsLocation: './tests/__fixtures__/apps',
-        configLocation: './tests/__fixtures__/config',
-        environmentsLocation: './tests/__fixtures__/environments',
-        tasksLocation: './tests/__fixtures__/tasks-hacky-load',
-        modulesLocation: './tests/__fixtures__/modules'
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks-hacky-load' },
+        modules: { location: './tests/__fixtures__/modules' }
       }
     )
 
@@ -321,11 +321,11 @@ describe(execTask, (): void => {
         ['option'],
         { fast: true },
         {
-          appsLocation: './tests/__fixtures__/apps',
-          configLocation: './tests/__fixtures__/config',
-          environmentsLocation: './tests/__fixtures__/environments-event-error',
-          tasksLocation: './tests/__fixtures__/tasks',
-          modulesLocation: './tests/__fixtures__/modules'
+          apps: { location: './tests/__fixtures__/apps' },
+          config: { location: './tests/__fixtures__/config' },
+          environments: { location: './tests/__fixtures__/environments-event-error' },
+          tasks: { location: './tests/__fixtures__/tasks' },
+          modules: { location: './tests/__fixtures__/modules' }
         }
       )
 
@@ -345,11 +345,11 @@ describe(execTask, (): void => {
       ['option'],
       { fast: true },
       {
-        appsLocation: './tests/__fixtures__/apps',
-        configLocation: './tests/__fixtures__/config',
-        environmentsLocation: './tests/__fixtures__/environments-event-error',
-        tasksLocation: './tests/__fixtures__/tasks-abortable',
-        modulesLocation: './tests/__fixtures__/modules'
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments-event-error' },
+        tasks: { location: './tests/__fixtures__/tasks-abortable' },
+        modules: { location: './tests/__fixtures__/modules' }
       }
     )
 
@@ -376,11 +376,11 @@ describe(execTask, (): void => {
       ['option'],
       { fast: true },
       {
-        appsLocation: './tests/__fixtures__/apps',
-        configLocation: './tests/__fixtures__/config',
-        environmentsLocation: './tests/__fixtures__/environments-event-error',
-        tasksLocation: './tests/__fixtures__/tasks-abortable',
-        modulesLocation: './tests/__fixtures__/modules'
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments-event-error' },
+        tasks: { location: './tests/__fixtures__/tasks-abortable' },
+        modules: { location: './tests/__fixtures__/modules' }
       }
     )
 

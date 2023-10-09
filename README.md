@@ -100,7 +100,7 @@ Example:
 
 ```
 default:
-  appsLocation: './src/apps'
+  apps: {location: './src/apps'}
 
 development:
   appWatcher:

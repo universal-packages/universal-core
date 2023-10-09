@@ -41,16 +41,26 @@ export type EnvironmentEvent =
 export type EnvironmentInterface = { [event in EnvironmentEvent]: () => Promise<void> | void }
 
 export interface CoreConfig {
-  appsLocation?: string
-  appWatcher?: {
-    enabled?: boolean
-    ignore?: string[]
+  apps?: {
+    location?: string
+    watcher?: {
+      enabled?: boolean
+      ignore?: string[]
+    }
   }
-  configLocation?: string
-  environmentsLocation?: string
-  modulesLocation?: string
-  modulesAsGlobals?: boolean
-  tasksLocation?: string
+  config?: {
+    location?: string
+  }
+  environments?: {
+    location?: string
+  }
+  modules?: {
+    asGlobals?: boolean
+    location?: string
+  }
+  tasks?: {
+    location?: string
+  }
   logger?: {
     level?: LogLevel
     silence?: boolean

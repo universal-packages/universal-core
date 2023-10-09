@@ -1,8 +1,9 @@
 development:
-  appWatcher:
-    enabled: true
-    ignore:
-      - tests
+  app:
+    watcher:
+      enabled: true
+      ignore:
+        - tests
   logger:
     level: TRACE
     terminal:

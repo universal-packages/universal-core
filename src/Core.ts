@@ -1,4 +1,4 @@
-import { loadConfig } from '@universal-packages/config-loader'
+import { deepMergeConfig, loadConfig } from '@universal-packages/config-loader'
 import { LocalFileTransport, Logger, TerminalTransport } from '@universal-packages/logger'
 import { ModuleRegistry, loadModules } from '@universal-packages/module-loader'
 import { loadPluginConfig } from '@universal-packages/plugin-config-loader'
@@ -18,17 +18,17 @@ export default class Core {
   }
 
   public static async getCoreConfig(coreConfigOverride?: CoreConfig): Promise<CoreConfig> {
-    const loadedCoreConfig = { ...(await loadPluginConfig('core', { cleanOrphanReplaceable: true, selectEnvironment: true })), ...coreConfigOverride }
-    const finalCoreConfig: CoreConfig = {
-      appsLocation: './src',
-      configLocation: './src/config',
-      environmentsLocation: './src',
-      modulesLocation: './src',
-      modulesAsGlobals: true,
-      tasksLocation: './src',
-      ...loadedCoreConfig,
-      logger: { silence: false, ...loadedCoreConfig?.logger, ...coreConfigOverride?.logger }
+    const defaultConfig: CoreConfig = {
+      apps: { location: './src' },
+      config: { location: './src/config' },
+      environments: { location: './src' },
+      modules: { asGlobals: true, location: './src' },
+      tasks: { location: './src' },
+      logger: { silence: false }
     }
+
+    const loadedCoreConfig = await loadPluginConfig<CoreConfig>('core', { cleanOrphanReplaceable: true, selectEnvironment: true, defaultConfig })
+    const finalCoreConfig = coreConfigOverride ? deepMergeConfig(loadedCoreConfig, coreConfigOverride) : loadedCoreConfig
     const errors = coreConfigSchema.validate(finalCoreConfig)
 
     if (errors.length > 0) {
@@ -41,11 +41,11 @@ export default class Core {
   }
 
   public static async getProjectConfig(coreConfig: CoreConfig): Promise<ProjectConfig> {
-    return await loadConfig(coreConfig.configLocation, { cleanOrphanReplaceable: true, selectEnvironment: true })
+    return await loadConfig(coreConfig.config.location, { cleanOrphanReplaceable: true, selectEnvironment: true })
   }
 
   public static async getCoreEnvironments(coreConfig: CoreConfig, logger: Logger, processType?: ProcessType, processableName?: string): Promise<CoreEnvironment[]> {
-    const localEnvironments = await loadModules(coreConfig.environmentsLocation, { conventionPrefix: 'environment' })
+    const localEnvironments = await loadModules(coreConfig.environments.location, { conventionPrefix: 'environment' })
     const thirdPartyEnvironments = await loadModules('./node_modules', { conventionPrefix: 'universal-core-environment' })
     const finalEnvironments = [...thirdPartyEnvironments, ...localEnvironments]
     const environments: CoreEnvironment[] = []
@@ -81,7 +81,7 @@ export default class Core {
   }
 
   public static async getCoreModules(coreConfig: CoreConfig, projectConfig: ProjectConfig, logger: Logger): Promise<[CoreModules, CoreModuleWarning[]]> {
-    const localModules = await loadModules(coreConfig.modulesLocation, { conventionPrefix: 'module' })
+    const localModules = await loadModules(coreConfig.modules.location, { conventionPrefix: 'module' })
     const thirdPartyModules = await loadModules('./node_modules', { conventionPrefix: 'universal-core-module' })
     const finalModules = [
       ...thirdPartyModules.sort((moduleA: ModuleRegistry, ModuleB: ModuleRegistry): number =>
@@ -128,7 +128,7 @@ export default class Core {
 
         coreModules[moduleCamelCaseName] = moduleInstance
 
-        if (coreConfig.modulesAsGlobals && moduleInstance.subject) global[subjectName] = moduleInstance.subject
+        if (coreConfig.modules.asGlobals && moduleInstance.subject) global[subjectName] = moduleInstance.subject
 
         // While loading we let other modules know about what core has loaded
         const globalCore = global.core || ({} as any)

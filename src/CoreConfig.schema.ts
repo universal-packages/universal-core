@@ -31,42 +31,52 @@ const directoryEnsureOptional = (value: any): boolean => {
 
 export const coreConfigSchema = new Schema(
   {
-    appsLocation: {
-      type: String,
-      use: { directoryCheck },
-      message: 'Location is not accessible'
-    },
-    appWatcher: {
-      enabled: {
-        type: Boolean
+    apps: {
+      location: {
+        type: String,
+        use: { directoryCheck },
+        message: 'Location is not accessible'
       },
-      ignore: {
-        type: Array,
-        each: { type: String }
+      watcher: {
+        enabled: {
+          type: Boolean
+        },
+        ignore: {
+          type: Array,
+          each: { type: String }
+        }
       }
     },
-    configLocation: {
-      type: String,
-      use: { directoryCheck },
-      message: 'Location is not accessible'
+    config: {
+      location: {
+        type: String,
+        use: { directoryCheck },
+        message: 'Location is not accessible'
+      }
     },
-    environmentsLocation: {
-      type: String,
-      use: { directoryCheckOptional },
-      message: 'Location is not accessible'
+    environments: {
+      location: {
+        type: String,
+        use: { directoryCheckOptional },
+        message: 'Location is not accessible'
+      }
     },
-    modulesLocation: {
-      type: String,
-      use: { directoryCheckOptional },
-      message: 'Location is not accessible'
+    modules: {
+      asGlobals: {
+        type: Boolean
+      },
+      location: {
+        type: String,
+        use: { directoryCheckOptional },
+        message: 'Location is not accessible'
+      }
     },
-    modulesAsGlobals: {
-      type: Boolean
-    },
-    tasksLocation: {
-      type: String,
-      use: { directoryCheck },
-      message: 'Location is not accessible'
+    tasks: {
+      location: {
+        type: String,
+        use: { directoryCheck },
+        message: 'Location is not accessible'
+      }
     },
     logger: {
       level: {

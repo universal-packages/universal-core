@@ -1,15 +1,21 @@
 default:
-  appsLocation: './example'
-  configLocation: './example/config'
-  modulesLocation: './example/modules'
-  tasksLocation: './example/tasks'
+  apps:
+   location: './example'
+  config:
+    location: './example/config'
+  modules:
+    location: './example/modules'
+  tasks:
+    location: './example/tasks'
 
 development:
-  modulesAsGlobals: true
-  appWatcher:
-    enabled: true
-    ignore:
-      - .github
+  modules:
+    asGlobals: true
+  apps:
+    watcher:
+      enabled: true
+      ignore:
+        - .github
   logger:
     level: TRACE
     silence: false

@@ -33,18 +33,18 @@ beforeEach((): void => {
 describe(runConsole, (): void => {
   it('do all the preparations and runs a repl server (sets core)', async (): Promise<void> => {
     await runConsole({
-      appsLocation: './tests/__fixtures__/apps',
-      configLocation: './tests/__fixtures__/config',
-      environmentsLocation: './tests/__fixtures__/environments',
-      tasksLocation: './tests/__fixtures__/tasks',
-      modulesLocation: './tests/__fixtures__/modules'
+      apps: { location: './tests/__fixtures__/apps' },
+      config: { location: './tests/__fixtures__/config' },
+      environments: { location: './tests/__fixtures__/environments' },
+      tasks: { location: './tests/__fixtures__/tasks' },
+      modules: { location: './tests/__fixtures__/modules' }
     })
 
     expect(core).toEqual({
       App: null,
       appConfig: null,
       appInstance: null,
-      coreConfig: expect.objectContaining({ modulesLocation: './tests/__fixtures__/modules' }),
+      coreConfig: expect.objectContaining({ modules: { asGlobals: true, location: './tests/__fixtures__/modules' } }),
       coreModules: { excellentModule: expect.any(ExcellentModule), goodModule: expect.any(GoodModule) },
       environments: [expect.any(ConsoleEnvironment), expect.any(TestEnvironment), expect.any(UniversalEnvironment)],
       logger: expect.any(Logger),
@@ -61,11 +61,11 @@ describe(runConsole, (): void => {
 
   it('exits if core config has errors', async (): Promise<void> => {
     await runConsole({
-      appsLocation: './tests/__fixtures__/noexistent',
-      configLocation: './tests/__fixtures__/config',
-      environmentsLocation: './tests/__fixtures__/environments',
-      tasksLocation: './tests/__fixtures__/tasks',
-      modulesLocation: './tests/__fixtures__/modules'
+      apps: { location: './tests/__fixtures__/noexistent' },
+      config: { location: './tests/__fixtures__/config' },
+      environments: { location: './tests/__fixtures__/environments' },
+      tasks: { location: './tests/__fixtures__/tasks' },
+      modules: { location: './tests/__fixtures__/modules' }
     })
 
     expect(process.exit).toHaveBeenCalledWith(1)
@@ -74,11 +74,11 @@ describe(runConsole, (): void => {
 
   it('exits if project config has errors', async (): Promise<void> => {
     await runConsole({
-      appsLocation: './tests/__fixtures__/apps',
-      configLocation: './tests/__fixtures__/config-errored',
-      environmentsLocation: './tests/__fixtures__/environments',
-      tasksLocation: './tests/__fixtures__/tasks',
-      modulesLocation: './tests/__fixtures__/modules'
+      apps: { location: './tests/__fixtures__/apps' },
+      config: { location: './tests/__fixtures__/config-errored' },
+      environments: { location: './tests/__fixtures__/environments' },
+      tasks: { location: './tests/__fixtures__/tasks' },
+      modules: { location: './tests/__fixtures__/modules' }
     })
 
     expect(process.exit).toHaveBeenCalledWith(1)
@@ -87,11 +87,11 @@ describe(runConsole, (): void => {
 
   it('exits if environments load fails', async (): Promise<void> => {
     await runConsole({
-      appsLocation: './tests/__fixtures__/apps',
-      configLocation: './tests/__fixtures__/config',
-      environmentsLocation: './tests/__fixtures__/environments-load-error',
-      tasksLocation: './tests/__fixtures__/tasks',
-      modulesLocation: './tests/__fixtures__/modules'
+      apps: { location: './tests/__fixtures__/apps' },
+      config: { location: './tests/__fixtures__/config' },
+      environments: { location: './tests/__fixtures__/environments-load-error' },
+      tasks: { location: './tests/__fixtures__/tasks' },
+      modules: { location: './tests/__fixtures__/modules' }
     })
 
     expect(process.exit).toHaveBeenCalledWith(1)
@@ -100,11 +100,11 @@ describe(runConsole, (): void => {
 
   it('exits if modules has errors', async (): Promise<void> => {
     await runConsole({
-      appsLocation: './tests/__fixtures__/apps',
-      configLocation: './tests/__fixtures__/config',
-      environmentsLocation: './tests/__fixtures__/environments',
-      tasksLocation: './tests/__fixtures__/tasks',
-      modulesLocation: './tests/__fixtures__/modules-load-error'
+      apps: { location: './tests/__fixtures__/apps' },
+      config: { location: './tests/__fixtures__/config' },
+      environments: { location: './tests/__fixtures__/environments' },
+      tasks: { location: './tests/__fixtures__/tasks' },
+      modules: { location: './tests/__fixtures__/modules-load-error' }
     })
 
     expect(process.exit).toHaveBeenCalledWith(1)
@@ -113,11 +113,11 @@ describe(runConsole, (): void => {
 
   it('continues if modules warnings are present (log the warnings)', async (): Promise<void> => {
     await runConsole({
-      appsLocation: './tests/__fixtures__/apps',
-      configLocation: './tests/__fixtures__/config',
-      environmentsLocation: './tests/__fixtures__/environments',
-      tasksLocation: './tests/__fixtures__/tasks',
-      modulesLocation: './tests/__fixtures__/modules-warnings'
+      apps: { location: './tests/__fixtures__/apps' },
+      config: { location: './tests/__fixtures__/config' },
+      environments: { location: './tests/__fixtures__/environments' },
+      tasks: { location: './tests/__fixtures__/tasks' },
+      modules: { location: './tests/__fixtures__/modules-warnings' }
     })
 
     expect(ConsoleEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeConsoleRuns', 'afterConsoleRuns'])
@@ -129,11 +129,11 @@ describe(runConsole, (): void => {
     })
 
     await runConsole({
-      appsLocation: './tests/__fixtures__/apps',
-      configLocation: './tests/__fixtures__/config',
-      environmentsLocation: './tests/__fixtures__/environments',
-      tasksLocation: './tests/__fixtures__/tasks',
-      modulesLocation: './tests/__fixtures__/modules'
+      apps: { location: './tests/__fixtures__/apps' },
+      config: { location: './tests/__fixtures__/config' },
+      environments: { location: './tests/__fixtures__/environments' },
+      tasks: { location: './tests/__fixtures__/tasks' },
+      modules: { location: './tests/__fixtures__/modules' }
     })
 
     expect(process.exit).toHaveBeenCalledWith(1)
@@ -143,11 +143,11 @@ describe(runConsole, (): void => {
 
   it('unload modules when repl server exists', async (): Promise<void> => {
     await runConsole({
-      appsLocation: './tests/__fixtures__/apps',
-      configLocation: './tests/__fixtures__/config',
-      environmentsLocation: './tests/__fixtures__/environments',
-      tasksLocation: './tests/__fixtures__/tasks',
-      modulesLocation: './tests/__fixtures__/modules'
+      apps: { location: './tests/__fixtures__/apps' },
+      config: { location: './tests/__fixtures__/config' },
+      environments: { location: './tests/__fixtures__/environments' },
+      tasks: { location: './tests/__fixtures__/tasks' },
+      modules: { location: './tests/__fixtures__/modules' }
     })
 
     await replServerMock.listeners('exit')[0]()
@@ -166,11 +166,11 @@ describe(runConsole, (): void => {
 
   it('exists if module releasing fails', async (): Promise<void> => {
     await runConsole({
-      appsLocation: './tests/__fixtures__/apps',
-      configLocation: './tests/__fixtures__/config',
-      environmentsLocation: './tests/__fixtures__/environments',
-      tasksLocation: './tests/__fixtures__/tasks',
-      modulesLocation: './tests/__fixtures__/modules-release-error'
+      apps: { location: './tests/__fixtures__/apps' },
+      config: { location: './tests/__fixtures__/config' },
+      environments: { location: './tests/__fixtures__/environments' },
+      tasks: { location: './tests/__fixtures__/tasks' },
+      modules: { location: './tests/__fixtures__/modules-release-error' }
     })
 
     await replServerMock.listeners('exit')[0]()
@@ -191,11 +191,11 @@ describe(runConsole, (): void => {
       EventErrorEnvironment.toError = currentEvent
 
       await runConsole({
-        appsLocation: './tests/__fixtures__/apps',
-        configLocation: './tests/__fixtures__/config',
-        environmentsLocation: './tests/__fixtures__/environments-event-error',
-        tasksLocation: './tests/__fixtures__/tasks',
-        modulesLocation: './tests/__fixtures__/modules'
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments-event-error' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules' }
       })
 
       expect(ControlEnvironment.calls).toEqual(baseEvents.slice(0, i + 1))
@@ -208,11 +208,11 @@ describe(runConsole, (): void => {
       EventErrorEnvironment.toError = currentEvent
 
       await runConsole({
-        appsLocation: './tests/__fixtures__/apps',
-        configLocation: './tests/__fixtures__/config',
-        environmentsLocation: './tests/__fixtures__/environments-event-error',
-        tasksLocation: './tests/__fixtures__/tasks',
-        modulesLocation: './tests/__fixtures__/modules'
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments-event-error' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules' }
       })
 
       await replServerMock.listeners('exit')[0]()

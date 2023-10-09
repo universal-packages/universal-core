@@ -24,7 +24,7 @@ export default class CoreTask<A = any> extends Core {
     const coreConfig = await this.getCoreConfig(coreConfigOverride)
     const pascalCaseName = pascalCase(name)
     const paramCaseName = paramCase(name)
-    const localTasks = await loadModules(coreConfig.tasksLocation, { conventionPrefix: 'task' })
+    const localTasks = await loadModules(coreConfig.tasks.location, { conventionPrefix: 'task' })
     const thirdPartyTasks = await loadModules('./node_modules', { conventionPrefix: 'universal-core-task' })
     const finalTasks = [...localTasks, ...thirdPartyTasks]
     const taskModuleRegistry = finalTasks.find((module: ModuleRegistry): boolean => {
@@ -34,7 +34,7 @@ export default class CoreTask<A = any> extends Core {
     })
 
     if (!taskModuleRegistry) {
-      throw new Error(`Task "${name}" can't be found anywhere in\n${coreConfig.tasksLocation}`)
+      throw new Error(`Task "${name}" can't be found anywhere in\n${coreConfig.tasks.location}`)
     } else if (taskModuleRegistry.error) {
       throw taskModuleRegistry.error
     }
