@@ -100,13 +100,15 @@ Example:
 
 ```
 default:
-  apps: {location: './src/apps'}
+  apps:
+    location: ./src/apps
 
 development:
-  appWatcher:
-    enabled: true
-    ignore:
-      - tests
+  apps:
+    watcher:
+      enabled: true
+      ignore:
+        - tests
   logger:
     level: TRACE
     terminal:
@@ -121,30 +123,37 @@ As you can see you can provide configuration depending on the environment you ar
 
 ### Config
 
-- **`appsLocation`** `string` `default: ./src`
-  Where core should look for app modules to load.
+- **`apps`** `map`
 
-- **`appWatcher`** `map`
+  - **`location`** `string` `default: ./src`
+    Where core should look for app modules to load.
+  - **`watcher`** `map`
+    - **`enabled`** `boolean` `default: false`
+      Should the runner watch your project for changes and reload the app on the fly?.
+    - **`ignore`** `string[]`
+      Which files and folders should the watcher ignore.
 
-  - **`enabled`** `boolean` `default: false`
-    Should the runner watch your project for changes and reload the app on the fly?.
-  - **`ignore`** `string[]`
-    Which files and folders should the watcher ignore.
+- **`config`** `map`
 
-- **`configLocation`** `string` `default: ./src/config`
-  Where all the project config is.
+  - **`location`** `string` `default: ./src/config`
+    Where all the project config is.
 
-- **`environmentsLocation`** `string` `default: ./src`
-  Where all your environments are.
+- **`environments`** `map`
 
-- **`modulesLocation`** `string` `default: ./src/modules`
-  Where all your custom modules are.
+  - **`location`** `string` `default: ./src`
+    Where all your environments are.
 
-- **`modulesAsGlobals`** `boolean` `default: true`
-  All modules will be available in the global scope like `myCustomModule`.
+- **`modules`** `map`
 
-- **`tasksLocation`** `boolean` `default: ./src/tasks`
-  Where all your custom tasks are.
+  - **`asGlobals`** `boolean` `default: true`
+    All modules will be available in the global scope like `myCustomModule`.
+  - **`location`** `string` `default: ./src`
+    Where all your custom modules are.
+
+- **`tasks`** `map`
+
+  - **`location`** `string` `default: ./src`
+    Where all your custom tasks are.
 
 - **`logger`** `map`
   - **`level`** `'FATAL' | 'ERROR' | 'WARNING' | 'QUERY' | 'INFO' | 'DEBUG' | 'TRACE'` `default: INFO`
