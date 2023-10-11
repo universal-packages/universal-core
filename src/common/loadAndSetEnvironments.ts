@@ -3,7 +3,7 @@ import { startMeasurement } from '@universal-packages/time-measurer'
 import Core from '../Core'
 import { ProcessType } from '../Core.types'
 
-export async function loadAndSetEnvironments(processType: ProcessType, processableName?: string): Promise<boolean> {
+export async function loadAndSetEnvironments(processType: ProcessType, processableName: string): Promise<boolean> {
   const measurer = startMeasurement()
 
   try {

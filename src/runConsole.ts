@@ -16,14 +16,14 @@ export async function runConsole(coreConfigOverride?: CoreConfig): Promise<void>
   // Common functions return true if something went wrong and we should exit
   if (await loadAndSetCoreConfig(coreConfigOverride)) return process.exit(1)
   if (await loadAndSetProjectConfig()) return process.exit(1)
-  if (await loadAndSetEnvironments('console')) return process.exit(1)
+  if (await loadAndSetEnvironments('console', 'console')) return process.exit(1)
 
   // Avoid terminating without unlading properly
   process.addListener('SIGINT', (): void => {})
   process.addListener('SIGTERM', (): void => {})
 
   if (await emitEnvironmentEvent('beforeModulesLoad')) return process.exit(1)
-  if (await loadAndSetCoreModules()) return process.exit(1)
+  if (await loadAndSetCoreModules('console', 'console')) return process.exit(1)
   if (await emitEnvironmentEvent('afterModulesLoad')) return process.exit(1)
 
   try {

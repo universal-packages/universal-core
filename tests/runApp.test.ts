@@ -7,10 +7,15 @@ import ControlEnvironment from './__fixtures__/environments-event-error/Control.
 import EventErrorEnvironment from './__fixtures__/environments-event-error/EventError.environment'
 import AppEnvironment from './__fixtures__/environments/App.environment'
 import GoodAppEnvironment from './__fixtures__/environments/GoodApp.environment'
+import NotProductionEnvironment from './__fixtures__/environments/NotProduction.environment'
 import TestEnvironment from './__fixtures__/environments/Test.environment'
 import UniversalEnvironment from './__fixtures__/environments/Universal.environment'
+import AppModule from './__fixtures__/modules/App.module'
 import ExcellentModule from './__fixtures__/modules/Excellent.module'
 import GoodModule from './__fixtures__/modules/Good.module'
+import GoodAppModule from './__fixtures__/modules/GoodApp.module'
+import NotProductionModule from './__fixtures__/modules/NotProduction.module'
+import TestModule from './__fixtures__/modules/Test.module'
 
 jest.spyOn(process, 'exit').mockImplementation(((): void => {}) as any)
 jest.mock('../src/AppWatcher')
@@ -47,8 +52,21 @@ describe(runApp, (): void => {
       appConfig: { doStuff: true, test: true },
       appInstance: expect.any(GoodApp),
       coreConfig: expect.objectContaining({ apps: { location: './tests/__fixtures__/apps' } }),
-      coreModules: { excellentModule: expect.any(ExcellentModule), goodModule: expect.any(GoodModule) },
-      environments: [expect.any(AppEnvironment), expect.any(GoodAppEnvironment), expect.any(TestEnvironment), expect.any(UniversalEnvironment)],
+      coreModules: {
+        appModule: expect.any(AppModule),
+        excellentModule: expect.any(ExcellentModule),
+        goodModule: expect.any(GoodModule),
+        goodAppModule: expect.any(GoodAppModule),
+        notProductionModule: expect.any(NotProductionModule),
+        testModule: expect.any(TestModule)
+      },
+      environments: [
+        expect.any(AppEnvironment),
+        expect.any(GoodAppEnvironment),
+        expect.any(NotProductionEnvironment),
+        expect.any(TestEnvironment),
+        expect.any(UniversalEnvironment)
+      ],
       logger: expect.any(Logger),
       projectConfig: expect.objectContaining({ ExcellentModule: expect.anything(), 'good-module': expect.anything(), 'good-app': expect.anything() }),
       stoppable: true,
@@ -60,6 +78,7 @@ describe(runApp, (): void => {
     expect(GoodAppEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeAppPrepare', 'afterAppPrepare', 'beforeAppRuns', 'afterAppRuns'])
     expect(TestEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeAppPrepare', 'afterAppPrepare', 'beforeAppRuns', 'afterAppRuns'])
     expect(UniversalEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeAppPrepare', 'afterAppPrepare', 'beforeAppRuns', 'afterAppRuns'])
+    expect(NotProductionEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeAppPrepare', 'afterAppPrepare', 'beforeAppRuns', 'afterAppRuns'])
   })
 
   it('exits if core config has errors', async (): Promise<void> => {

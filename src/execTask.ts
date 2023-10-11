@@ -43,7 +43,7 @@ export async function execTask(name: string, directive?: string, directiveOption
 
   // Common functions return true if something went wrong and we should exit
   if (await emitEnvironmentEvent('beforeModulesLoad')) return process.exit(1)
-  if (await loadAndSetCoreModules()) return process.exit(1)
+  if (await loadAndSetCoreModules('tasks', core.Task.taskName || core.Task.name)) return process.exit(1)
   if (await emitEnvironmentEvent('afterModulesLoad')) return process.exit(1)
 
   core.stoppable = true

@@ -4,7 +4,7 @@ import { EnvironmentInterface, EnvironmentName, ProcessType } from './Core.types
 
 export default class CoreEnvironment implements EnvironmentInterface {
   public static readonly environment: EnvironmentName | EnvironmentName[]
-  public static readonly onlyFor: ProcessType
+  public static readonly onlyFor: ProcessType | ProcessType[]
   public static readonly tideTo: string | string[]
 
   public readonly logger: Logger

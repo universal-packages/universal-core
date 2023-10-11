@@ -5,6 +5,7 @@ import { execTask } from '../src/execTask'
 import ControlEnvironment from './__fixtures__/environments-event-error/Control.environment'
 import EventErrorEnvironment from './__fixtures__/environments-event-error/EventError.environment'
 import GoodTaskEnvironment from './__fixtures__/environments/GoodTask.environment'
+import NotProductionEnvironment from './__fixtures__/environments/NotProduction.environment'
 import TaskEnvironment from './__fixtures__/environments/Task.environment'
 import TestEnvironment from './__fixtures__/environments/Test.environment'
 import UniversalEnvironment from './__fixtures__/environments/Universal.environment'
@@ -49,7 +50,13 @@ describe(execTask, (): void => {
       appInstance: null,
       coreConfig: expect.objectContaining({ tasks: { location: './tests/__fixtures__/tasks' } }),
       coreModules: {},
-      environments: [expect.any(GoodTaskEnvironment), expect.any(TaskEnvironment), expect.any(TestEnvironment), expect.any(UniversalEnvironment)],
+      environments: [
+        expect.any(GoodTaskEnvironment),
+        expect.any(NotProductionEnvironment),
+        expect.any(TaskEnvironment),
+        expect.any(TestEnvironment),
+        expect.any(UniversalEnvironment)
+      ],
       logger: expect.any(Logger),
       projectConfig: expect.objectContaining({ ExcellentModule: expect.anything(), 'good-module': expect.anything(), 'good-app': expect.anything() }),
       stoppable: true,
@@ -61,6 +68,7 @@ describe(execTask, (): void => {
     expect(TaskEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeTaskExec', 'afterTaskExec', 'beforeModulesRelease', 'afterModulesRelease'])
     expect(TestEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeTaskExec', 'afterTaskExec', 'beforeModulesRelease', 'afterModulesRelease'])
     expect(UniversalEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeTaskExec', 'afterTaskExec', 'beforeModulesRelease', 'afterModulesRelease'])
+    expect(NotProductionEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeTaskExec', 'afterTaskExec', 'beforeModulesRelease', 'afterModulesRelease'])
   })
 
   it('exits if core config has errors', async (): Promise<void> => {

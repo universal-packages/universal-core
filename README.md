@@ -187,6 +187,9 @@ export default class RedisModule extends CoreModule {
   static moduleName = 'redis-module'
   static description = 'Redis encapsulation'
   static defaultConfig = { port: 3789 }
+  static environment = 'production'
+  static onlyFor = 'apps'
+  static tideTo = 'web-server-app'
 
   subject = null
 
@@ -225,6 +228,20 @@ Quick explanation of what your modules provides.
 #### **`defaultConfig`** `String`
 
 Before core passed the configuration loaded to this module it can optionally grab this default configuration and merge it with the loaded one, normally used to avoid errors while configuring the subject.
+
+#### **`environment`** `String | String[]`
+
+If specified the module will only be loaded if `NODE_ENV` matches one of the values, for instance the example above will only be loaded when `NODE_ENV` is equal to `production`, another example will be to set it like `static environment = ['production', 'staging']` to only be ran in those.
+
+It is also supported negated environments, for instance `static environment = '!development'` will be loaded in any environment except development.
+
+#### **`onlyFor`** `'apps' | 'tasks' | 'console'`
+
+If specified the environment will only be loaded if the process type matches, for instance the example above will only be loaded if we are running an app, another example will be to set it like `static onlyFor = ['apps', 'console']` to only be ran in those.
+
+#### **`tideTo`** `String | String[]`
+
+If specified the environment will only be loaded if the process name matches, for instance the example above will only be loaded if we are running an app called `web-server-app`, another example will be to set it like `static tideTo = ['web-server-app', 'worker-app']` to only be ran in those.
 
 ### Instance properties
 
@@ -482,6 +499,8 @@ export default class MyEnvironment extends CoreEnvironment {
 #### **`environment`** `String | String[]`
 
 If specified the environment will only be loaded if `NODE_ENV` matches one of the values, for instance the example above will only be loaded when `NODE_ENV` is equal to `production`, another example will be to set it like `static environment = ['production', 'staging']` to only be ran in those.
+
+It is also supported negated environments, for instance `static environment = '!development'` will be loaded in any environment except development.
 
 #### **`onlyFor`** `'apps' | 'tasks' | 'console'`
 

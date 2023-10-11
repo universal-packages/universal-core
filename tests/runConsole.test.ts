@@ -7,10 +7,14 @@ import { runConsole } from '../src/runConsole'
 import ControlEnvironment from './__fixtures__/environments-event-error/Control.environment'
 import EventErrorEnvironment from './__fixtures__/environments-event-error/EventError.environment'
 import ConsoleEnvironment from './__fixtures__/environments/Console.environment'
+import NotProductionEnvironment from './__fixtures__/environments/NotProduction.environment'
 import TestEnvironment from './__fixtures__/environments/Test.environment'
 import UniversalEnvironment from './__fixtures__/environments/Universal.environment'
+import ConsoleModule from './__fixtures__/modules/Console.module'
 import ExcellentModule from './__fixtures__/modules/Excellent.module'
 import GoodModule from './__fixtures__/modules/Good.module'
+import NotProductionModule from './__fixtures__/modules/NotProduction.module'
+import TestModule from './__fixtures__/modules/Test.module'
 
 class ReplServerMock extends EventEmitter {
   public setupHistory = jest.fn()
@@ -45,8 +49,14 @@ describe(runConsole, (): void => {
       appConfig: null,
       appInstance: null,
       coreConfig: expect.objectContaining({ modules: { asGlobals: true, location: './tests/__fixtures__/modules' } }),
-      coreModules: { excellentModule: expect.any(ExcellentModule), goodModule: expect.any(GoodModule) },
-      environments: [expect.any(ConsoleEnvironment), expect.any(TestEnvironment), expect.any(UniversalEnvironment)],
+      coreModules: {
+        consoleModule: expect.any(ConsoleModule),
+        excellentModule: expect.any(ExcellentModule),
+        goodModule: expect.any(GoodModule),
+        notProductionModule: expect.any(NotProductionModule),
+        testModule: expect.any(TestModule)
+      },
+      environments: [expect.any(ConsoleEnvironment), expect.any(NotProductionEnvironment), expect.any(TestEnvironment), expect.any(UniversalEnvironment)],
       logger: expect.any(Logger),
       projectConfig: expect.objectContaining({ ExcellentModule: expect.anything(), 'good-module': expect.anything(), 'good-app': expect.anything() }),
       stoppable: false,
@@ -57,6 +67,7 @@ describe(runConsole, (): void => {
     expect(ConsoleEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeConsoleRuns', 'afterConsoleRuns'])
     expect(TestEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeConsoleRuns', 'afterConsoleRuns'])
     expect(UniversalEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeConsoleRuns', 'afterConsoleRuns'])
+    expect(NotProductionEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeConsoleRuns', 'afterConsoleRuns'])
   })
 
   it('exits if core config has errors', async (): Promise<void> => {

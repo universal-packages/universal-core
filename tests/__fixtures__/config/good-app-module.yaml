@@ -1,0 +1,5 @@
+default:
+  isGoodApp: true
+
+test:
+  test: true

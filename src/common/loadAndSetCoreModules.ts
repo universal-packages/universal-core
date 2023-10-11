@@ -1,12 +1,13 @@
 import { startMeasurement } from '@universal-packages/time-measurer'
 
 import Core from '../Core'
+import { ProcessType } from '../Core.types'
 
-export async function loadAndSetCoreModules(): Promise<boolean> {
+export async function loadAndSetCoreModules(processType: ProcessType, processableName: string): Promise<boolean> {
   const measurer = startMeasurement()
 
   try {
-    const [loadedCoreModules, warnings] = await Core.getCoreModules(core.coreConfig, core.projectConfig, core.logger)
+    const [loadedCoreModules, warnings] = await Core.getCoreModules(core.coreConfig, core.projectConfig, core.logger, processType, processableName)
 
     core.coreModules = loadedCoreModules
 

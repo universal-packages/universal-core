@@ -1,0 +1,5 @@
+default:
+  isApp: true
+
+test:
+  test: true

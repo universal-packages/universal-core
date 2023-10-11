@@ -44,7 +44,7 @@ export default class Core {
     return await loadConfig(coreConfig.config.location, { cleanOrphanReplaceable: true, selectEnvironment: true })
   }
 
-  public static async getCoreEnvironments(coreConfig: CoreConfig, logger: Logger, processType?: ProcessType, processableName?: string): Promise<CoreEnvironment[]> {
+  public static async getCoreEnvironments(coreConfig: CoreConfig, logger: Logger, processType: ProcessType, processableName: string): Promise<CoreEnvironment[]> {
     const localEnvironments = await loadModules(coreConfig.environments.location, { conventionPrefix: 'environment' })
     const thirdPartyEnvironments = await loadModules('./node_modules', { conventionPrefix: 'universal-core-environment' })
     const finalEnvironments = [...thirdPartyEnvironments, ...localEnvironments]
@@ -63,12 +63,18 @@ export default class Core {
       const EnvironmentClass: typeof CoreEnvironment = currentEnvironment.exports
 
       const configuredNodeEnvironments = [].concat(EnvironmentClass.environment).filter(Boolean)
+      const positiveConfiguredNodeEnvironments = configuredNodeEnvironments.filter((configuredNodeEnvironment: string): boolean => !configuredNodeEnvironment.startsWith('!'))
+      const negativeConfiguredNodeEnvironments = configuredNodeEnvironments.filter((configuredNodeEnvironment: string): boolean => configuredNodeEnvironment.startsWith('!'))
       const configuredProcessTypes = [].concat(EnvironmentClass.onlyFor)
       const configuredProcessNames = [].concat(EnvironmentClass.tideTo)
 
-      const canRunInNodeEnvironment = !EnvironmentClass.environment || configuredNodeEnvironments.includes(process.env['NODE_ENV'])
-      const canRunForProcessType = !EnvironmentClass.onlyFor || configuredProcessTypes.includes(processType)
-      const canRunForProcessName = !EnvironmentClass.tideTo || configuredProcessNames.includes(processableName)
+      const canRunInNodeEnvironment =
+        !EnvironmentClass.environment ||
+        (positiveConfiguredNodeEnvironments.length > 0
+          ? positiveConfiguredNodeEnvironments.includes(process.env['NODE_ENV'])
+          : !negativeConfiguredNodeEnvironments.includes(`!${process.env['NODE_ENV']}`))
+      const canRunForProcessType = !EnvironmentClass.onlyFor || !processType || configuredProcessTypes.includes(processType)
+      const canRunForProcessName = !EnvironmentClass.tideTo || !processableName || configuredProcessNames.includes(processableName)
 
       if (canRunInNodeEnvironment && canRunForProcessType && canRunForProcessName) {
         const EnvironmentInstance = new EnvironmentClass(logger)
@@ -80,7 +86,13 @@ export default class Core {
     return environments
   }
 
-  public static async getCoreModules(coreConfig: CoreConfig, projectConfig: ProjectConfig, logger: Logger): Promise<[CoreModules, CoreModuleWarning[]]> {
+  public static async getCoreModules(
+    coreConfig: CoreConfig,
+    projectConfig: ProjectConfig,
+    logger: Logger,
+    processType: ProcessType,
+    processableName: string
+  ): Promise<[CoreModules, CoreModuleWarning[]]> {
     const localModules = await loadModules(coreConfig.modules.location, { conventionPrefix: 'module' })
     const thirdPartyModules = await loadModules('./node_modules', { conventionPrefix: 'universal-core-module' })
     const finalModules = [
@@ -108,31 +120,47 @@ export default class Core {
       const modulePascalCaseName = pascalCase(moduleName)
       const subjectName = moduleCamelCaseName.replace('Module', 'Subject')
       const moduleConfig = projectConfig[moduleParamCaseName] || projectConfig[modulePascalCaseName] || projectConfig[moduleName]
+      const ModuleClass: typeof CoreModule = currentModule.exports
 
-      if (coreModules[moduleCamelCaseName]) {
-        warnings.push({ title: `Two modules have the same name: ${moduleName}`, message: `First loaded will take precedence\n${currentModule.location}` })
-      } else {
-        const ModuleClass: typeof CoreModule = currentModule.exports
-        const moduleInstance = new ModuleClass({ ...ModuleClass.defaultConfig, ...moduleConfig }, logger)
+      const configuredNodeEnvironments = [].concat(ModuleClass.environment).filter(Boolean)
+      const positiveConfiguredNodeEnvironments = configuredNodeEnvironments.filter((configuredNodeEnvironment: string): boolean => !configuredNodeEnvironment.startsWith('!'))
+      const negativeConfiguredNodeEnvironments = configuredNodeEnvironments.filter((configuredNodeEnvironment: string): boolean => configuredNodeEnvironment.startsWith('!'))
+      const configuredProcessTypes = [].concat(ModuleClass.onlyFor)
+      const configuredProcessNames = [].concat(ModuleClass.tideTo)
 
-        try {
-          await moduleInstance.prepare()
-        } catch (error) {
-          // Release already loaded modules
+      const canRunInNodeEnvironment =
+        !ModuleClass.environment ||
+        (positiveConfiguredNodeEnvironments.length > 0
+          ? positiveConfiguredNodeEnvironments.includes(process.env['NODE_ENV'])
+          : !negativeConfiguredNodeEnvironments.includes(`!${process.env['NODE_ENV']}`))
+      const canRunForProcessType = !ModuleClass.onlyFor || !processType || configuredProcessTypes.includes(processType)
+      const canRunForProcessName = !ModuleClass.tideTo || !processableName || configuredProcessNames.includes(processableName)
+
+      if (canRunInNodeEnvironment && canRunForProcessType && canRunForProcessName) {
+        if (coreModules[moduleCamelCaseName]) {
+          warnings.push({ title: `Two modules have the same name: ${moduleName}`, message: `First loaded will take precedence\n${currentModule.location}` })
+        } else {
+          const moduleInstance = new ModuleClass({ ...ModuleClass.defaultConfig, ...moduleConfig }, logger)
+
           try {
-            await Core.releaseInternalModules(coreModules)
-          } catch (err) {}
+            await moduleInstance.prepare()
+          } catch (error) {
+            // Release already loaded modules
+            try {
+              await Core.releaseInternalModules(coreModules)
+            } catch (err) {}
 
-          throw error
+            throw error
+          }
+
+          coreModules[moduleCamelCaseName] = moduleInstance
+
+          if (coreConfig.modules.asGlobals && moduleInstance.subject) global[subjectName] = moduleInstance.subject
+
+          // While loading we let other modules know about what core has loaded
+          const globalCore = global.core || ({} as any)
+          globalCore.coreModules = coreModules
         }
-
-        coreModules[moduleCamelCaseName] = moduleInstance
-
-        if (coreConfig.modules.asGlobals && moduleInstance.subject) global[subjectName] = moduleInstance.subject
-
-        // While loading we let other modules know about what core has loaded
-        const globalCore = global.core || ({} as any)
-        globalCore.coreModules = coreModules
       }
     }
 

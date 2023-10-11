@@ -108,7 +108,7 @@ export async function runApp(name: string, args?: Record<string, any>, demon?: b
 
     // Common functions return true if something went wrong and we should exit
     if (await emitEnvironmentEvent('beforeModulesLoad')) return process.exit(1)
-    if (await loadAndSetCoreModules()) return process.exit(1)
+    if (await loadAndSetCoreModules('apps', core.App.appName || core.App.name)) return process.exit(1)
     if (await emitEnvironmentEvent('afterModulesLoad')) return process.exit(1)
 
     if (await emitEnvironmentEvent('beforeAppPrepare')) return process.exit(1)
