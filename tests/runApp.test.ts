@@ -304,7 +304,7 @@ describe(runApp, (): void => {
     ])
   })
 
-  it("waits until the running reaches a stoppable state to start aborting (so we don't unload at the same time the task is being loaded)", async (): Promise<void> => {
+  it("waits until the running reaches a stoppable state to start aborting (so we don't unload at the same time the app is being loaded)", async (): Promise<void> => {
     setTimeout((): void => {
       expect(GoodApp.iWasPrepared).toEqual(true)
       expect(GoodApp.iWasRan).toEqual(true)

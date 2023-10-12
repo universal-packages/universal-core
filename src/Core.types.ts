@@ -7,7 +7,7 @@ import CoreTask from './CoreTask'
 
 export type ProjectConfig = Record<any, any>
 export type EnvironmentName = 'production' | 'development' | 'test' | '!production' | '!development' | '!test' | string
-export type ProcessType = 'apps' | 'tasks' | 'console'
+export type ProcessType = 'apps' | 'tasks' | 'console' | 'bare'
 export type EnvironmentEvent =
   // Module load events
   | 'beforeModulesLoad'
