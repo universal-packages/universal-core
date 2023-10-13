@@ -34,7 +34,7 @@ yargs
       yargs
         .positional('task-name', { description: 'Name of the task to run', type: 'string', demandOption: true })
         .positional('task-directive', { description: 'Task behavior directive', type: 'string' })
-        .positional('directive-options', { description: 'Any options unsupported by the task directive' }),
+        .positional('directive-options', { description: 'Any options supported by the task directive' }),
     handler: (argv: ArgumentsCamelCase) => {
       const argvExtract = processArgv(argv)
       execTask(argvExtract.taskName, argvExtract.taskDirective, argvExtract.directiveOptions, argvExtract.options)
