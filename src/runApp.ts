@@ -2,7 +2,9 @@ import { sleep } from '@universal-packages/time-measurer'
 
 import AppWatcher from './AppWatcher'
 import { CoreConfig } from './Core.types'
+import { adjustCoreLogger } from './common/adjustCoreLogger'
 import { emitEnvironmentEvent } from './common/emitEnvironmentEvent'
+import { initCoreLogger } from './common/initCoreLogger'
 import { loadAndSetCoreApp } from './common/loadAndSetCoreApp'
 import { loadAndSetCoreConfig } from './common/loadAndSetCoreConfig'
 import { loadAndSetCoreModules } from './common/loadAndSetCoreModules'
@@ -19,9 +21,12 @@ import { StopAppFunction } from './runApp.types'
 
 export async function runApp(name: string, args?: Record<string, any>, demon?: boolean, coreConfigOverride?: CoreConfig): Promise<StopAppFunction> {
   setCoreGlobal()
+  initCoreLogger()
 
   // Common functions return true if something went wrong and we should exit
   if (await loadAndSetCoreConfig(coreConfigOverride)) return process.exit(1)
+
+  adjustCoreLogger()
 
   if (!demon && core.coreConfig.apps.watcher?.enabled) {
     core.logger.publish('INFO', 'App Watcher enabled', 'App will be ran in a sub process', 'CORE')

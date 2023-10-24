@@ -3,3 +3,5 @@ if (process.env.CI || process.versions.node.startsWith('20')) {
   jest.retryTimes(5)
   jest.setTimeout(10000)
 }
+
+process.env.CORE_TESTING = 'true'

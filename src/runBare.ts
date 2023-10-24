@@ -1,7 +1,9 @@
 import { sleep } from '@universal-packages/time-measurer'
 
 import { CoreConfig } from './Core.types'
+import { adjustCoreLogger } from './common/adjustCoreLogger'
 import { emitEnvironmentEvent } from './common/emitEnvironmentEvent'
+import { initCoreLogger } from './common/initCoreLogger'
 import { loadAndSetCoreConfig } from './common/loadAndSetCoreConfig'
 import { loadAndSetCoreModules } from './common/loadAndSetCoreModules'
 import { loadAndSetEnvironments } from './common/loadAndSetEnvironments'
@@ -12,9 +14,12 @@ import { UnloadFunction } from './runBare.types'
 
 export async function runBare(coreConfigOverride?: CoreConfig): Promise<UnloadFunction> {
   setCoreGlobal()
+  initCoreLogger()
 
   // Common functions return true if something went wrong and we should exit
   if (await loadAndSetCoreConfig(coreConfigOverride)) return process.exit(1)
+
+  adjustCoreLogger()
 
   // Common functions return true if something went wrong and we should exit
   if (await loadAndSetProjectConfig()) return process.exit(1)

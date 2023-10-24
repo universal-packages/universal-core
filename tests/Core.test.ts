@@ -1,3 +1,5 @@
+import { Logger } from '@universal-packages/logger'
+
 import { Core } from '../src'
 import AppEnvironment from './__fixtures__/environments/App.environment'
 import ConsoleEnvironment from './__fixtures__/environments/Console.environment'
@@ -96,7 +98,7 @@ logger.localFile.location - Location is not accessible`)
 
   describe('.getCoreEnvironments', (): void => {
     it('loads all core environments considering process type and process name', async (): Promise<void> => {
-      const logger = Core.getCoreLogger()
+      const logger = new Logger({ silence: true })
 
       let environments = await Core.getCoreEnvironments({ environments: { location: './tests/__fixtures__/environments' } }, logger, 'apps', 'good-app')
       expect(environments).toEqual([
@@ -123,7 +125,7 @@ logger.localFile.location - Location is not accessible`)
     it('throws if it finds an environment with errors', async (): Promise<void> => {
       let error: Error
       try {
-        const logger = Core.getCoreLogger()
+        const logger = new Logger({ silence: true })
         await Core.getCoreEnvironments({ environments: { location: './tests/__fixtures__/environments-load-error' } }, logger, 'apps', 'good-app')
       } catch (err) {
         error = err
@@ -135,7 +137,7 @@ logger.localFile.location - Location is not accessible`)
 
   describe('.getCoreModules', (): void => {
     it('loads all core modules and passes the matching config form project config and a logger', async (): Promise<void> => {
-      const logger = Core.getCoreLogger()
+      const logger = new Logger({ silence: true })
       const projectConfig = await Core.getProjectConfig({ config: { location: './tests/__fixtures__/config' } })
       const [modules, warnings] = await Core.getCoreModules({ modules: { location: './tests/__fixtures__/modules' } }, projectConfig, logger, 'apps', 'good-app')
 
@@ -158,7 +160,7 @@ logger.localFile.location - Location is not accessible`)
     })
 
     it('loads all core modules by process type', async (): Promise<void> => {
-      const logger = Core.getCoreLogger()
+      const logger = new Logger({ silence: true })
       const projectConfig = await Core.getProjectConfig({ config: { location: './tests/__fixtures__/config' } })
 
       const [app_modules] = await Core.getCoreModules({ modules: { location: './tests/__fixtures__/modules' } }, projectConfig, logger, 'apps', 'good-app')
@@ -194,7 +196,7 @@ logger.localFile.location - Location is not accessible`)
     it('throws as soon as a module preparation throws and unloads previously loaded ones', async (): Promise<void> => {
       let error: Error
       try {
-        const logger = Core.getCoreLogger()
+        const logger = new Logger({ silence: true })
         const projectConfig = await Core.getProjectConfig({ config: { location: './tests/__fixtures__/config' } })
         await Core.getCoreModules({ modules: { location: './tests/__fixtures__/modules-prepare-error' } }, projectConfig, logger, 'apps', 'any-app')
       } catch (err) {
@@ -209,7 +211,7 @@ logger.localFile.location - Location is not accessible`)
     it('throws if it finds module with errors', async (): Promise<void> => {
       let error: Error
       try {
-        const logger = Core.getCoreLogger()
+        const logger = new Logger({ silence: true })
         const projectConfig = await Core.getProjectConfig({ config: { location: './tests/__fixtures__/config' } })
         await Core.getCoreModules({ modules: { location: './tests/__fixtures__/modules-load-error' } }, projectConfig, logger, 'apps', 'any-app')
       } catch (err) {
@@ -220,7 +222,7 @@ logger.localFile.location - Location is not accessible`)
     })
 
     it('returns warnings about repeated modules (named intentionally the same)', async (): Promise<void> => {
-      const logger = Core.getCoreLogger()
+      const logger = new Logger({ silence: true })
       const projectConfig = await Core.getProjectConfig({ config: { location: './tests/__fixtures__/config' } })
       const [modules, warnings] = await Core.getCoreModules({ modules: { location: './tests/__fixtures__/modules-warnings' } }, projectConfig, logger, 'apps', 'any-app')
 
@@ -234,7 +236,7 @@ logger.localFile.location - Location is not accessible`)
     })
 
     it('sets modules as globals', async (): Promise<void> => {
-      const logger = Core.getCoreLogger()
+      const logger = new Logger({ silence: true })
       const projectConfig = await Core.getProjectConfig({ config: { location: './tests/__fixtures__/config' } })
       await Core.getCoreModules({ modules: { location: './tests/__fixtures__/modules', asGlobals: true } }, projectConfig, logger, 'apps', 'any-app')
 
@@ -243,23 +245,9 @@ logger.localFile.location - Location is not accessible`)
     })
   })
 
-  describe('.getCoreLogger', (): void => {
-    it('creates and setups a logger and its basic transports', async (): Promise<void> => {
-      const logger = Core.getCoreLogger({
-        logger: { level: 'ERROR', silence: true, terminal: { enable: false, clear: false, withHeader: true }, localFile: { enable: false, asJson: true } }
-      })
-
-      expect(logger).toMatchObject({
-        level: 'ERROR',
-        silence: true,
-        transports: { terminal: { enabled: false, options: { clear: false, withHeader: true } }, localFile: { enabled: false, options: { asJson: true } } }
-      })
-    })
-  })
-
   describe('.releaseInternalModules', (): void => {
     it('calls the release method in all modules', async (): Promise<void> => {
-      const logger = Core.getCoreLogger()
+      const logger = new Logger({ silence: true })
       const projectConfig = await Core.getProjectConfig({ config: { location: './tests/__fixtures__/config' } })
       const [modules] = await Core.getCoreModules({ modules: { location: './tests/__fixtures__/modules' } }, projectConfig, logger, 'apps', 'any-app')
 
@@ -270,7 +258,7 @@ logger.localFile.location - Location is not accessible`)
     })
 
     it('throws at release error but still keep releasing what can be releases', async (): Promise<void> => {
-      const logger = Core.getCoreLogger()
+      const logger = new Logger({ silence: true })
       const projectConfig = await Core.getProjectConfig({ config: { location: './tests/__fixtures__/config' } })
       const [modules] = await Core.getCoreModules({ modules: { location: './tests/__fixtures__/modules-release-error' } }, projectConfig, logger, 'apps', 'any-app')
       let error: Error

@@ -1,5 +1,5 @@
 import { deepMergeConfig, loadConfig } from '@universal-packages/config-loader'
-import { LocalFileTransport, Logger, TerminalTransport } from '@universal-packages/logger'
+import { Logger } from '@universal-packages/logger'
 import { ModuleRegistry, loadModules } from '@universal-packages/module-loader'
 import { loadPluginConfig } from '@universal-packages/plugin-config-loader'
 import { camelCase, paramCase, pascalCase } from 'change-case'
@@ -166,33 +166,6 @@ export default class Core {
     }
 
     return [coreModules, warnings]
-  }
-
-  public static getCoreLogger(coreConfig?: CoreConfig): Logger {
-    const logger = new Logger({ silence: process.env['NODE_ENV'] === 'test' })
-    const terminalTransport = logger.getTransport('terminal') as TerminalTransport
-    const localFileTransport = logger.getTransport('localFile') as LocalFileTransport
-
-    terminalTransport.options.categoryColors['CORE'] = 'BLACK'
-
-    if (coreConfig) {
-      if (coreConfig.logger?.level) logger.level = coreConfig.logger.level
-      if (coreConfig.logger?.silence !== undefined) logger.silence = coreConfig.logger?.silence
-
-      if (coreConfig.logger?.terminal) {
-        terminalTransport.enabled = coreConfig.logger?.terminal?.enable !== false
-        terminalTransport.options.clear = coreConfig.logger?.terminal?.clear !== false
-        terminalTransport.options.withHeader = coreConfig.logger?.terminal?.withHeader !== false
-      }
-
-      if (coreConfig.logger?.localFile) {
-        localFileTransport.enabled = coreConfig.logger?.localFile?.enable !== false
-        localFileTransport.options.asJson = coreConfig.logger?.localFile?.asJson !== false
-        localFileTransport.options.location = coreConfig.logger?.localFile.location || localFileTransport.options.location
-      }
-    }
-
-    return logger
   }
 
   public static async releaseInternalModules(internalModules: CoreModules = {}): Promise<void> {

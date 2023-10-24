@@ -1,11 +1,11 @@
+import { Logger } from '@universal-packages/logger'
 import { populateTemplates } from '@universal-packages/template-populator'
 import { exec } from 'child_process'
 import path from 'path'
 
-import Core from './Core'
-
 export async function initProject(name: string, args: Record<string, any>): Promise<void> {
-  const logger = Core.getCoreLogger()
+  const logger = new Logger({ silence: process.env.NODE_ENV === 'test' })
+
   let coreVersion = '1.0.0'
 
   try {

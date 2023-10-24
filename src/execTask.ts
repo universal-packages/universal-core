@@ -2,8 +2,10 @@ import { sleep } from '@universal-packages/time-measurer'
 
 import { CoreConfig } from './Core.types'
 import { abortCoreTaskInstance } from './common/abortCoreTaskInstance'
+import { adjustCoreLogger } from './common/adjustCoreLogger'
 import { emitEnvironmentEvent } from './common/emitEnvironmentEvent'
 import { execCoreTaskInstance } from './common/execCoreTaskInstance'
+import { initCoreLogger } from './common/initCoreLogger'
 import { loadAndSetCoreConfig } from './common/loadAndSetCoreConfig'
 import { loadAndSetCoreModules } from './common/loadAndSetCoreModules'
 import { loadAndSetCoreTask } from './common/loadAndSetCoreTask'
@@ -14,9 +16,13 @@ import { setCoreGlobal } from './common/setCoreGlobal'
 
 export async function execTask(name: string, directive?: string, directiveOptions?: string[], args?: Record<string, any>, coreConfigOverride?: CoreConfig): Promise<void> {
   setCoreGlobal()
+  initCoreLogger()
 
   // Common functions return true if something went wrong and we should exit
   if (await loadAndSetCoreConfig(coreConfigOverride)) return process.exit(1)
+
+  adjustCoreLogger()
+
   if (await loadAndSetProjectConfig()) return process.exit(1)
   if (await loadAndSetCoreTask(name, directive, directiveOptions, args)) return process.exit(1)
   if (await loadAndSetEnvironments('tasks', core.Task.taskName || core.Task.name)) return process.exit(1)

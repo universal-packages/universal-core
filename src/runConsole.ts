@@ -2,7 +2,9 @@ import repl from 'repl'
 
 import Core from './Core'
 import { CoreConfig } from './Core.types'
+import { adjustCoreLogger } from './common/adjustCoreLogger'
 import { emitEnvironmentEvent } from './common/emitEnvironmentEvent'
+import { initCoreLogger } from './common/initCoreLogger'
 import { loadAndSetCoreConfig } from './common/loadAndSetCoreConfig'
 import { loadAndSetCoreModules } from './common/loadAndSetCoreModules'
 import { loadAndSetEnvironments } from './common/loadAndSetEnvironments'
@@ -12,9 +14,13 @@ import { setCoreGlobal } from './common/setCoreGlobal'
 
 export async function runConsole(coreConfigOverride?: CoreConfig): Promise<void> {
   setCoreGlobal()
+  initCoreLogger()
 
   // Common functions return true if something went wrong and we should exit
   if (await loadAndSetCoreConfig(coreConfigOverride)) return process.exit(1)
+
+  adjustCoreLogger()
+
   if (await loadAndSetProjectConfig()) return process.exit(1)
   if (await loadAndSetEnvironments('console', 'console')) return process.exit(1)
 
