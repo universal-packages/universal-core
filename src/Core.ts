@@ -29,7 +29,7 @@ export default class Core {
 
     const loadedCoreConfig = await loadPluginConfig<CoreConfig>('core', { cleanOrphanReplaceable: true, selectEnvironment: true })
     const defaultPlusLoadedCoreConfig = loadedCoreConfig ? deepMergeConfig(defaultConfig, loadedCoreConfig) : defaultConfig
-    const finalCoreConfig = coreConfigOverride ? deepMergeConfig(defaultPlusLoadedCoreConfig, coreConfigOverride) : loadedCoreConfig
+    const finalCoreConfig = coreConfigOverride ? deepMergeConfig(defaultPlusLoadedCoreConfig, coreConfigOverride) : defaultPlusLoadedCoreConfig
     const errors = coreConfigSchema.validate(finalCoreConfig)
 
     if (errors.length > 0) {
