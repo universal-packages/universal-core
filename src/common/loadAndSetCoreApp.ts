@@ -3,7 +3,7 @@ import { paramCase, pascalCase } from 'change-case'
 
 import CoreApp from '../CoreApp'
 
-export async function loadAndSetCoreApp(name: string, args: Record<string, any>): Promise<boolean> {
+export async function loadAndSetCoreApp(name: string, args: Record<string, any>, throwError?: boolean): Promise<boolean> {
   const measurer = startMeasurement()
 
   try {
@@ -20,6 +20,8 @@ export async function loadAndSetCoreApp(name: string, args: Record<string, any>)
     })
 
     await core.logger.await()
+
+    if (throwError) throw error
     return true
   }
 

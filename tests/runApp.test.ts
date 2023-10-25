@@ -37,12 +37,14 @@ beforeEach((): void => {
 
 describe(runApp, (): void => {
   it('do all the preparations funds an app and runs it (sets core)', async (): Promise<void> => {
-    await runApp('Good', { fast: true }, false, {
-      apps: { location: './tests/__fixtures__/apps' },
-      config: { location: './tests/__fixtures__/config' },
-      environments: { location: './tests/__fixtures__/environments' },
-      tasks: { location: './tests/__fixtures__/tasks' },
-      modules: { location: './tests/__fixtures__/modules' }
+    await runApp('Good', {
+      coreConfigOverride: {
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules' }
+      }
     })
 
     expect(GoodApp.iWasPrepared).toEqual(true)
@@ -82,12 +84,14 @@ describe(runApp, (): void => {
   })
 
   it('exits if core config has errors', async (): Promise<void> => {
-    await runApp('Good', { fast: true }, false, {
-      apps: { location: './tests/__fixtures__/nonexistent' },
-      config: { location: './tests/__fixtures__/config' },
-      environments: { location: './tests/__fixtures__/environments' },
-      tasks: { location: './tests/__fixtures__/tasks' },
-      modules: { location: './tests/__fixtures__/modules' }
+    await runApp('Good', {
+      coreConfigOverride: {
+        apps: { location: './tests/__fixtures__/nonexistent' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules' }
+      }
     })
 
     expect(process.exit).toHaveBeenCalledWith(1)
@@ -97,12 +101,14 @@ describe(runApp, (): void => {
   })
 
   it('exits if project config has errors', async (): Promise<void> => {
-    await runApp('Good', { fast: true }, false, {
-      apps: { location: './tests/__fixtures__/apps' },
-      config: { location: './tests/__fixtures__/config-errored' },
-      environments: { location: './tests/__fixtures__/environments' },
-      tasks: { location: './tests/__fixtures__/tasks' },
-      modules: { location: './tests/__fixtures__/modules' }
+    await runApp('Good', {
+      coreConfigOverride: {
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config-errored' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules' }
+      }
     })
 
     expect(process.exit).toHaveBeenCalledWith(1)
@@ -112,12 +118,14 @@ describe(runApp, (): void => {
   })
 
   it('exits if environments load fails', async (): Promise<void> => {
-    await runApp('Good', { fast: true }, false, {
-      apps: { location: './tests/__fixtures__/apps' },
-      config: { location: './tests/__fixtures__/config' },
-      environments: { location: './tests/__fixtures__/environments-load-error' },
-      tasks: { location: './tests/__fixtures__/tasks' },
-      modules: { location: './tests/__fixtures__/modules' }
+    await runApp('Good', {
+      coreConfigOverride: {
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments-load-error' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules' }
+      }
     })
 
     expect(process.exit).toHaveBeenCalledWith(1)
@@ -127,12 +135,14 @@ describe(runApp, (): void => {
   })
 
   it('exits if app load fails', async (): Promise<void> => {
-    await runApp('load-error-app', { fast: true }, false, {
-      apps: { location: './tests/__fixtures__/apps-load-error' },
-      config: { location: './tests/__fixtures__/config' },
-      environments: { location: './tests/__fixtures__/environments' },
-      tasks: { location: './tests/__fixtures__/tasks' },
-      modules: { location: './tests/__fixtures__/modules' }
+    await runApp('load-error-app', {
+      coreConfigOverride: {
+        apps: { location: './tests/__fixtures__/apps-load-error' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules' }
+      }
     })
 
     expect(process.exit).toHaveBeenCalledWith(1)
@@ -142,12 +152,14 @@ describe(runApp, (): void => {
   })
 
   it('exits if modules has errors', async (): Promise<void> => {
-    await runApp('Good', { fast: true }, false, {
-      apps: { location: './tests/__fixtures__/apps' },
-      config: { location: './tests/__fixtures__/config' },
-      environments: { location: './tests/__fixtures__/environments' },
-      tasks: { location: './tests/__fixtures__/tasks' },
-      modules: { location: './tests/__fixtures__/modules-load-error' }
+    await runApp('Good', {
+      coreConfigOverride: {
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules-load-error' }
+      }
     })
 
     expect(process.exit).toHaveBeenCalledWith(1)
@@ -157,12 +169,14 @@ describe(runApp, (): void => {
   })
 
   it('continues if modules warnings are present (log the warnings)', async (): Promise<void> => {
-    await runApp('Good', { fast: true }, false, {
-      apps: { location: './tests/__fixtures__/apps' },
-      config: { location: './tests/__fixtures__/config' },
-      environments: { location: './tests/__fixtures__/environments' },
-      tasks: { location: './tests/__fixtures__/tasks' },
-      modules: { location: './tests/__fixtures__/modules-warnings' }
+    await runApp('Good', {
+      coreConfigOverride: {
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules-warnings' }
+      }
     })
 
     expect(GoodApp.iWasPrepared).toEqual(true)
@@ -171,12 +185,14 @@ describe(runApp, (): void => {
   })
 
   it('exits if app preparation fails (unload modules)', async (): Promise<void> => {
-    await runApp('prepare-error-app', { fast: true }, false, {
-      apps: { location: './tests/__fixtures__/apps-prepare-error' },
-      config: { location: './tests/__fixtures__/config' },
-      environments: { location: './tests/__fixtures__/environments' },
-      tasks: { location: './tests/__fixtures__/tasks' },
-      modules: { location: './tests/__fixtures__/modules' }
+    await runApp('prepare-error-app', {
+      coreConfigOverride: {
+        apps: { location: './tests/__fixtures__/apps-prepare-error' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules' }
+      }
     })
 
     expect(process.exit).toHaveBeenCalledWith(1)
@@ -185,12 +201,14 @@ describe(runApp, (): void => {
   })
 
   it('exits if running the app fails (unload modules)', async (): Promise<void> => {
-    await runApp('run-error-app', { fast: true }, false, {
-      apps: { location: './tests/__fixtures__/apps-run-error' },
-      config: { location: './tests/__fixtures__/config' },
-      environments: { location: './tests/__fixtures__/environments' },
-      tasks: { location: './tests/__fixtures__/tasks' },
-      modules: { location: './tests/__fixtures__/modules' }
+    await runApp('run-error-app', {
+      coreConfigOverride: {
+        apps: { location: './tests/__fixtures__/apps-run-error' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules' }
+      }
     })
 
     expect(process.exit).toHaveBeenCalledWith(1)
@@ -199,12 +217,14 @@ describe(runApp, (): void => {
   })
 
   it('stops the app when receiving the signal', async (): Promise<void> => {
-    await runApp('good-app', { fast: true }, false, {
-      apps: { location: './tests/__fixtures__/apps' },
-      config: { location: './tests/__fixtures__/config' },
-      environments: { location: './tests/__fixtures__/environments' },
-      tasks: { location: './tests/__fixtures__/tasks' },
-      modules: { location: './tests/__fixtures__/modules' }
+    await runApp('good-app', {
+      coreConfigOverride: {
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules' }
+      }
     })
 
     await process.listeners('SIGINT')[0]('SIGINT')
@@ -230,12 +250,14 @@ describe(runApp, (): void => {
   })
 
   it('exists if stopping goes wrong', async (): Promise<void> => {
-    await runApp('stop-error-app', { fast: true }, false, {
-      apps: { location: './tests/__fixtures__/apps-stop-error' },
-      config: { location: './tests/__fixtures__/config' },
-      environments: { location: './tests/__fixtures__/environments' },
-      tasks: { location: './tests/__fixtures__/tasks' },
-      modules: { location: './tests/__fixtures__/modules' }
+    await runApp('stop-error-app', {
+      coreConfigOverride: {
+        apps: { location: './tests/__fixtures__/apps-stop-error' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules' }
+      }
     })
 
     jest.runOnlyPendingTimers()
@@ -248,12 +270,14 @@ describe(runApp, (): void => {
   })
 
   it('exists if releasing goes wrong', async (): Promise<void> => {
-    await runApp('release-error-app', { fast: true }, false, {
-      apps: { location: './tests/__fixtures__/apps-release-error' },
-      config: { location: './tests/__fixtures__/config' },
-      environments: { location: './tests/__fixtures__/environments' },
-      tasks: { location: './tests/__fixtures__/tasks' },
-      modules: { location: './tests/__fixtures__/modules' }
+    await runApp('release-error-app', {
+      coreConfigOverride: {
+        apps: { location: './tests/__fixtures__/apps-release-error' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules' }
+      }
     })
 
     jest.runOnlyPendingTimers()
@@ -276,12 +300,14 @@ describe(runApp, (): void => {
   })
 
   it('exits if modules unloading goes wrong', async (): Promise<void> => {
-    await runApp('good-app', { fast: true }, false, {
-      apps: { location: './tests/__fixtures__/apps' },
-      config: { location: './tests/__fixtures__/config' },
-      environments: { location: './tests/__fixtures__/environments' },
-      tasks: { location: './tests/__fixtures__/tasks' },
-      modules: { location: './tests/__fixtures__/modules-release-error' }
+    await runApp('good-app', {
+      coreConfigOverride: {
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules-release-error' }
+      }
     })
 
     jest.runOnlyPendingTimers()
@@ -313,12 +339,14 @@ describe(runApp, (): void => {
       core.stoppable = true
     }, 500)
 
-    await runApp('good-app', { fast: true }, false, {
-      apps: { location: './tests/__fixtures__/apps' },
-      config: { location: './tests/__fixtures__/config' },
-      environments: { location: './tests/__fixtures__/environments' },
-      tasks: { location: './tests/__fixtures__/tasks' },
-      modules: { location: './tests/__fixtures__/modules' }
+    await runApp('good-app', {
+      coreConfigOverride: {
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules' }
+      }
     })
 
     core.stoppable = false
@@ -334,12 +362,15 @@ describe(runApp, (): void => {
   })
 
   it('special signals are used for restarting and killing when demonized', async (): Promise<void> => {
-    await runApp('good-app', { fast: true }, true, {
-      apps: { location: './tests/__fixtures__/apps' },
-      config: { location: './tests/__fixtures__/config' },
-      environments: { location: './tests/__fixtures__/environments' },
-      tasks: { location: './tests/__fixtures__/tasks' },
-      modules: { location: './tests/__fixtures__/modules' }
+    await runApp('good-app', {
+      demon: true,
+      coreConfigOverride: {
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules' }
+      }
     })
 
     jest.runOnlyPendingTimers()
@@ -377,12 +408,14 @@ describe(runApp, (): void => {
   })
 
   it('runs an app watcher if configured', async (): Promise<void> => {
-    await runApp('good-app', { fast: true }, false, {
-      apps: { location: './tests/__fixtures__/apps', watcher: { enabled: true } },
-      config: { location: './tests/__fixtures__/config' },
-      environments: { location: './tests/__fixtures__/environments' },
-      tasks: { location: './tests/__fixtures__/tasks' },
-      modules: { location: './tests/__fixtures__/modules' }
+    await runApp('good-app', {
+      coreConfigOverride: {
+        apps: { location: './tests/__fixtures__/apps', watcher: { enabled: true } },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules' }
+      }
     })
 
     jest.runOnlyPendingTimers()
@@ -407,12 +440,14 @@ describe(runApp, (): void => {
       ControlEnvironment.calls = []
       EventErrorEnvironment.toError = currentEvent
 
-      await runApp('Good', { fast: true }, false, {
-        apps: { location: './tests/__fixtures__/apps' },
-        config: { location: './tests/__fixtures__/config' },
-        environments: { location: './tests/__fixtures__/environments-event-error' },
-        tasks: { location: './tests/__fixtures__/tasks' },
-        modules: { location: './tests/__fixtures__/modules' }
+      await runApp('Good', {
+        coreConfigOverride: {
+          apps: { location: './tests/__fixtures__/apps' },
+          config: { location: './tests/__fixtures__/config' },
+          environments: { location: './tests/__fixtures__/environments-event-error' },
+          tasks: { location: './tests/__fixtures__/tasks' },
+          modules: { location: './tests/__fixtures__/modules' }
+        }
       })
 
       expect(ControlEnvironment.calls).toEqual(baseEvents.slice(0, i + 1))
@@ -425,12 +460,14 @@ describe(runApp, (): void => {
       ControlEnvironment.calls = []
       EventErrorEnvironment.toError = currentEvent
 
-      await runApp('Good', { fast: true }, false, {
-        apps: { location: './tests/__fixtures__/apps' },
-        config: { location: './tests/__fixtures__/config' },
-        environments: { location: './tests/__fixtures__/environments-event-error' },
-        tasks: { location: './tests/__fixtures__/tasks' },
-        modules: { location: './tests/__fixtures__/modules' }
+      await runApp('Good', {
+        coreConfigOverride: {
+          apps: { location: './tests/__fixtures__/apps' },
+          config: { location: './tests/__fixtures__/config' },
+          environments: { location: './tests/__fixtures__/environments-event-error' },
+          tasks: { location: './tests/__fixtures__/tasks' },
+          modules: { location: './tests/__fixtures__/modules' }
+        }
       })
 
       await process.listeners('SIGINT')[0]('SIGINT')

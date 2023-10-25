@@ -3,7 +3,7 @@ import { startMeasurement } from '@universal-packages/time-measurer'
 import Core from '../Core'
 import { ProcessType } from '../Core.types'
 
-export async function loadAndSetCoreModules(processType: ProcessType, processableName: string): Promise<boolean> {
+export async function loadAndSetCoreModules(processType: ProcessType, processableName: string, throwError?: boolean): Promise<boolean> {
   const measurer = startMeasurement()
 
   try {
@@ -24,6 +24,8 @@ export async function loadAndSetCoreModules(processType: ProcessType, processabl
     })
 
     await core.logger.await()
+
+    if (throwError) throw error
     return true
   }
 

@@ -29,19 +29,15 @@ beforeEach((): void => {
 
 describe(execTask, (): void => {
   it('do all the preparations funds a task and runs it (sets core)', async (): Promise<void> => {
-    await execTask(
-      'Good',
-      'directive',
-      ['option'],
-      { fast: true },
-      {
+    await execTask('Good', {
+      coreConfigOverride: {
         apps: { location: './tests/__fixtures__/apps' },
         config: { location: './tests/__fixtures__/config' },
         environments: { location: './tests/__fixtures__/environments' },
         tasks: { location: './tests/__fixtures__/tasks' },
         modules: { location: './tests/__fixtures__/modules' }
       }
-    )
+    })
 
     expect(GoodTask.iWasExecuted).toEqual(true)
     expect(core).toEqual({
@@ -72,19 +68,15 @@ describe(execTask, (): void => {
   })
 
   it('exits if core config has errors', async (): Promise<void> => {
-    await execTask(
-      'Good',
-      'directive',
-      ['option'],
-      { fast: true },
-      {
+    await execTask('Good', {
+      coreConfigOverride: {
         apps: { location: './tests/__fixtures__/apps' },
         config: { location: './tests/__fixtures__/config' },
         environments: { location: './tests/__fixtures__/environments' },
         tasks: { location: './tests/__fixtures__/nonexistent' },
         modules: { location: './tests/__fixtures__/modules' }
       }
-    )
+    })
 
     expect(process.exit).toHaveBeenCalledWith(1)
     expect(GoodTask.iWasExecuted).toEqual(false)
@@ -92,19 +84,15 @@ describe(execTask, (): void => {
   })
 
   it('exits if project config has errors', async (): Promise<void> => {
-    await execTask(
-      'Good',
-      'directive',
-      ['option'],
-      { fast: true },
-      {
+    await execTask('Good', {
+      coreConfigOverride: {
         apps: { location: './tests/__fixtures__/apps' },
         config: { location: './tests/__fixtures__/config-errored' },
         environments: { location: './tests/__fixtures__/environments' },
         tasks: { location: './tests/__fixtures__/tasks' },
         modules: { location: './tests/__fixtures__/modules' }
       }
-    )
+    })
 
     expect(process.exit).toHaveBeenCalledWith(1)
     expect(GoodTask.iWasExecuted).toEqual(false)
@@ -112,19 +100,15 @@ describe(execTask, (): void => {
   })
 
   it('exits if environments load fails', async (): Promise<void> => {
-    await execTask(
-      'Good',
-      'directive',
-      ['option'],
-      { fast: true },
-      {
+    await execTask('Good', {
+      coreConfigOverride: {
         apps: { location: './tests/__fixtures__/apps' },
         config: { location: './tests/__fixtures__/config' },
         environments: { location: './tests/__fixtures__/environments-load-error' },
         tasks: { location: './tests/__fixtures__/tasks' },
         modules: { location: './tests/__fixtures__/modules' }
       }
-    )
+    })
 
     expect(process.exit).toHaveBeenCalledWith(1)
     expect(GoodTask.iWasExecuted).toEqual(false)
@@ -132,19 +116,15 @@ describe(execTask, (): void => {
   })
 
   it('exits if task load fails', async (): Promise<void> => {
-    await execTask(
-      'load-error-task',
-      'directive',
-      ['option'],
-      { fast: true },
-      {
+    await execTask('load-error-task', {
+      coreConfigOverride: {
         apps: { location: './tests/__fixtures__/apps' },
         config: { location: './tests/__fixtures__/config' },
         environments: { location: './tests/__fixtures__/environments' },
         tasks: { location: './tests/__fixtures__/tasks-load-error' },
         modules: { location: './tests/__fixtures__/modules' }
       }
-    )
+    })
 
     expect(process.exit).toHaveBeenCalledWith(1)
     expect(GoodTask.iWasExecuted).toEqual(false)
@@ -152,19 +132,15 @@ describe(execTask, (): void => {
   })
 
   it('exits if modules has errors', async (): Promise<void> => {
-    await execTask(
-      'Good',
-      'directive',
-      ['option'],
-      { fast: true },
-      {
+    await execTask('Good', {
+      coreConfigOverride: {
         apps: { location: './tests/__fixtures__/apps' },
         config: { location: './tests/__fixtures__/config' },
         environments: { location: './tests/__fixtures__/environments' },
         tasks: { location: './tests/__fixtures__/tasks' },
         modules: { location: './tests/__fixtures__/modules-load-error' }
       }
-    )
+    })
 
     expect(process.exit).toHaveBeenCalledWith(1)
     expect(GoodTask.iWasExecuted).toEqual(false)
@@ -172,38 +148,30 @@ describe(execTask, (): void => {
   })
 
   it('continues if modules warnings are present (log the warnings)', async (): Promise<void> => {
-    await execTask(
-      'Good',
-      'directive',
-      ['option'],
-      { fast: true },
-      {
+    await execTask('Good', {
+      coreConfigOverride: {
         apps: { location: './tests/__fixtures__/apps' },
         config: { location: './tests/__fixtures__/config' },
         environments: { location: './tests/__fixtures__/environments' },
         tasks: { location: './tests/__fixtures__/tasks' },
         modules: { location: './tests/__fixtures__/modules-warnings' }
       }
-    )
+    })
 
     expect(GoodTask.iWasExecuted).toEqual(true)
     expect(TaskEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeTaskExec', 'afterTaskExec', 'beforeModulesRelease', 'afterModulesRelease'])
   })
 
   it('exits if task execution fails (unload modules)', async (): Promise<void> => {
-    await execTask(
-      'exec-error-task',
-      'directive',
-      ['option'],
-      { fast: true },
-      {
+    await execTask('exec-error-task', {
+      coreConfigOverride: {
         apps: { location: './tests/__fixtures__/apps' },
         config: { location: './tests/__fixtures__/config' },
         environments: { location: './tests/__fixtures__/environments' },
         tasks: { location: './tests/__fixtures__/tasks-exec-error' },
         modules: { location: './tests/__fixtures__/modules' }
       }
-    )
+    })
 
     expect(process.exit).toHaveBeenCalledWith(1)
     expect(core.coreModules).toEqual({})
@@ -211,19 +179,15 @@ describe(execTask, (): void => {
   })
 
   it('exits if modules unloading goes wrong', async (): Promise<void> => {
-    await execTask(
-      'good',
-      'directive',
-      ['option'],
-      { fast: true },
-      {
+    await execTask('good', {
+      coreConfigOverride: {
         apps: { location: './tests/__fixtures__/apps' },
         config: { location: './tests/__fixtures__/config' },
         environments: { location: './tests/__fixtures__/environments' },
         tasks: { location: './tests/__fixtures__/tasks' },
         modules: { location: './tests/__fixtures__/modules-release-error' }
       }
-    )
+    })
 
     expect(process.exit).toHaveBeenCalledWith(1)
     expect(core.coreModules).toEqual({})
@@ -235,19 +199,15 @@ describe(execTask, (): void => {
       process.emit('SIGINT')
     }, 200)
 
-    await execTask(
-      'AbortableTask',
-      'directive',
-      ['option'],
-      { fast: true },
-      {
+    await execTask('AbortableTask', {
+      coreConfigOverride: {
         apps: { location: './tests/__fixtures__/apps' },
         config: { location: './tests/__fixtures__/config' },
         environments: { location: './tests/__fixtures__/environments' },
         tasks: { location: './tests/__fixtures__/tasks-abortable' },
         modules: { location: './tests/__fixtures__/modules' }
       }
-    )
+    })
 
     expect(AbortableTask.iWasExecuted).toEqual(true)
     expect(AbortableTask.iWasAborted).toEqual(true)
@@ -268,19 +228,15 @@ describe(execTask, (): void => {
       process.emit('SIGINT')
     }, 200)
 
-    await execTask(
-      'AbortError',
-      'directive',
-      ['option'],
-      { fast: true },
-      {
+    await execTask('AbortError', {
+      coreConfigOverride: {
         apps: { location: './tests/__fixtures__/apps' },
         config: { location: './tests/__fixtures__/config' },
         environments: { location: './tests/__fixtures__/environments' },
         tasks: { location: './tests/__fixtures__/tasks-abort-error' },
         modules: { location: './tests/__fixtures__/modules' }
       }
-    )
+    })
 
     expect(process.exit).toHaveBeenCalledWith(1)
   })
@@ -296,19 +252,15 @@ describe(execTask, (): void => {
       }, 500)
     }, 200)
 
-    await execTask(
-      'HackyLoad',
-      'directive',
-      ['option'],
-      { fast: true },
-      {
+    await execTask('HackyLoad', {
+      coreConfigOverride: {
         apps: { location: './tests/__fixtures__/apps' },
         config: { location: './tests/__fixtures__/config' },
         environments: { location: './tests/__fixtures__/environments' },
         tasks: { location: './tests/__fixtures__/tasks-hacky-load' },
         modules: { location: './tests/__fixtures__/modules' }
       }
-    )
+    })
 
     expect(HackyLoadTask.iWasExecuted).toEqual(true)
     expect(HackyLoadTask.iWasAborted).toEqual(true)
@@ -323,19 +275,15 @@ describe(execTask, (): void => {
       ControlEnvironment.calls = []
       EventErrorEnvironment.toError = currentEvent
 
-      await execTask(
-        'Good',
-        'directive',
-        ['option'],
-        { fast: true },
-        {
+      await execTask('Good', {
+        coreConfigOverride: {
           apps: { location: './tests/__fixtures__/apps' },
           config: { location: './tests/__fixtures__/config' },
           environments: { location: './tests/__fixtures__/environments-event-error' },
           tasks: { location: './tests/__fixtures__/tasks' },
           modules: { location: './tests/__fixtures__/modules' }
         }
-      )
+      })
 
       expect(ControlEnvironment.calls).toEqual(baseEvents.slice(0, i + 1))
     }
@@ -347,19 +295,15 @@ describe(execTask, (): void => {
       process.emit('SIGINT')
     }, 200)
 
-    await execTask(
-      'AbortableTask',
-      'directive',
-      ['option'],
-      { fast: true },
-      {
+    await execTask('AbortableTask', {
+      coreConfigOverride: {
         apps: { location: './tests/__fixtures__/apps' },
         config: { location: './tests/__fixtures__/config' },
         environments: { location: './tests/__fixtures__/environments-event-error' },
         tasks: { location: './tests/__fixtures__/tasks-abortable' },
         modules: { location: './tests/__fixtures__/modules' }
       }
-    )
+    })
 
     expect(ControlEnvironment.calls).toEqual([
       'beforeModulesLoad',
@@ -378,19 +322,15 @@ describe(execTask, (): void => {
       process.emit('SIGINT')
     }, 200)
 
-    await execTask(
-      'AbortableTask',
-      'directive',
-      ['option'],
-      { fast: true },
-      {
+    await execTask('AbortableTask', {
+      coreConfigOverride: {
         apps: { location: './tests/__fixtures__/apps' },
         config: { location: './tests/__fixtures__/config' },
         environments: { location: './tests/__fixtures__/environments-event-error' },
         tasks: { location: './tests/__fixtures__/tasks-abortable' },
         modules: { location: './tests/__fixtures__/modules' }
       }
-    )
+    })
 
     expect(ControlEnvironment.calls).toEqual([
       'beforeModulesLoad',

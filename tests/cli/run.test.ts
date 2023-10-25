@@ -7,6 +7,6 @@ describe('cli', (): void => {
     process.argv = ['node', 'ucore', 'run', 'web-server', '-p', '3000']
     await import('../../src/cli')
 
-    expect(runApp).toHaveBeenCalledWith('web-server', { p: 3000 })
+    expect(runApp).toHaveBeenCalledWith('web-server', { args: { p: 3000 } })
   })
 })

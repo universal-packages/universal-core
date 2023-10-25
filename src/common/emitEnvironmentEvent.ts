@@ -2,7 +2,7 @@ import { startMeasurement } from '@universal-packages/time-measurer'
 
 import { EnvironmentEvent } from '../Core.types'
 
-export async function emitEnvironmentEvent(event: EnvironmentEvent): Promise<boolean> {
+export async function emitEnvironmentEvent(event: EnvironmentEvent, throwError?: boolean): Promise<boolean> {
   const measurer = startMeasurement()
 
   try {
@@ -18,6 +18,8 @@ export async function emitEnvironmentEvent(event: EnvironmentEvent): Promise<boo
     })
 
     await core.logger.await()
+
+    if (throwError) throw error
     return true
   }
 

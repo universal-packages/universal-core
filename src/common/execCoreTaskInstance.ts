@@ -2,7 +2,7 @@ import { startMeasurement } from '@universal-packages/time-measurer'
 
 import Core from '../Core'
 
-export async function execCoreTaskInstance(): Promise<boolean> {
+export async function execCoreTaskInstance(throwError?: boolean): Promise<boolean> {
   const measurer = startMeasurement()
 
   try {
@@ -19,6 +19,8 @@ export async function execCoreTaskInstance(): Promise<boolean> {
     }
 
     await core.logger.await()
+
+    if (throwError) throw error
     return true
   }
 

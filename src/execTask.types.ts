@@ -1,10 +1,9 @@
 import { CoreConfig } from './Core.types'
 
-export interface RunAppOptions {
+export interface ExecTaskOptions {
   args?: Record<string, any>
   coreConfigOverride?: CoreConfig
-  demon?: boolean
+  directive?: string
+  directiveOptions?: string[]
   exitType?: 'process' | 'throw'
 }
-
-export type StopAppFunction = (restarting?: boolean) => Promise<void>

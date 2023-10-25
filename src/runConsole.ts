@@ -11,32 +11,36 @@ import { loadAndSetEnvironments } from './common/loadAndSetEnvironments'
 import { loadAndSetProjectConfig } from './common/loadAndSetProjectConfig'
 import { releaseCoreModules } from './common/releaseCoreModules'
 import { setCoreGlobal } from './common/setCoreGlobal'
+import { RunConsoleOptions } from './runConsole.types'
 
-export async function runConsole(coreConfigOverride?: CoreConfig): Promise<void> {
+export async function runConsole(options: RunConsoleOptions = {}): Promise<void> {
+  const { coreConfigOverride, exitType }: RunConsoleOptions = options
+  const throwError: boolean = exitType === 'throw'
+
   setCoreGlobal()
   initCoreLogger()
 
   // Common functions return true if something went wrong and we should exit
-  if (await loadAndSetCoreConfig(coreConfigOverride)) return process.exit(1)
+  if (await loadAndSetCoreConfig(coreConfigOverride, throwError)) return process.exit(1)
 
   adjustCoreLogger()
 
-  if (await loadAndSetProjectConfig()) return process.exit(1)
-  if (await loadAndSetEnvironments('console', 'console')) return process.exit(1)
+  if (await loadAndSetProjectConfig(throwError)) return process.exit(1)
+  if (await loadAndSetEnvironments('console', 'console', throwError)) return process.exit(1)
 
   // Avoid terminating without unlading properly
   process.addListener('SIGINT', (): void => {})
   process.addListener('SIGTERM', (): void => {})
 
-  if (await emitEnvironmentEvent('beforeModulesLoad')) return process.exit(1)
-  if (await loadAndSetCoreModules('console', 'console')) return process.exit(1)
-  if (await emitEnvironmentEvent('afterModulesLoad')) return process.exit(1)
+  if (await emitEnvironmentEvent('beforeModulesLoad', throwError)) return process.exit(1)
+  if (await loadAndSetCoreModules('console', 'console', throwError)) return process.exit(1)
+  if (await emitEnvironmentEvent('afterModulesLoad', throwError)) return process.exit(1)
 
   try {
     await core.logger.await()
 
     // Common functions return true if something went wrong and we should exit
-    if (await emitEnvironmentEvent('beforeConsoleRuns')) return process.exit(1)
+    if (await emitEnvironmentEvent('beforeConsoleRuns', throwError)) return process.exit(1)
 
     await core.logger.await()
 
@@ -47,16 +51,16 @@ export async function runConsole(coreConfigOverride?: CoreConfig): Promise<void>
     })
 
     // Common functions return true if something went wrong and we should exit
-    if (await emitEnvironmentEvent('afterConsoleRuns')) return process.exit(1)
+    if (await emitEnvironmentEvent('afterConsoleRuns', throwError)) return process.exit(1)
 
     // We emit this so the Core knows the user basically sent those signals
     replServer.on('exit', async (): Promise<void> => {
       // Common functions return true if something went wrong and we should exit
-      if (await emitEnvironmentEvent('afterConsoleStops')) return process.exit(1)
+      if (await emitEnvironmentEvent('afterConsoleStops', throwError)) return process.exit(1)
 
-      if (await emitEnvironmentEvent('beforeModulesRelease')) return process.exit(1)
-      if (await releaseCoreModules()) return process.exit(1)
-      if (await emitEnvironmentEvent('afterModulesRelease')) return process.exit(1)
+      if (await emitEnvironmentEvent('beforeModulesRelease', throwError)) return process.exit(1)
+      if (await releaseCoreModules(throwError)) return process.exit(1)
+      if (await emitEnvironmentEvent('afterModulesRelease', throwError)) return process.exit(1)
     })
   } catch (error) {
     core.logger.publish('ERROR', 'Console', 'There was an error while running the console', 'CORE', { error })

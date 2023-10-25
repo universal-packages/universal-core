@@ -1,7 +1,6 @@
 import { sleep } from '@universal-packages/time-measurer'
 
 import AppWatcher from './AppWatcher'
-import { CoreConfig } from './Core.types'
 import { adjustCoreLogger } from './common/adjustCoreLogger'
 import { emitEnvironmentEvent } from './common/emitEnvironmentEvent'
 import { initCoreLogger } from './common/initCoreLogger'
@@ -17,14 +16,17 @@ import { runCoreAppInstance } from './common/runCoreAppInstance'
 import { setCoreGlobal } from './common/setCoreGlobal'
 import { stopCoreAppInstance } from './common/stopCoreAppInstance'
 import { debounce } from './debounce'
-import { StopAppFunction } from './runApp.types'
+import { RunAppOptions, StopAppFunction } from './runApp.types'
 
-export async function runApp(name: string, args?: Record<string, any>, demon?: boolean, coreConfigOverride?: CoreConfig): Promise<StopAppFunction> {
+export async function runApp(name: string, options: RunAppOptions = {}): Promise<StopAppFunction> {
+  const { args = {}, demon = false, coreConfigOverride, exitType = 'process' } = options
+  const throwError = exitType === 'throw'
+
   setCoreGlobal()
   initCoreLogger()
 
   // Common functions return true if something went wrong and we should exit
-  if (await loadAndSetCoreConfig(coreConfigOverride)) return process.exit(1)
+  if (await loadAndSetCoreConfig(coreConfigOverride, throwError)) return process.exit(1)
 
   adjustCoreLogger()
 
@@ -60,9 +62,9 @@ export async function runApp(name: string, args?: Record<string, any>, demon?: b
     return stopWatcher
   } else {
     // Common functions return true if something went wrong and we should exit
-    if (await loadAndSetProjectConfig()) return process.exit(1)
-    if (await loadAndSetCoreApp(name, args)) return process.exit(1)
-    if (await loadAndSetEnvironments('apps', core.App.appName || core.App.name)) return process.exit(1)
+    if (await loadAndSetProjectConfig(throwError)) return process.exit(1)
+    if (await loadAndSetCoreApp(name, args, throwError)) return process.exit(1)
+    if (await loadAndSetEnvironments('apps', core.App.appName || core.App.name, throwError)) return process.exit(1)
 
     const stopApp = async (restarting: boolean = false): Promise<void> => {
       // We are already restating-stopping
@@ -86,17 +88,17 @@ export async function runApp(name: string, args?: Record<string, any>, demon?: b
       while (!core.stoppable) await sleep(100)
 
       // Common functions return true if something went wrong and we should exit
-      if (await emitEnvironmentEvent('beforeAppStops')) return process.exit(1)
-      if (await stopCoreAppInstance()) return process.exit(1)
-      if (await emitEnvironmentEvent('afterAppStops')) return process.exit(1)
+      if (await emitEnvironmentEvent('beforeAppStops', throwError)) return process.exit(1)
+      if (await stopCoreAppInstance(throwError)) return process.exit(1)
+      if (await emitEnvironmentEvent('afterAppStops', throwError)) return process.exit(1)
 
-      if (await emitEnvironmentEvent('beforeAppRelease')) return process.exit(1)
-      if (await releaseCoreAppInstance()) return process.exit(1)
-      if (await emitEnvironmentEvent('afterAppRelease')) return process.exit(1)
+      if (await emitEnvironmentEvent('beforeAppRelease', throwError)) return process.exit(1)
+      if (await releaseCoreAppInstance(throwError)) return process.exit(1)
+      if (await emitEnvironmentEvent('afterAppRelease', throwError)) return process.exit(1)
 
-      if (await emitEnvironmentEvent('beforeModulesRelease')) return process.exit(1)
-      if (await releaseCoreModules()) return process.exit(1)
-      if (await emitEnvironmentEvent('afterModulesRelease')) return process.exit(1)
+      if (await emitEnvironmentEvent('beforeModulesRelease', throwError)) return process.exit(1)
+      if (await releaseCoreModules(throwError)) return process.exit(1)
+      if (await emitEnvironmentEvent('afterModulesRelease', throwError)) return process.exit(1)
     }
 
     if (demon) {
@@ -112,17 +114,17 @@ export async function runApp(name: string, args?: Record<string, any>, demon?: b
     }
 
     // Common functions return true if something went wrong and we should exit
-    if (await emitEnvironmentEvent('beforeModulesLoad')) return process.exit(1)
-    if (await loadAndSetCoreModules('apps', core.App.appName || core.App.name)) return process.exit(1)
-    if (await emitEnvironmentEvent('afterModulesLoad')) return process.exit(1)
+    if (await emitEnvironmentEvent('beforeModulesLoad', throwError)) return process.exit(1)
+    if (await loadAndSetCoreModules('apps', core.App.appName || core.App.name, throwError)) return process.exit(1)
+    if (await emitEnvironmentEvent('afterModulesLoad', throwError)) return process.exit(1)
 
-    if (await emitEnvironmentEvent('beforeAppPrepare')) return process.exit(1)
-    if (await prepareCoreAppInstance()) return process.exit(1)
-    if (await emitEnvironmentEvent('afterAppPrepare')) return process.exit(1)
+    if (await emitEnvironmentEvent('beforeAppPrepare', throwError)) return process.exit(1)
+    if (await prepareCoreAppInstance(throwError)) return process.exit(1)
+    if (await emitEnvironmentEvent('afterAppPrepare', throwError)) return process.exit(1)
 
-    if (await emitEnvironmentEvent('beforeAppRuns')) return process.exit(1)
-    if (await runCoreAppInstance()) return process.exit(1)
-    if (await emitEnvironmentEvent('afterAppRuns')) return process.exit(1)
+    if (await emitEnvironmentEvent('beforeAppRuns', throwError)) return process.exit(1)
+    if (await runCoreAppInstance(throwError)) return process.exit(1)
+    if (await emitEnvironmentEvent('afterAppRuns', throwError)) return process.exit(1)
 
     core.stoppable = true
 

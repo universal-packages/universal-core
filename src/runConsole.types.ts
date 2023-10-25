@@ -1,8 +1,6 @@
 import { CoreConfig } from './Core.types'
 
-export interface RunBareOptions {
+export interface RunConsoleOptions {
   coreConfigOverride?: CoreConfig
   exitType?: 'process' | 'throw'
 }
-
-export type UnloadFunction = () => Promise<void>

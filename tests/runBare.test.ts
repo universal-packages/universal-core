@@ -35,11 +35,13 @@ beforeEach((): void => {
 describe(runBare, (): void => {
   it('do all the preparations (sets core)', async (): Promise<void> => {
     await runBare({
-      apps: { location: './tests/__fixtures__/apps' },
-      config: { location: './tests/__fixtures__/config' },
-      environments: { location: './tests/__fixtures__/environments' },
-      tasks: { location: './tests/__fixtures__/tasks' },
-      modules: { location: './tests/__fixtures__/modules' }
+      coreConfigOverride: {
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules' }
+      }
     })
 
     expect(core).toEqual({
@@ -68,11 +70,13 @@ describe(runBare, (): void => {
 
   it('exits if core config has errors', async (): Promise<void> => {
     await runBare({
-      apps: { location: './tests/__fixtures__/nonexistent' },
-      config: { location: './tests/__fixtures__/config' },
-      environments: { location: './tests/__fixtures__/environments' },
-      tasks: { location: './tests/__fixtures__/tasks' },
-      modules: { location: './tests/__fixtures__/modules' }
+      coreConfigOverride: {
+        apps: { location: './tests/__fixtures__/nonexistent' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules' }
+      }
     })
 
     expect(process.exit).toHaveBeenCalledWith(1)
@@ -81,11 +85,13 @@ describe(runBare, (): void => {
 
   it('exits if project config has errors', async (): Promise<void> => {
     await runBare({
-      apps: { location: './tests/__fixtures__/apps' },
-      config: { location: './tests/__fixtures__/config-errored' },
-      environments: { location: './tests/__fixtures__/environments' },
-      tasks: { location: './tests/__fixtures__/tasks' },
-      modules: { location: './tests/__fixtures__/modules' }
+      coreConfigOverride: {
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config-errored' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules' }
+      }
     })
 
     expect(process.exit).toHaveBeenCalledWith(1)
@@ -94,11 +100,13 @@ describe(runBare, (): void => {
 
   it('exits if environments load fails', async (): Promise<void> => {
     await runBare({
-      apps: { location: './tests/__fixtures__/apps' },
-      config: { location: './tests/__fixtures__/config' },
-      environments: { location: './tests/__fixtures__/environments-load-error' },
-      tasks: { location: './tests/__fixtures__/tasks' },
-      modules: { location: './tests/__fixtures__/modules' }
+      coreConfigOverride: {
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments-load-error' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules' }
+      }
     })
 
     expect(process.exit).toHaveBeenCalledWith(1)
@@ -107,11 +115,13 @@ describe(runBare, (): void => {
 
   it('exits if modules has errors', async (): Promise<void> => {
     await runBare({
-      apps: { location: './tests/__fixtures__/apps' },
-      config: { location: './tests/__fixtures__/config' },
-      environments: { location: './tests/__fixtures__/environments' },
-      tasks: { location: './tests/__fixtures__/tasks' },
-      modules: { location: './tests/__fixtures__/modules-load-error' }
+      coreConfigOverride: {
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules-load-error' }
+      }
     })
 
     expect(process.exit).toHaveBeenCalledWith(1)
@@ -120,11 +130,13 @@ describe(runBare, (): void => {
 
   it('continues if modules warnings are present (log the warnings)', async (): Promise<void> => {
     await runBare({
-      apps: { location: './tests/__fixtures__/apps' },
-      config: { location: './tests/__fixtures__/config' },
-      environments: { location: './tests/__fixtures__/environments' },
-      tasks: { location: './tests/__fixtures__/tasks' },
-      modules: { location: './tests/__fixtures__/modules-warnings' }
+      coreConfigOverride: {
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules-warnings' }
+      }
     })
 
     expect(UniversalEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad'])
@@ -132,11 +144,13 @@ describe(runBare, (): void => {
 
   it('unloads when calling returning function', async (): Promise<void> => {
     const unload = await runBare({
-      apps: { location: './tests/__fixtures__/apps' },
-      config: { location: './tests/__fixtures__/config' },
-      environments: { location: './tests/__fixtures__/environments' },
-      tasks: { location: './tests/__fixtures__/tasks' },
-      modules: { location: './tests/__fixtures__/modules' }
+      coreConfigOverride: {
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules' }
+      }
     })
 
     await unload()
@@ -146,11 +160,13 @@ describe(runBare, (): void => {
 
   it('exits if modules unloading goes wrong', async (): Promise<void> => {
     const unload = await runBare({
-      apps: { location: './tests/__fixtures__/apps' },
-      config: { location: './tests/__fixtures__/config' },
-      environments: { location: './tests/__fixtures__/environments' },
-      tasks: { location: './tests/__fixtures__/tasks' },
-      modules: { location: './tests/__fixtures__/modules-release-error' }
+      coreConfigOverride: {
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules-release-error' }
+      }
     })
 
     await unload()
@@ -165,11 +181,13 @@ describe(runBare, (): void => {
     }, 100)
 
     const unload = await runBare({
-      apps: { location: './tests/__fixtures__/apps' },
-      config: { location: './tests/__fixtures__/config' },
-      environments: { location: './tests/__fixtures__/environments' },
-      tasks: { location: './tests/__fixtures__/tasks' },
-      modules: { location: './tests/__fixtures__/modules' }
+      coreConfigOverride: {
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules' }
+      }
     })
 
     core.stoppable = false
@@ -190,11 +208,13 @@ describe(runBare, (): void => {
       EventErrorEnvironment.toError = currentEvent
 
       await runBare({
-        apps: { location: './tests/__fixtures__/apps' },
-        config: { location: './tests/__fixtures__/config' },
-        environments: { location: './tests/__fixtures__/environments-event-error' },
-        tasks: { location: './tests/__fixtures__/tasks' },
-        modules: { location: './tests/__fixtures__/modules' }
+        coreConfigOverride: {
+          apps: { location: './tests/__fixtures__/apps' },
+          config: { location: './tests/__fixtures__/config' },
+          environments: { location: './tests/__fixtures__/environments-event-error' },
+          tasks: { location: './tests/__fixtures__/tasks' },
+          modules: { location: './tests/__fixtures__/modules' }
+        }
       })
 
       expect(ControlEnvironment.calls).toEqual(baseEvents.slice(0, i + 1))
@@ -208,11 +228,13 @@ describe(runBare, (): void => {
       EventErrorEnvironment.toError = currentEvent
 
       const unload = await runBare({
-        apps: { location: './tests/__fixtures__/apps' },
-        config: { location: './tests/__fixtures__/config' },
-        environments: { location: './tests/__fixtures__/environments-event-error' },
-        tasks: { location: './tests/__fixtures__/tasks' },
-        modules: { location: './tests/__fixtures__/modules' }
+        coreConfigOverride: {
+          apps: { location: './tests/__fixtures__/apps' },
+          config: { location: './tests/__fixtures__/config' },
+          environments: { location: './tests/__fixtures__/environments-event-error' },
+          tasks: { location: './tests/__fixtures__/tasks' },
+          modules: { location: './tests/__fixtures__/modules' }
+        }
       })
 
       await unload()

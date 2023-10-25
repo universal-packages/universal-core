@@ -3,7 +3,7 @@ import { startMeasurement } from '@universal-packages/time-measurer'
 import Core from '../Core'
 import { CoreConfig } from '../Core.types'
 
-export async function loadAndSetCoreConfig(coreConfigOverride: CoreConfig): Promise<boolean> {
+export async function loadAndSetCoreConfig(coreConfigOverride: CoreConfig, throwError?: boolean): Promise<boolean> {
   const measurer = startMeasurement()
 
   try {
@@ -17,6 +17,8 @@ export async function loadAndSetCoreConfig(coreConfigOverride: CoreConfig): Prom
     })
 
     await core.logger.await()
+
+    if (throwError) throw error
     return true
   }
 

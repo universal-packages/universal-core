@@ -23,7 +23,7 @@ yargs
     builder: (yargs: Argv) => yargs.positional('app-name', { description: 'Name of the app to run', type: 'string', demandOption: true }),
     handler: (argv: ArgumentsCamelCase) => {
       const argvExtract = processArgv(argv)
-      runApp(argvExtract.appName, argvExtract.options)
+      runApp(argvExtract.appName, { args: argvExtract.options })
     }
   })
   .command({
@@ -37,7 +37,7 @@ yargs
         .positional('directive-options', { description: 'Any options supported by the task directive' }),
     handler: (argv: ArgumentsCamelCase) => {
       const argvExtract = processArgv(argv)
-      execTask(argvExtract.taskName, argvExtract.taskDirective, argvExtract.directiveOptions, argvExtract.options)
+      execTask(argvExtract.taskName, { args: argvExtract.options, directive: argvExtract.taskDirective, directiveOptions: argvExtract.directiveOptions })
     }
   })
   .command({

@@ -7,6 +7,6 @@ describe('cli', (): void => {
     process.argv = ['node', 'ucore', 'exec', 'migrate', 'users', 'all', '--fast']
     await import('../../src/cli')
 
-    expect(execTask).toHaveBeenCalledWith('migrate', 'users', ['all'], { fast: true })
+    expect(execTask).toHaveBeenCalledWith('migrate', { args: { fast: true }, directive: 'users', directiveOptions: ['all'] })
   })
 })

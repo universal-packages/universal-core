@@ -2,7 +2,7 @@ import { startMeasurement } from '@universal-packages/time-measurer'
 
 import CoreTask from '../CoreTask'
 
-export async function loadAndSetCoreTask(name: string, directive: string, directiveOptions: string[], args: Record<string, any>): Promise<boolean> {
+export async function loadAndSetCoreTask(name: string, directive: string, directiveOptions: string[], args: Record<string, any>, throwError?: boolean): Promise<boolean> {
   const measurer = startMeasurement()
 
   try {
@@ -21,6 +21,8 @@ export async function loadAndSetCoreTask(name: string, directive: string, direct
     }
 
     await core.logger.await()
+
+    if (throwError) throw error
     return true
   }
 

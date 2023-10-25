@@ -2,7 +2,7 @@ import { startMeasurement } from '@universal-packages/time-measurer'
 
 import Core from '../Core'
 
-export async function releaseCoreModules(): Promise<boolean> {
+export async function releaseCoreModules(throwError?: boolean): Promise<boolean> {
   const measurer = startMeasurement()
 
   try {
@@ -11,6 +11,8 @@ export async function releaseCoreModules(): Promise<boolean> {
   } catch (error) {
     core.logger.publish('ERROR', 'There was an error while releasing modules', null, 'CORE', { error })
     await core.logger.await()
+
+    if (throwError) throw error
     return true
   }
 
