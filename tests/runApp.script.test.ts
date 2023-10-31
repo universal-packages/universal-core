@@ -14,6 +14,6 @@ describe('runApp.script', (): void => {
 
     require('../src/runApp.script')
 
-    expect(runApp).toHaveBeenCalledWith(appName, args, demon)
+    expect(runApp).toHaveBeenCalledWith(appName, { args, demon })
   })
 })
