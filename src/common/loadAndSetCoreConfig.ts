@@ -2,12 +2,15 @@ import { startMeasurement } from '@universal-packages/time-measurer'
 
 import Core from '../Core'
 import { CoreConfig } from '../Core.types'
+import { adjustCoreLogger } from './adjustCoreLogger'
 
 export async function loadAndSetCoreConfig(coreConfigOverride: CoreConfig, throwError?: boolean): Promise<boolean> {
   const measurer = startMeasurement()
 
   try {
     core.coreConfig = await Core.getCoreConfig(coreConfigOverride)
+
+    adjustCoreLogger()
 
     core.logger.publish('DEBUG', 'Core config loaded', null, 'CORE', { metadata: core.coreConfig, measurement: measurer.finish().toString() })
   } catch (error) {

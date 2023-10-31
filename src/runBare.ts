@@ -21,8 +21,6 @@ export async function runBare(options: RunBareOptions = {}): Promise<UnloadFunct
   // Common functions return true if something went wrong and we should exit
   if (await loadAndSetCoreConfig(coreConfigOverride, throwError)) return process.exit(1)
 
-  adjustCoreLogger()
-
   // Common functions return true if something went wrong and we should exit
   if (await loadAndSetProjectConfig(throwError)) return process.exit(1)
   if (await loadAndSetEnvironments('bare', 'bare', throwError)) return process.exit(1)

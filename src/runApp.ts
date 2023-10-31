@@ -28,8 +28,6 @@ export async function runApp(name: string, options: RunAppOptions = {}): Promise
   // Common functions return true if something went wrong and we should exit
   if (await loadAndSetCoreConfig(coreConfigOverride, throwError)) return process.exit(1)
 
-  adjustCoreLogger()
-
   if (!demon && core.coreConfig.apps.watcher?.enabled) {
     core.logger.publish('INFO', 'App Watcher enabled', 'App will be ran in a sub process', 'CORE')
 

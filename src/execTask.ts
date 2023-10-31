@@ -24,8 +24,6 @@ export async function execTask(name: string, options: ExecTaskOptions = {}): Pro
   // Common functions return true if something went wrong and we should exit
   if (await loadAndSetCoreConfig(coreConfigOverride, throwError)) return process.exit(1)
 
-  adjustCoreLogger()
-
   if (await loadAndSetProjectConfig(throwError)) return process.exit(1)
   if (await loadAndSetCoreTask(name, directive, directiveOptions, args, throwError)) return process.exit(1)
   if (await loadAndSetEnvironments('tasks', core.Task.taskName || core.Task.name, throwError)) return process.exit(1)

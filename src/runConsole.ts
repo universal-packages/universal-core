@@ -23,8 +23,6 @@ export async function runConsole(options: RunConsoleOptions = {}): Promise<void>
   // Common functions return true if something went wrong and we should exit
   if (await loadAndSetCoreConfig(coreConfigOverride, throwError)) return process.exit(1)
 
-  adjustCoreLogger()
-
   if (await loadAndSetProjectConfig(throwError)) return process.exit(1)
   if (await loadAndSetEnvironments('console', 'console', throwError)) return process.exit(1)
 
