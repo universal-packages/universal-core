@@ -118,13 +118,15 @@ describe(runConsole, (): void => {
   })
 
   it('exits if modules has errors', async (): Promise<void> => {
-    await runConsole({coreConfigOverride: {
-      apps: { location: './tests/__fixtures__/apps' },
-      config: { location: './tests/__fixtures__/config' },
-      environments: { location: './tests/__fixtures__/environments' },
-      tasks: { location: './tests/__fixtures__/tasks' },
-      modules: { location: './tests/__fixtures__/modules-load-error' }
-    }})
+    await runConsole({
+      coreConfigOverride: {
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules-load-error' }
+      }
+    })
 
     expect(process.exit).toHaveBeenCalledWith(1)
     expect(ConsoleEnvironment.calls).toEqual(['beforeModulesLoad'])
