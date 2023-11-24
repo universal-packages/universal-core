@@ -19,7 +19,7 @@ export async function loadAndSetCoreConfig(coreConfigOverride: CoreConfig, throw
       measurement: measurer.finish().toString()
     })
 
-    await core.logger.await()
+    await core.logger.await
 
     if (throwError) throw error
     return true

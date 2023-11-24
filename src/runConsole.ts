@@ -35,12 +35,12 @@ export async function runConsole(options: RunConsoleOptions = {}): Promise<void>
   if (await emitEnvironmentEvent('afterModulesLoad', throwError)) return process.exit(1)
 
   try {
-    await core.logger.await()
+    await core.logger.await
 
     // Common functions return true if something went wrong and we should exit
     if (await emitEnvironmentEvent('beforeConsoleRuns', throwError)) return process.exit(1)
 
-    await core.logger.await()
+    await core.logger.await
 
     // We just start a repl server it even has its own termination CTRL+C
     const replServer = repl.start({ prompt: 'core > ' })
@@ -69,7 +69,7 @@ export async function runConsole(options: RunConsoleOptions = {}): Promise<void>
       // We prioritize higher error
     }
 
-    await core.logger.await()
+    await core.logger.await
     return process.exit(1)
   }
 }

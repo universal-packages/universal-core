@@ -23,7 +23,7 @@ export async function loadAndSetCoreModules(processType: ProcessType, processabl
       measurement: measurer.finish().toString()
     })
 
-    await core.logger.await()
+    await core.logger.await
 
     if (throwError) throw error
     return true

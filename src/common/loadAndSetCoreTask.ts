@@ -20,7 +20,7 @@ export async function loadAndSetCoreTask(name: string, directive: string, direct
       // We prioritize higher error
     }
 
-    await core.logger.await()
+    await core.logger.await
 
     if (throwError) throw error
     return true

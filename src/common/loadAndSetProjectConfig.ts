@@ -15,7 +15,7 @@ export async function loadAndSetProjectConfig(throwError?: boolean): Promise<boo
       measurement: measurer.finish().toString()
     })
 
-    await core.logger.await()
+    await core.logger.await
 
     if (throwError) throw error
     return true

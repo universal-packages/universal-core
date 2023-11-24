@@ -19,7 +19,7 @@ export async function loadAndSetCoreApp(name: string, args: Record<string, any>,
       measurement: measurer.finish().toString()
     })
 
-    await core.logger.await()
+    await core.logger.await
 
     if (throwError) throw error
     return true

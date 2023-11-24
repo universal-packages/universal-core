@@ -17,7 +17,7 @@ export async function stopCoreAppInstance(throwError?: boolean): Promise<boolean
       // We prioritize higher error
     }
 
-    await core.logger.await()
+    await core.logger.await
 
     if (throwError) throw error
     return true

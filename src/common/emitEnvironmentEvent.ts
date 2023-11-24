@@ -17,7 +17,7 @@ export async function emitEnvironmentEvent(event: EnvironmentEvent, throwError?:
       measurement: measurer.finish().toString()
     })
 
-    await core.logger.await()
+    await core.logger.await
 
     if (throwError) throw error
     return true

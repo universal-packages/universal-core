@@ -18,7 +18,7 @@ export async function loadAndSetEnvironments(processType: ProcessType, processab
       measurement: measurer.finish().toString()
     })
 
-    await core.logger.await()
+    await core.logger.await
 
     if (throwError) throw error
     return true

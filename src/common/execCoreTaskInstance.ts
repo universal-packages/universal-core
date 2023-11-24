@@ -18,7 +18,7 @@ export async function execCoreTaskInstance(throwError?: boolean): Promise<boolea
       // We prioritize higher error
     }
 
-    await core.logger.await()
+    await core.logger.await
 
     if (throwError) throw error
     return true
