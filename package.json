@@ -25,7 +25,7 @@
     "@universal-packages/logger": "^1.10.4",
     "@universal-packages/module-loader": "^1.0.1",
     "@universal-packages/plugin-config-loader": "^1.5.6",
-    "@universal-packages/template-populator": "^1.0.6",
+    "@universal-packages/template-populator": "^1.0.8",
     "@universal-packages/time-measurer": "^1.4.9",
     "change-case": "^4.1.2",
     "chokidar": "^3.5.3",
