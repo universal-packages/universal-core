@@ -6,7 +6,7 @@ export async function loadAndSetProjectConfig(throwError?: boolean): Promise<boo
   const measurer = startMeasurement()
 
   try {
-    core.projectConfig = await Core.getProjectConfig(core.coreConfig)
+    core.projectConfig = Core.getProjectConfig(core.coreConfig)
 
     core.logger.publish('DEBUG', 'Project config loaded', null, 'CORE', { metadata: core.projectConfig, measurement: measurer.finish().toString() })
   } catch (error) {

@@ -41,8 +41,8 @@ export default class Core {
     return finalCoreConfig
   }
 
-  public static async getProjectConfig(coreConfig: CoreConfig): Promise<ProjectConfig> {
-    return await loadConfig(coreConfig.config.location, { cleanOrphanReplaceable: true, selectEnvironment: true })
+  public static getProjectConfig(coreConfig: CoreConfig): ProjectConfig {
+    return loadConfig(coreConfig.config.location, { cleanOrphanReplaceable: true, selectEnvironment: true })
   }
 
   public static async getCoreEnvironments(coreConfig: CoreConfig, logger: Logger, processType: ProcessType, processableName: string): Promise<CoreEnvironment[]> {
