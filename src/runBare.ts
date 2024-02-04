@@ -1,6 +1,5 @@
 import { sleep } from '@universal-packages/time-measurer'
 
-import { adjustCoreLogger } from './common/adjustCoreLogger'
 import { emitEnvironmentEvent } from './common/emitEnvironmentEvent'
 import { initCoreLogger } from './common/initCoreLogger'
 import { loadAndSetCoreConfig } from './common/loadAndSetCoreConfig'

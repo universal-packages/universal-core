@@ -1,7 +1,6 @@
 import { sleep } from '@universal-packages/time-measurer'
 
 import { abortCoreTaskInstance } from './common/abortCoreTaskInstance'
-import { adjustCoreLogger } from './common/adjustCoreLogger'
 import { emitEnvironmentEvent } from './common/emitEnvironmentEvent'
 import { execCoreTaskInstance } from './common/execCoreTaskInstance'
 import { initCoreLogger } from './common/initCoreLogger'

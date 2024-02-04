@@ -1,7 +1,6 @@
 import { sleep } from '@universal-packages/time-measurer'
 
 import AppWatcher from './AppWatcher'
-import { adjustCoreLogger } from './common/adjustCoreLogger'
 import { emitEnvironmentEvent } from './common/emitEnvironmentEvent'
 import { initCoreLogger } from './common/initCoreLogger'
 import { loadAndSetCoreApp } from './common/loadAndSetCoreApp'

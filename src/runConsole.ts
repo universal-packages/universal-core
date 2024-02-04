@@ -1,8 +1,6 @@
 import repl from 'repl'
 
 import Core from './Core'
-import { CoreConfig } from './Core.types'
-import { adjustCoreLogger } from './common/adjustCoreLogger'
 import { emitEnvironmentEvent } from './common/emitEnvironmentEvent'
 import { initCoreLogger } from './common/initCoreLogger'
 import { loadAndSetCoreConfig } from './common/loadAndSetCoreConfig'
