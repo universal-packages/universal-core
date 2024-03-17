@@ -25,7 +25,7 @@ jobs:
       - run: rsync -a --prune-empty-dirs --include '*/' --exclude '*.ts' src/ dist/
       - run: cp -a bin dist
 
-      - uses: softprops/action-gh-release@v1
+      - uses: softprops/action-gh-release@v2
 
       - run: npm publish --access public
         working-directory: ./dist
