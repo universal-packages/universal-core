@@ -1,6 +1,6 @@
 {
   "name": "@universal-packages/core",
-  "version": "1.16.34",
+  "version": "1.16.35",
   "description": "Agnostic and conventional node executions wrap",
   "author": "David De Anda <david@universal-packages.com> (https://github.com/universal-packages)",
   "license": "MIT",
