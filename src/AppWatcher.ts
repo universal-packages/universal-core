@@ -3,6 +3,7 @@ import chokidar, { FSWatcher } from 'chokidar'
 import EventEmitter from 'events'
 import fs from 'fs'
 import path from 'path'
+import readline from 'readline'
 
 export default class AppWatcher extends EventEmitter {
   private appName: string
@@ -15,6 +16,7 @@ export default class AppWatcher extends EventEmitter {
   private fileEventsBuffer: string[] = []
   private restartTimeout: NodeJS.Timeout
   private ready: boolean
+  private readlineInterface: readline.Interface
 
   public constructor(appName: string, args: Record<string, any>, ignore: string[] = []) {
     super()
@@ -47,24 +49,7 @@ export default class AppWatcher extends EventEmitter {
         if (this.ready) {
           this.fileEventsBuffer.push(`${event} ${path}`)
 
-          clearTimeout(this.restartTimeout)
-
-          this.restartTimeout = setTimeout((): void => {
-            if (!this.stopping) {
-              if (this.currentChildProcess) {
-                // if the forked app is still in a state that can be terminated send the signal that do so
-                this.currentChildProcess.kill('SIGTERM')
-
-                // Internally ALRM will recognize we try to reload
-                this.currentChildProcess.kill('SIGALRM')
-              } else {
-                this.spawnSubProcess()
-              }
-
-              this.emit('restart', this.fileEventsBuffer)
-              this.fileEventsBuffer = []
-            }
-          }, 1000)
+          this.restart()
         }
       })
       .on('ready', (): void => {
@@ -72,12 +57,32 @@ export default class AppWatcher extends EventEmitter {
         this.spawnSubProcess()
         this.emit('ready')
       })
+
+    if (process.stdin.isTTY) {
+      this.readlineInterface = readline.createInterface({ input: process.stdin, escapeCodeTimeout: 50 })
+      process.stdin.setRawMode(true)
+      readline.emitKeypressEvents(process.stdin, this.readlineInterface)
+
+      process.stdin.on('keypress', (ch, key) => {
+        if (key.ctrl && key.name === 'c') {
+          if (this.stopping) {
+            this.kill()
+          } else {
+            this.stop()
+          }
+        }
+        if (ch === 'r' || key.name === 'return') {
+          this.restart()
+        }
+      })
+    }
   }
 
   public stop(): void {
     this.stopping = true
 
     this.watcher.close()
+    if (this.readlineInterface) this.readlineInterface.close()
     clearTimeout(this.restartTimeout)
 
     if (this.currentChildProcess) {
@@ -91,6 +96,27 @@ export default class AppWatcher extends EventEmitter {
       this.currentChildProcess.kill('SIGTERM')
       this.currentChildProcess.kill('SIGABRT')
     }
+  }
+
+  public restart(): void {
+    clearTimeout(this.restartTimeout)
+
+    this.restartTimeout = setTimeout((): void => {
+      if (!this.stopping) {
+        if (this.currentChildProcess) {
+          // if the forked app is still in a state that can be terminated send the signal that do so
+          this.currentChildProcess.kill('SIGTERM')
+
+          // Internally ALRM will recognize we try to reload
+          this.currentChildProcess.kill('SIGALRM')
+        } else {
+          this.spawnSubProcess()
+        }
+
+        this.emit('restart', this.fileEventsBuffer)
+        this.fileEventsBuffer = []
+      }
+    }, 1000)
   }
 
   private async spawnSubProcess(): Promise<void> {
