@@ -4,7 +4,7 @@ import Core from '../Core'
 import { CoreConfig } from '../Core.types'
 import { LOG_CONFIGURATION } from './terminal-presenter/LOG_CONFIGURATION'
 import { adjustCoreLogger } from './adjustCoreLogger'
-import { releaseLogger } from './releaseLogger'
+import { releaseLoggerAndPresenter } from './releaseLoggerAndPresenter'
 
 export async function loadAndSetCoreConfig(coreConfigOverride: CoreConfig, throwError?: boolean): Promise<boolean> {
   const measurer = startMeasurement()
@@ -36,7 +36,7 @@ export async function loadAndSetCoreConfig(coreConfigOverride: CoreConfig, throw
       LOG_CONFIGURATION
     )
 
-    await releaseLogger()
+    await releaseLoggerAndPresenter()
 
     if (throwError) throw error
     return true

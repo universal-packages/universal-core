@@ -2,7 +2,7 @@ import { startMeasurement } from '@universal-packages/time-measurer'
 
 import Core from '../Core'
 import { LOG_CONFIGURATION } from './terminal-presenter/LOG_CONFIGURATION'
-import { releaseLogger } from './releaseLogger'
+import { releaseLoggerAndPresenter } from './releaseLoggerAndPresenter'
 
 export async function loadAndSetProjectConfig(throwError?: boolean): Promise<boolean> {
   const measurer = startMeasurement()
@@ -32,7 +32,7 @@ export async function loadAndSetProjectConfig(throwError?: boolean): Promise<boo
       LOG_CONFIGURATION
     )
 
-    await releaseLogger()
+    await releaseLoggerAndPresenter()
 
     if (throwError) throw error
     return true

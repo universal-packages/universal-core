@@ -82,6 +82,7 @@ export interface CoreGlobal {
   coreConfig: CoreConfig
   coreModules: CoreModules
   environments: CoreEnvironment[]
+  forked: boolean
   logger: Logger
   projectConfig: ProjectConfig
   stoppable: boolean

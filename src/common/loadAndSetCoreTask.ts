@@ -2,7 +2,7 @@ import { startMeasurement } from '@universal-packages/time-measurer'
 
 import CoreTask from '../CoreTask'
 import { LOG_CONFIGURATION } from './terminal-presenter/LOG_CONFIGURATION'
-import { releaseLogger } from './releaseLogger'
+import { releaseLoggerAndPresenter } from './releaseLoggerAndPresenter'
 
 export async function loadAndSetCoreTask(name: string, directive: string, directiveOptions: string[], args: Record<string, any>, throwError?: boolean): Promise<boolean> {
   const measurer = startMeasurement()
@@ -28,7 +28,7 @@ export async function loadAndSetCoreTask(name: string, directive: string, direct
       // We prioritize higher error
     }
 
-    await releaseLogger()
+    await releaseLoggerAndPresenter()
 
     if (throwError) throw error
     return true

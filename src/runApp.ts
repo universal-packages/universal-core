@@ -3,6 +3,7 @@ import { sleep } from '@universal-packages/time-measurer'
 import AppWatcher from './AppWatcher'
 import { emitEnvironmentEvent } from './common/emitEnvironmentEvent'
 import { initCoreLogger } from './common/initCoreLogger'
+import { initTerminalPresenter } from './common/initTerminalPresenter'
 import { loadAndSetCoreApp } from './common/loadAndSetCoreApp'
 import { loadAndSetCoreConfig } from './common/loadAndSetCoreConfig'
 import { loadAndSetCoreModules } from './common/loadAndSetCoreModules'
@@ -11,7 +12,7 @@ import { loadAndSetProjectConfig } from './common/loadAndSetProjectConfig'
 import { prepareCoreAppInstance } from './common/prepareCoreAppInstance'
 import { releaseCoreAppInstance } from './common/releaseCoreAppInstance'
 import { releaseCoreModules } from './common/releaseCoreModules'
-import { releaseLogger } from './common/releaseLogger'
+import { releaseLoggerAndPresenter } from './common/releaseLoggerAndPresenter'
 import { runCoreAppInstance } from './common/runCoreAppInstance'
 import { setCoreGlobal } from './common/setCoreGlobal'
 import { stopCoreAppInstance } from './common/stopCoreAppInstance'
@@ -23,13 +24,13 @@ export async function runApp(name: string, options: RunAppOptions = {}): Promise
   const { args = {}, forked = false, coreConfigOverride, exitType = 'process' } = options
   const throwError = exitType === 'throw'
 
-  setCoreGlobal()
+  setCoreGlobal(forked)
   await initCoreLogger()
 
   // Common functions return true if something went wrong and we should exit
   if (await loadAndSetCoreConfig(coreConfigOverride, throwError)) return process.exit(1)
 
-  if (!forked && core.coreConfig.apps.watcher?.enabled) {
+  if (!forked && core.coreConfig.apps?.watcher?.enabled) {
     core.logger.log(
       {
         level: 'QUERY',
@@ -89,6 +90,8 @@ export async function runApp(name: string, options: RunAppOptions = {}): Promise
     if (await loadAndSetCoreApp(name, args, throwError)) return process.exit(1)
     if (await loadAndSetEnvironments('apps', core.App.appName || core.App.name, throwError)) return process.exit(1)
 
+    initTerminalPresenter()
+
     const stopApp = async (restarting: boolean = false): Promise<void> => {
       // We are already restating-stopping
       // we only exit the process at ctrl+c (SIGABRT)
@@ -131,7 +134,7 @@ export async function runApp(name: string, options: RunAppOptions = {}): Promise
       if (await releaseCoreModules(throwError)) return process.exit(1)
       if (await emitEnvironmentEvent('afterModulesRelease', throwError)) return process.exit(1)
 
-      releaseLogger()
+      releaseLoggerAndPresenter()
     }
 
     if (forked) {

@@ -4,6 +4,7 @@ import { paramCase, pascalCase } from 'change-case'
 
 import Core from './Core'
 import { CoreConfig } from './Core.types'
+import { updateCoreDocTaskProgress } from './common/updateCoreDoc'
 
 export default class CoreTask<A = any> extends Core {
   public static readonly taskName: string
@@ -47,4 +48,8 @@ export default class CoreTask<A = any> extends Core {
   }
 
   public abort(): Promise<void> | void {}
+
+  protected updatePresenterProgress(progress: number): void {
+    updateCoreDocTaskProgress(progress)
+  }
 }

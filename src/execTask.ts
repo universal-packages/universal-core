@@ -1,18 +1,19 @@
 import { sleep } from '@universal-packages/time-measurer'
 
-import { LOG_CONFIGURATION } from './common/terminal-presenter/LOG_CONFIGURATION'
 import { abortCoreTaskInstance } from './common/abortCoreTaskInstance'
 import { emitEnvironmentEvent } from './common/emitEnvironmentEvent'
 import { execCoreTaskInstance } from './common/execCoreTaskInstance'
 import { initCoreLogger } from './common/initCoreLogger'
+import { initTerminalPresenter } from './common/initTerminalPresenter'
 import { loadAndSetCoreConfig } from './common/loadAndSetCoreConfig'
 import { loadAndSetCoreModules } from './common/loadAndSetCoreModules'
 import { loadAndSetCoreTask } from './common/loadAndSetCoreTask'
 import { loadAndSetEnvironments } from './common/loadAndSetEnvironments'
 import { loadAndSetProjectConfig } from './common/loadAndSetProjectConfig'
 import { releaseCoreModules } from './common/releaseCoreModules'
-import { releaseLogger } from './common/releaseLogger'
+import { releaseLoggerAndPresenter } from './common/releaseLoggerAndPresenter'
 import { setCoreGlobal } from './common/setCoreGlobal'
+import { LOG_CONFIGURATION } from './common/terminal-presenter/LOG_CONFIGURATION'
 import { ExecTaskOptions } from './execTask.types'
 
 export async function execTask(name: string, options: ExecTaskOptions = {}): Promise<void> {
@@ -28,6 +29,8 @@ export async function execTask(name: string, options: ExecTaskOptions = {}): Pro
   if (await loadAndSetProjectConfig(throwError)) return process.exit(1)
   if (await loadAndSetCoreTask(name, directive, directiveOptions, args, throwError)) return process.exit(1)
   if (await loadAndSetEnvironments('tasks', core.Task.taskName || core.Task.name, throwError)) return process.exit(1)
+
+  initTerminalPresenter()
 
   const abortTask = async (): Promise<void> => {
     if (process.stdout.clearLine) process.stdout.clearLine(0)
@@ -72,5 +75,5 @@ export async function execTask(name: string, options: ExecTaskOptions = {}): Pro
   if (await releaseCoreModules(throwError)) return process.exit(1)
   if (await emitEnvironmentEvent('afterModulesRelease', throwError)) return process.exit(1)
 
-  await releaseLogger()
+  await releaseLoggerAndPresenter()
 }

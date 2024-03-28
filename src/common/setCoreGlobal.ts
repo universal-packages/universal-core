@@ -1,6 +1,6 @@
 import { TerminalPresenter } from '@universal-packages/terminal-presenter'
 
-export function setCoreGlobal(): void {
+export function setCoreGlobal(forked: boolean = false): void {
   global.core = {
     App: null,
     appConfig: null,
@@ -8,6 +8,7 @@ export function setCoreGlobal(): void {
     coreConfig: null,
     coreModules: null,
     environments: null,
+    forked: forked,
     logger: null,
     projectConfig: null,
     stoppable: false,

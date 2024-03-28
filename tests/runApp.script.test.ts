@@ -6,7 +6,7 @@ describe('runApp.script', (): void => {
   it('do all the preparations funds an app and runs it (sets core)', async (): Promise<void> => {
     const appName = 'super-app'
     const args = { fast: true }
-    const demon = true
+    const forked = true
 
     process.env['CORE_APP_NAME'] = appName
     process.env['CORE_APP_ARGS'] = JSON.stringify(args)
@@ -14,6 +14,6 @@ describe('runApp.script', (): void => {
 
     require('../src/runApp.script')
 
-    expect(runApp).toHaveBeenCalledWith(appName, { args, demon })
+    expect(runApp).toHaveBeenCalledWith(appName, { args, forked })
   })
 })

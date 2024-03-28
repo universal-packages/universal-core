@@ -1,11 +1,12 @@
 import { sleep } from '@universal-packages/time-measurer'
+
 import BaseTask from '../../src/CoreTask'
 
 export default class MigrateSomethingTask extends BaseTask {
   public static readonly description = 'Migrates some important data'
 
-  private timeout: NodeJS.Timeout
   private resolve: Function
+  private progressInterval: NodeJS.Timeout
 
   public async prepare(): Promise<void> {
     await sleep(1000)
@@ -14,12 +15,22 @@ export default class MigrateSomethingTask extends BaseTask {
   public async exec(): Promise<void> {
     return await new Promise((resolve): void => {
       this.resolve = resolve
-      this.timeout = setTimeout(resolve, 10000)
+      let progress = 0
+
+      this.progressInterval = setInterval(() => {
+        progress += 0.01
+        this.updatePresenterProgress(progress)
+
+        if (progress >= 100) {
+          clearInterval(this.progressInterval)
+          resolve()
+        }
+      }, 1)
     })
   }
 
   public async abort(): Promise<void> {
-    clearTimeout(this.timeout)
+    clearTimeout(this.progressInterval)
     this.resolve()
     await sleep(1000)
   }

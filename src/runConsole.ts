@@ -9,7 +9,7 @@ import { loadAndSetCoreModules } from './common/loadAndSetCoreModules'
 import { loadAndSetEnvironments } from './common/loadAndSetEnvironments'
 import { loadAndSetProjectConfig } from './common/loadAndSetProjectConfig'
 import { releaseCoreModules } from './common/releaseCoreModules'
-import { releaseLogger } from './common/releaseLogger'
+import { releaseLoggerAndPresenter } from './common/releaseLoggerAndPresenter'
 import { setCoreGlobal } from './common/setCoreGlobal'
 import { RunConsoleOptions } from './runConsole.types'
 
@@ -77,7 +77,7 @@ export async function runConsole(options: RunConsoleOptions = {}): Promise<void>
       // We prioritize higher error
     }
 
-    await releaseLogger()
+    await releaseLoggerAndPresenter()
     return process.exit(1)
   }
 }

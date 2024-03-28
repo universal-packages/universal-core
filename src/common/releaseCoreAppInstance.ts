@@ -2,7 +2,7 @@ import { startMeasurement } from '@universal-packages/time-measurer'
 
 import CoreApp from '../CoreApp'
 import { LOG_CONFIGURATION } from './terminal-presenter/LOG_CONFIGURATION'
-import { releaseLogger } from './releaseLogger'
+import { releaseLoggerAndPresenter } from './releaseLoggerAndPresenter'
 
 export async function releaseCoreAppInstance(throwError?: boolean): Promise<boolean> {
   const measurer = startMeasurement()
@@ -37,7 +37,7 @@ export async function releaseCoreAppInstance(throwError?: boolean): Promise<bool
         // We prioritize higher error
       }
 
-      await releaseLogger()
+      await releaseLoggerAndPresenter()
 
       if (throwError) throw error
       return true

@@ -20,7 +20,7 @@ development:
     level: TRACE
     silence: false
   terminalPresenter:
-    clear: false
+    clear: true
 
 test:
   logger:

@@ -2,8 +2,9 @@ import { startMeasurement } from '@universal-packages/time-measurer'
 import { paramCase, pascalCase } from 'change-case'
 
 import CoreApp from '../CoreApp'
+import { releaseLoggerAndPresenter } from './releaseLoggerAndPresenter'
 import { LOG_CONFIGURATION } from './terminal-presenter/LOG_CONFIGURATION'
-import { releaseLogger } from './releaseLogger'
+import { updateCoreDoc } from './updateCoreDoc'
 
 export async function loadAndSetCoreApp(name: string, args: Record<string, any>, throwError?: boolean): Promise<boolean> {
   const measurer = startMeasurement()
@@ -27,7 +28,7 @@ export async function loadAndSetCoreApp(name: string, args: Record<string, any>,
       LOG_CONFIGURATION
     )
 
-    await releaseLogger()
+    await releaseLoggerAndPresenter()
 
     if (throwError) throw error
     return true
