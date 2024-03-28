@@ -156,24 +156,10 @@ As you can see you can provide configuration depending on the environment you ar
     Where all your custom tasks are.
 
 - **`logger`** `map`
-  - **`level`** `'FATAL' | 'ERROR' | 'WARNING' | 'QUERY' | 'INFO' | 'DEBUG' | 'TRACE'` `default: INFO`
-    Log level for the main Logger.
-  - **`silence`** `boolean` `default: false`
-    Should the logger be silenced since the beginning.
-  - **`terminal`** `map`
-    - **`enable`** `boolean` `default: true`
-      Should the logger use the terminal transport.
-    - **`clear`** `boolean` `default: false`
-      Should the logger clear the terminal before start logging.
-    - **`withHeader`** `boolean` `default: false`
-      Should the logger print a header for every entry.
-  - **`localFile`** `map`
-    - **`enable`** `boolean` `default: true`
-      Should the logger use the localFile transport.
-    - **`asJson`** `boolean` `default: false`
-      Should the log entries in the file be serialized into JSON.
-    - **`localFile`** `string` `default: ./logs`
-      Where should the file with logs be created?
+  See [Logger Options](https://github.com/universal-packages/universal-logger?tab=readme-ov-file#options)
+
+- **`terminalPresenter`** `map`
+  See [Terminal Presenter Options](https://github.com/universal-packages/universal-terminal-presenter?tab=readme-ov-file#options)
 
 ## Core Module
 
