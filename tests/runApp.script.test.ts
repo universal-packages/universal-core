@@ -10,7 +10,7 @@ describe('runApp.script', (): void => {
 
     process.env['CORE_APP_NAME'] = appName
     process.env['CORE_APP_ARGS'] = JSON.stringify(args)
-    process.env['CORE_DEMON'] = 'true'
+    process.env['CORE_FORK'] = 'true'
 
     require('../src/runApp.script')
 

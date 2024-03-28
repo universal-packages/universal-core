@@ -72,7 +72,7 @@ describe(AppWatcher, (): void => {
       expect(readyMock).toHaveBeenCalledTimes(1)
       expect(forkMock).toHaveBeenCalledTimes(1)
       expect(forkMock).toHaveBeenCalledWith(expect.stringMatching(/universal-core\/src\/runApp.script.ts/), {
-        env: expect.objectContaining({ CORE_APP_NAME: 'app', CORE_APP_ARGS: '{}', CORE_DEMON: 'true' }),
+        env: expect.objectContaining({ CORE_APP_NAME: 'app', CORE_APP_ARGS: '{}', CORE_FORK: 'true' }),
         stdio: ['ipc', 'inherit', 'inherit']
       })
     })
@@ -194,7 +194,7 @@ describe(AppWatcher, (): void => {
 
       expect(forkMock).toHaveBeenCalledTimes(2)
       expect(forkMock).toHaveBeenLastCalledWith(expect.stringMatching(/universal-core\/src\/runApp.script.ts/), {
-        env: expect.objectContaining({ CORE_APP_NAME: 'app', CORE_APP_ARGS: '{}', CORE_DEMON: 'true' }),
+        env: expect.objectContaining({ CORE_APP_NAME: 'app', CORE_APP_ARGS: '{}', CORE_FORK: 'true' }),
         stdio: ['ipc', 'inherit', 'inherit']
       })
     })

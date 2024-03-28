@@ -1,7 +1,6 @@
 import { sleep } from '@universal-packages/time-measurer'
 
 import AppWatcher from './AppWatcher'
-import { LOG_CONFIGURATION } from './common/terminal-presenter/LOG_CONFIGURATION'
 import { emitEnvironmentEvent } from './common/emitEnvironmentEvent'
 import { initCoreLogger } from './common/initCoreLogger'
 import { loadAndSetCoreApp } from './common/loadAndSetCoreApp'
@@ -16,11 +15,12 @@ import { releaseLogger } from './common/releaseLogger'
 import { runCoreAppInstance } from './common/runCoreAppInstance'
 import { setCoreGlobal } from './common/setCoreGlobal'
 import { stopCoreAppInstance } from './common/stopCoreAppInstance'
+import { LOG_CONFIGURATION } from './common/terminal-presenter/LOG_CONFIGURATION'
 import { debounce } from './debounce'
 import { RunAppOptions, StopAppFunction } from './runApp.types'
 
 export async function runApp(name: string, options: RunAppOptions = {}): Promise<StopAppFunction> {
-  const { args = {}, demon = false, coreConfigOverride, exitType = 'process' } = options
+  const { args = {}, forked = false, coreConfigOverride, exitType = 'process' } = options
   const throwError = exitType === 'throw'
 
   setCoreGlobal()
@@ -29,7 +29,7 @@ export async function runApp(name: string, options: RunAppOptions = {}): Promise
   // Common functions return true if something went wrong and we should exit
   if (await loadAndSetCoreConfig(coreConfigOverride, throwError)) return process.exit(1)
 
-  if (!demon && core.coreConfig.apps.watcher?.enabled) {
+  if (!forked && core.coreConfig.apps.watcher?.enabled) {
     core.logger.log(
       {
         level: 'QUERY',
@@ -134,7 +134,7 @@ export async function runApp(name: string, options: RunAppOptions = {}): Promise
       releaseLogger()
     }
 
-    if (demon) {
+    if (forked) {
       process.addListener('SIGALRM', stopApp.bind(null, true))
       process.addListener('SIGABRT', stopApp.bind(null, false))
       process.addListener('SIGINT', () => {})

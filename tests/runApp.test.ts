@@ -365,7 +365,7 @@ describe(runApp, (): void => {
 
   it('special signals are used for restarting and killing when demonized', async (): Promise<void> => {
     await runApp('good-app', {
-      demon: true,
+      forked: true,
       coreConfigOverride: {
         apps: { location: './tests/__fixtures__/apps' },
         config: { location: './tests/__fixtures__/config' },

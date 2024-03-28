@@ -12,4 +12,4 @@ if (isTsProject) {
 const appName = process.env['CORE_APP_NAME']
 const args = JSON.parse(process.env['CORE_APP_ARGS'] || '{}')
 
-require('./runApp').runApp(appName, { args, demon: !!process.env['CORE_DEMON'] })
+require('./runApp').runApp(appName, { args, demon: !!process.env['CORE_FORK'] })

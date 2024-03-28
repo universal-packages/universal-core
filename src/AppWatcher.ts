@@ -98,7 +98,7 @@ export default class AppWatcher extends EventEmitter {
       ...process.env,
       CORE_APP_NAME: this.appName,
       CORE_APP_ARGS: JSON.stringify(this.args),
-      CORE_DEMON: 'true'
+      CORE_FORK: 'true'
     }
     const tsScriptExists = fs.existsSync(path.resolve(__dirname, 'runApp.script.ts'))
     const extension = tsScriptExists ? 'ts' : 'js'

@@ -2,8 +2,8 @@ import { CoreConfig } from './Core.types'
 
 export interface RunAppOptions {
   args?: Record<string, any>
+  forked?: boolean
   coreConfigOverride?: CoreConfig
-  demon?: boolean
   exitType?: 'process' | 'throw'
 }
 
