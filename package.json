@@ -22,7 +22,7 @@
   "dependencies": {
     "@babel/register": "^7.22.15",
     "@universal-packages/config-loader": "^1.12.6",
-    "@universal-packages/logger": "^1.13.1",
+    "@universal-packages/logger": "^1.14.0",
     "@universal-packages/logger-terminal-presenter": "^1.0.9",
     "@universal-packages/module-loader": "^1.0.8",
     "@universal-packages/plugin-config-loader": "^1.6.8",
