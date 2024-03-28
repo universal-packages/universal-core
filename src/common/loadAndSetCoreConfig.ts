@@ -2,7 +2,7 @@ import { startMeasurement } from '@universal-packages/time-measurer'
 
 import Core from '../Core'
 import { CoreConfig } from '../Core.types'
-import { LOG_CONFIGURATION } from './LOG_CONFIGURATION'
+import { LOG_CONFIGURATION } from './terminal-presenter/LOG_CONFIGURATION'
 import { adjustCoreLogger } from './adjustCoreLogger'
 import { releaseLogger } from './releaseLogger'
 

@@ -1,6 +1,6 @@
 import { sleep } from '@universal-packages/time-measurer'
 
-import { LOG_CONFIGURATION } from './common/LOG_CONFIGURATION'
+import { LOG_CONFIGURATION } from './common/terminal-presenter/LOG_CONFIGURATION'
 import { abortCoreTaskInstance } from './common/abortCoreTaskInstance'
 import { emitEnvironmentEvent } from './common/emitEnvironmentEvent'
 import { execCoreTaskInstance } from './common/execCoreTaskInstance'

@@ -3,7 +3,7 @@ import { populateTemplates } from '@universal-packages/template-populator'
 import { exec } from 'child_process'
 import path from 'path'
 
-import { LOG_CONFIGURATION } from './common/LOG_CONFIGURATION'
+import { LOG_CONFIGURATION } from './common/terminal-presenter/LOG_CONFIGURATION'
 
 export async function initProject(name: string, args: Record<string, any>): Promise<void> {
   const logger = new Logger({ silence: process.env.NODE_ENV === 'test', transports: ['terminal-presenter', 'local-file'] })

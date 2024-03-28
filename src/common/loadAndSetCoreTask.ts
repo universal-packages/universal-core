@@ -1,7 +1,7 @@
 import { startMeasurement } from '@universal-packages/time-measurer'
 
 import CoreTask from '../CoreTask'
-import { LOG_CONFIGURATION } from './LOG_CONFIGURATION'
+import { LOG_CONFIGURATION } from './terminal-presenter/LOG_CONFIGURATION'
 import { releaseLogger } from './releaseLogger'
 
 export async function loadAndSetCoreTask(name: string, directive: string, directiveOptions: string[], args: Record<string, any>, throwError?: boolean): Promise<boolean> {

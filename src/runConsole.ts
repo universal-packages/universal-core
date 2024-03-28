@@ -1,7 +1,7 @@
 import repl from 'repl'
 
 import Core from './Core'
-import { LOG_CONFIGURATION } from './common/LOG_CONFIGURATION'
+import { LOG_CONFIGURATION } from './common/terminal-presenter/LOG_CONFIGURATION'
 import { emitEnvironmentEvent } from './common/emitEnvironmentEvent'
 import { initCoreLogger } from './common/initCoreLogger'
 import { loadAndSetCoreConfig } from './common/loadAndSetCoreConfig'

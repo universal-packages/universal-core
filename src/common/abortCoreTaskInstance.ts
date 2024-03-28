@@ -1,7 +1,7 @@
 import { startMeasurement } from '@universal-packages/time-measurer'
 
 import Core from '../Core'
-import { LOG_CONFIGURATION } from './LOG_CONFIGURATION'
+import { LOG_CONFIGURATION } from './terminal-presenter/LOG_CONFIGURATION'
 import { releaseLogger } from './releaseLogger'
 
 export async function abortCoreTaskInstance(throwError?: boolean): Promise<boolean> {
