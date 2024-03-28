@@ -1,3 +1,5 @@
+import { TerminalPresenter } from '@universal-packages/terminal-presenter'
+
 export function setCoreGlobal(): void {
   global.core = {
     App: null,
@@ -11,6 +13,7 @@ export function setCoreGlobal(): void {
     stoppable: false,
     stopping: false,
     Task: null,
-    taskInstance: null
+    taskInstance: null,
+    TerminalPresenter: TerminalPresenter
   }
 }

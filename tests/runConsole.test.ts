@@ -1,4 +1,5 @@
 import { Logger } from '@universal-packages/logger'
+import { TerminalPresenter } from '@universal-packages/terminal-presenter'
 import EventEmitter from 'events'
 import repl from 'repl'
 
@@ -64,7 +65,8 @@ describe(runConsole, (): void => {
       stoppable: false,
       stopping: false,
       Task: null,
-      taskInstance: null
+      taskInstance: null,
+      TerminalPresenter: TerminalPresenter
     })
     expect(ConsoleEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeConsoleRuns', 'afterConsoleRuns'])
     expect(TestEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeConsoleRuns', 'afterConsoleRuns'])
@@ -75,7 +77,7 @@ describe(runConsole, (): void => {
   it('exits if core config has errors', async (): Promise<void> => {
     await runConsole({
       coreConfigOverride: {
-        apps: { location: './tests/__fixtures__/noexistent' },
+        apps: { location: 10 as any },
         config: { location: './tests/__fixtures__/config' },
         environments: { location: './tests/__fixtures__/environments' },
         tasks: { location: './tests/__fixtures__/tasks' },

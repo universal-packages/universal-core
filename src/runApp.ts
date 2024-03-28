@@ -1,6 +1,7 @@
 import { sleep } from '@universal-packages/time-measurer'
 
 import AppWatcher from './AppWatcher'
+import { LOG_CONFIGURATION } from './common/LOG_CONFIGURATION'
 import { emitEnvironmentEvent } from './common/emitEnvironmentEvent'
 import { initCoreLogger } from './common/initCoreLogger'
 import { loadAndSetCoreApp } from './common/loadAndSetCoreApp'
@@ -11,6 +12,7 @@ import { loadAndSetProjectConfig } from './common/loadAndSetProjectConfig'
 import { prepareCoreAppInstance } from './common/prepareCoreAppInstance'
 import { releaseCoreAppInstance } from './common/releaseCoreAppInstance'
 import { releaseCoreModules } from './common/releaseCoreModules'
+import { releaseLogger } from './common/releaseLogger'
 import { runCoreAppInstance } from './common/runCoreAppInstance'
 import { setCoreGlobal } from './common/setCoreGlobal'
 import { stopCoreAppInstance } from './common/stopCoreAppInstance'
@@ -22,16 +24,32 @@ export async function runApp(name: string, options: RunAppOptions = {}): Promise
   const throwError = exitType === 'throw'
 
   setCoreGlobal()
-  initCoreLogger()
+  await initCoreLogger()
 
   // Common functions return true if something went wrong and we should exit
   if (await loadAndSetCoreConfig(coreConfigOverride, throwError)) return process.exit(1)
 
   if (!demon && core.coreConfig.apps.watcher?.enabled) {
-    core.logger.publish('INFO', 'App Watcher enabled', 'App will be ran in a sub process', 'CORE')
+    core.logger.log(
+      {
+        level: 'QUERY',
+        title: 'Watching App for development',
+        message: 'App will be reloaded every time file changes are detected',
+        category: 'CORE'
+      },
+      LOG_CONFIGURATION
+    )
 
     if (process.env['NODE_ENV'] !== 'development') {
-      core.logger.publish('WARNING', 'Watch and reload is meant only for development', 'Consider deactivating it for not development environments', 'CORE')
+      core.logger.log(
+        {
+          level: 'WARNING',
+          title: 'Watch and reload is meant only for development',
+          message: 'Consider deactivating it for not development environments',
+          category: 'CORE'
+        },
+        LOG_CONFIGURATION
+      )
     }
 
     const appWatcher = new AppWatcher(name, args, core.coreConfig.apps.watcher?.ignore)
@@ -39,7 +57,15 @@ export async function runApp(name: string, options: RunAppOptions = {}): Promise
     appWatcher.run()
 
     appWatcher.on('restart', (files: string[]): void => {
-      core.logger.publish('QUERY', 'Reloading..', files.join('\n'), 'CORE')
+      core.logger.log(
+        {
+          level: 'QUERY',
+          title: 'Reloading...',
+          message: files.join('\n'),
+          category: 'CORE'
+        },
+        LOG_CONFIGURATION
+      )
     })
 
     const stopWatcher = async (): Promise<void> => {
@@ -74,7 +100,15 @@ export async function runApp(name: string, options: RunAppOptions = {}): Promise
       if (core.stopping) return process.exit(0)
 
       if (!restarting) {
-        core.logger.publish('INFO', 'Stopping app gracefully', 'press CTRL+C again to kill', 'CORE')
+        core.logger.log(
+          {
+            level: 'INFO',
+            title: 'Stopping app gracefully',
+            message: 'Press CTRL+C again to kill',
+            category: 'CORE'
+          },
+          LOG_CONFIGURATION
+        )
       }
 
       core.stopping = true
@@ -96,6 +130,8 @@ export async function runApp(name: string, options: RunAppOptions = {}): Promise
       if (await emitEnvironmentEvent('beforeModulesRelease', throwError)) return process.exit(1)
       if (await releaseCoreModules(throwError)) return process.exit(1)
       if (await emitEnvironmentEvent('afterModulesRelease', throwError)) return process.exit(1)
+
+      releaseLogger()
     }
 
     if (demon) {

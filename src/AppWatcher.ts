@@ -23,7 +23,6 @@ export default class AppWatcher extends EventEmitter {
     this.ignore = ignore
   }
 
-  /** Starts the watcher and forks the app running the runApp.script file  */
   public run(): void {
     this.watcher = chokidar
       .watch('.', {
@@ -61,7 +60,7 @@ export default class AppWatcher extends EventEmitter {
               } else {
                 this.spawnSubProcess()
               }
-              // Emit the changes
+
               this.emit('restart', this.fileEventsBuffer)
               this.fileEventsBuffer = []
             }
@@ -87,7 +86,6 @@ export default class AppWatcher extends EventEmitter {
     }
   }
 
-  /** Sends the ABORT signal */
   public kill(): void {
     if (this.currentChildProcess) {
       this.currentChildProcess.kill('SIGTERM')
@@ -95,7 +93,6 @@ export default class AppWatcher extends EventEmitter {
     }
   }
 
-  /** Forks to a new process that run the apps en a demonized way */
   private async spawnSubProcess(): Promise<void> {
     const env: NodeJS.ProcessEnv = {
       ...process.env,

@@ -1,6 +1,7 @@
 import repl from 'repl'
 
 import Core from './Core'
+import { LOG_CONFIGURATION } from './common/LOG_CONFIGURATION'
 import { emitEnvironmentEvent } from './common/emitEnvironmentEvent'
 import { initCoreLogger } from './common/initCoreLogger'
 import { loadAndSetCoreConfig } from './common/loadAndSetCoreConfig'
@@ -8,6 +9,7 @@ import { loadAndSetCoreModules } from './common/loadAndSetCoreModules'
 import { loadAndSetEnvironments } from './common/loadAndSetEnvironments'
 import { loadAndSetProjectConfig } from './common/loadAndSetProjectConfig'
 import { releaseCoreModules } from './common/releaseCoreModules'
+import { releaseLogger } from './common/releaseLogger'
 import { setCoreGlobal } from './common/setCoreGlobal'
 import { RunConsoleOptions } from './runConsole.types'
 
@@ -16,7 +18,7 @@ export async function runConsole(options: RunConsoleOptions = {}): Promise<void>
   const throwError: boolean = exitType === 'throw'
 
   setCoreGlobal()
-  initCoreLogger()
+  await initCoreLogger()
 
   // Common functions return true if something went wrong and we should exit
   if (await loadAndSetCoreConfig(coreConfigOverride, throwError)) return process.exit(1)
@@ -33,12 +35,12 @@ export async function runConsole(options: RunConsoleOptions = {}): Promise<void>
   if (await emitEnvironmentEvent('afterModulesLoad', throwError)) return process.exit(1)
 
   try {
-    await core.logger.await
+    await core.logger.waitForLoggingActivity()
 
     // Common functions return true if something went wrong and we should exit
     if (await emitEnvironmentEvent('beforeConsoleRuns', throwError)) return process.exit(1)
 
-    await core.logger.await
+    await core.logger.waitForLoggingActivity()
 
     // We just start a repl server it even has its own termination CTRL+C
     const replServer = repl.start({ prompt: 'core > ' })
@@ -59,7 +61,15 @@ export async function runConsole(options: RunConsoleOptions = {}): Promise<void>
       if (await emitEnvironmentEvent('afterModulesRelease', throwError)) return process.exit(1)
     })
   } catch (error) {
-    core.logger.publish('ERROR', 'Console', 'There was an error while running the console', 'CORE', { error })
+    core.logger.log(
+      {
+        level: 'ERROR',
+        title: 'There was an error while running the console',
+        category: 'CORE',
+        error
+      },
+      LOG_CONFIGURATION
+    )
 
     try {
       await Core.releaseInternalModules(core.coreModules)
@@ -67,7 +77,7 @@ export async function runConsole(options: RunConsoleOptions = {}): Promise<void>
       // We prioritize higher error
     }
 
-    await core.logger.await
+    await releaseLogger()
     return process.exit(1)
   }
 }

@@ -1,117 +1,143 @@
-import { checkDirectory, ensureDirectory } from '@universal-packages/fs-utils'
-import Schema from 'validate'
+import { JSONSchema7 } from 'json-schema'
 
-const directoryCheck = (value: any): boolean => {
-  try {
-    checkDirectory(value)
-    return true
-  } catch {
-    return false
-  }
-}
-
-const directoryCheckOptional = (value: any): boolean => {
-  if (!value) return true
-  return directoryCheck(value)
-}
-
-const directoryEnsure = (value: any): boolean => {
-  try {
-    ensureDirectory(value)
-    return true
-  } catch {
-    return false
-  }
-}
-
-const directoryEnsureOptional = (value: any): boolean => {
-  if (!value) return true
-  return directoryEnsure(value)
-}
-
-export const coreConfigSchema = new Schema(
-  {
+export const coreConfigSchema: JSONSchema7 = {
+  $schema: 'http://json-schema.org/draft-07/schema#',
+  type: 'object',
+  additionalProperties: false,
+  properties: {
     apps: {
-      location: {
-        type: String,
-        use: { directoryCheck },
-        message: 'Location is not accessible'
-      },
-      watcher: {
-        enabled: {
-          type: Boolean
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        location: {
+          type: 'string'
         },
-        ignore: {
-          type: Array,
-          each: { type: String }
+        watcher: {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            enabled: {
+              type: 'boolean'
+            },
+            ignore: {
+              type: 'array',
+              items: {
+                type: 'string'
+              }
+            }
+          }
         }
       }
     },
     config: {
-      location: {
-        type: String,
-        use: { directoryCheck },
-        message: 'Location is not accessible'
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        location: {
+          type: 'string'
+        }
       }
     },
     environments: {
-      location: {
-        type: String,
-        use: { directoryCheckOptional },
-        message: 'Location is not accessible'
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        location: {
+          type: 'string'
+        }
       }
     },
     modules: {
-      asGlobals: {
-        type: Boolean
-      },
-      location: {
-        type: String,
-        use: { directoryCheckOptional },
-        message: 'Location is not accessible'
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        asGlobals: {
+          type: 'boolean'
+        },
+        location: {
+          type: 'string'
+        }
       }
     },
     tasks: {
-      location: {
-        type: String,
-        use: { directoryCheck },
-        message: 'Location is not accessible'
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        location: {
+          type: 'string'
+        }
+      }
+    },
+    terminalPresenter: {
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        clear: {
+          type: 'boolean'
+        },
+        decorateConsole: {
+          type: 'boolean'
+        },
+        enabled: {
+          type: 'boolean'
+        },
+        framesPerSecond: {
+          type: 'number'
+        }
       }
     },
     logger: {
-      level: {
-        type: String,
-        enum: ['FATAL', 'ERROR', 'WARNING', 'QUERY', 'INFO', 'DEBUG', 'TRACE'],
-        message: 'Must be one of: FATAL | ERROR | WARNING | QUERY | INFO | DEBUG | TRACE'
-      },
-      silence: {
-        type: Boolean
-      },
-      terminal: {
-        enable: {
-          type: Boolean
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        level: {
+          oneOf: [
+            {
+              type: 'string',
+              enum: ['FATAL', 'ERROR', 'WARNING', 'QUERY', 'INFO', 'DEBUG', 'TRACE']
+            },
+            {
+              type: 'array',
+              items: {
+                type: 'string',
+                enum: ['FATAL', 'ERROR', 'WARNING', 'QUERY', 'INFO', 'DEBUG', 'TRACE']
+              }
+            }
+          ]
         },
-        clear: {
-          type: Boolean
+        silence: {
+          type: 'boolean'
         },
-        withHeader: {
-          type: Boolean
-        }
-      },
-      localFile: {
-        enable: {
-          type: Boolean
+        transports: {
+          type: 'array',
+          items: {
+            oneOf: [
+              {
+                type: 'string'
+              },
+              {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                  transport: {
+                    type: 'string'
+                  },
+                  transportOptions: {
+                    type: 'object'
+                  }
+                },
+                required: ['transport']
+              }
+            ]
+          }
         },
-        asJson: {
-          type: Boolean
-        },
-        location: {
-          type: String,
-          use: { directoryEnsureOptional },
-          message: 'Location is not accessible'
+        filterMetadataKeys: {
+          type: 'array',
+          items: {
+            type: 'string'
+          }
         }
       }
     }
-  },
-  { strict: true }
-)
+  }
+}

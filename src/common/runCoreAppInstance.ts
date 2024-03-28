@@ -1,15 +1,35 @@
 import { startMeasurement } from '@universal-packages/time-measurer'
 
 import CoreApp from '../CoreApp'
+import { LOG_CONFIGURATION } from './LOG_CONFIGURATION'
+import { releaseLogger } from './releaseLogger'
 
 export async function runCoreAppInstance(throwError?: boolean): Promise<boolean> {
   const measurer = startMeasurement()
 
   try {
     await core.appInstance.run()
-    core.logger.publish('INFO', `${core.App.appName || core.App.name} running`, core.App.description, 'CORE', { measurement: measurer.finish().toString() })
+    core.logger.log(
+      {
+        level: 'INFO',
+        title: `App ${core.App.appName || core.App.name} running`,
+        message: core.App.description,
+        category: 'CORE',
+        measurement: measurer.finish()
+      },
+      LOG_CONFIGURATION
+    )
   } catch (error) {
-    core.logger.publish('ERROR', core.App.appName || core.App.name, 'There was an error while running app', 'CORE', { error })
+    core.logger.log(
+      {
+        level: 'ERROR',
+        title: 'There was an error while running app',
+        category: 'CORE',
+        error,
+        measurement: measurer.finish()
+      },
+      LOG_CONFIGURATION
+    )
 
     try {
       await CoreApp.releaseInternalModules(core.coreModules)
@@ -17,7 +37,7 @@ export async function runCoreAppInstance(throwError?: boolean): Promise<boolean>
       // We prioritize higher error
     }
 
-    await core.logger.await
+    await releaseLogger()
 
     if (throwError) throw error
     return true

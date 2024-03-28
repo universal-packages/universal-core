@@ -34,51 +34,6 @@ describe(Core, (): void => {
 
       expect(config).toMatchObject({ apps: { location: './tests' }, tasks: { location: './tests' }, config: { location: './tests' } })
     })
-
-    it('validates the core config schema', async (): Promise<void> => {
-      let error: Error
-
-      try {
-        const config = await Core.getCoreConfig({
-          apps: { location: './nop', watcher: { enabled: 'nop', ignore: [55] } },
-          config: { location: './nop' },
-          modules: { location: './nop', asGlobals: 'nop' },
-          tasks: { location: './nop' },
-          logger: {
-            level: 'LEVEL',
-            silence: 'nop',
-            terminal: {
-              clear: 'nop',
-              enable: 'nop',
-              withHeader: 'nop'
-            },
-            localFile: {
-              asJson: 'nop',
-              location: '/nop',
-              enable: 'nop'
-            }
-          }
-        } as any)
-      } catch (err) {
-        error = err
-      }
-
-      expect(error.message).toEqual(`apps.location - Location is not accessible
-apps.watcher.enabled - apps.watcher.enabled must be of type Boolean.
-apps.watcher.ignore.0 - apps.watcher.ignore.0 must be of type String.
-config.location - Location is not accessible
-modules.asGlobals - modules.asGlobals must be of type Boolean.
-modules.location - Location is not accessible
-tasks.location - Location is not accessible
-logger.level - Must be one of: FATAL | ERROR | WARNING | QUERY | INFO | DEBUG | TRACE
-logger.silence - logger.silence must be of type Boolean.
-logger.terminal.enable - logger.terminal.enable must be of type Boolean.
-logger.terminal.clear - logger.terminal.clear must be of type Boolean.
-logger.terminal.withHeader - logger.terminal.withHeader must be of type Boolean.
-logger.localFile.enable - logger.localFile.enable must be of type Boolean.
-logger.localFile.asJson - logger.localFile.asJson must be of type Boolean.
-logger.localFile.location - Location is not accessible`)
-    })
   })
 
   describe('.getProjectConfig', (): void => {

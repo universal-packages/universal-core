@@ -1,5 +1,6 @@
 import { sleep } from '@universal-packages/time-measurer'
 
+import { LOG_CONFIGURATION } from './common/LOG_CONFIGURATION'
 import { abortCoreTaskInstance } from './common/abortCoreTaskInstance'
 import { emitEnvironmentEvent } from './common/emitEnvironmentEvent'
 import { execCoreTaskInstance } from './common/execCoreTaskInstance'
@@ -10,6 +11,7 @@ import { loadAndSetCoreTask } from './common/loadAndSetCoreTask'
 import { loadAndSetEnvironments } from './common/loadAndSetEnvironments'
 import { loadAndSetProjectConfig } from './common/loadAndSetProjectConfig'
 import { releaseCoreModules } from './common/releaseCoreModules'
+import { releaseLogger } from './common/releaseLogger'
 import { setCoreGlobal } from './common/setCoreGlobal'
 import { ExecTaskOptions } from './execTask.types'
 
@@ -18,7 +20,7 @@ export async function execTask(name: string, options: ExecTaskOptions = {}): Pro
   const throwError = exitType === 'throw'
 
   setCoreGlobal()
-  initCoreLogger()
+  await initCoreLogger()
 
   // Common functions return true if something went wrong and we should exit
   if (await loadAndSetCoreConfig(coreConfigOverride, throwError)) return process.exit(1)
@@ -34,7 +36,15 @@ export async function execTask(name: string, options: ExecTaskOptions = {}): Pro
     if (core.stopping) return process.exit(0)
     core.stopping = true
 
-    core.logger.publish('INFO', 'Aborting task gracefully', 'press CTRL+C again to kill', 'CORE')
+    core.logger.log(
+      {
+        level: 'INFO',
+        title: 'Aborting task gracefully',
+        message: 'press CTRL+C again to kill',
+        category: 'CORE'
+      },
+      LOG_CONFIGURATION
+    )
 
     while (!core.stoppable) await sleep(100)
 
@@ -61,4 +71,6 @@ export async function execTask(name: string, options: ExecTaskOptions = {}): Pro
   if (await emitEnvironmentEvent('beforeModulesRelease', throwError)) return process.exit(1)
   if (await releaseCoreModules(throwError)) return process.exit(1)
   if (await emitEnvironmentEvent('afterModulesRelease', throwError)) return process.exit(1)
+
+  await releaseLogger()
 }

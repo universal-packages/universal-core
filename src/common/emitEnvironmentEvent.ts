@@ -1,6 +1,8 @@
 import { startMeasurement } from '@universal-packages/time-measurer'
 
 import { EnvironmentEvent } from '../Core.types'
+import { LOG_CONFIGURATION } from './LOG_CONFIGURATION'
+import { releaseLogger } from './releaseLogger'
 
 export async function emitEnvironmentEvent(event: EnvironmentEvent, throwError?: boolean): Promise<boolean> {
   const measurer = startMeasurement()
@@ -11,13 +13,19 @@ export async function emitEnvironmentEvent(event: EnvironmentEvent, throwError?:
       if (currentEnvironment[event]) await currentEnvironment[event]()
     }
   } catch (error) {
-    core.logger.publish('ERROR', 'There was an error calling environment event', null, 'CORE', {
-      error: error,
-      metadata: { event },
-      measurement: measurer.finish().toString()
-    })
+    core.logger.log(
+      {
+        level: 'ERROR',
+        title: 'There was an error calling environment event',
+        category: 'CORE',
+        error,
+        metadata: { event },
+        measurement: measurer.finish()
+      },
+      LOG_CONFIGURATION
+    )
 
-    await core.logger.await
+    await releaseLogger()
 
     if (throwError) throw error
     return true

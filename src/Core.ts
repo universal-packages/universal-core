@@ -2,6 +2,7 @@ import { deepMergeConfig, loadConfig } from '@universal-packages/config-loader'
 import { Logger } from '@universal-packages/logger'
 import { ModuleRegistry, loadModules } from '@universal-packages/module-loader'
 import { loadPluginConfig } from '@universal-packages/plugin-config-loader'
+import Ajv from 'ajv'
 import { camelCase, paramCase, pascalCase } from 'change-case'
 
 import { CoreConfig, CoreModuleWarning, CoreModules, ProcessType, ProjectConfig } from './Core.types'
@@ -30,12 +31,28 @@ export default class Core {
     const loadedCoreConfig = await loadPluginConfig<CoreConfig>('core', { cleanOrphanReplaceable: true, selectEnvironment: true })
     const defaultPlusLoadedCoreConfig = loadedCoreConfig ? deepMergeConfig(defaultConfig, loadedCoreConfig) : defaultConfig
     const finalCoreConfig = coreConfigOverride ? deepMergeConfig(defaultPlusLoadedCoreConfig, coreConfigOverride) : defaultPlusLoadedCoreConfig
-    const errors = coreConfigSchema.validate(finalCoreConfig)
 
-    if (errors.length > 0) {
-      const errorMessages = errors.map((error: any): string => `${error.path} - ${error.message}`)
+    const ajv = new Ajv({ allowUnionTypes: true })
+    const validate = ajv.compile(coreConfigSchema)
 
-      throw new Error(errorMessages.join('\n'))
+    validate(finalCoreConfig)
+
+    const errors = validate.errors
+
+    if (errors) {
+      const baseMessage = `Core config is invalid:\n\n`
+      const schemaErrors = errors
+        .map((error) => {
+          const instancePath = error.instancePath
+          const message = error.message
+          const allowedValues = error.params.allowedValues ? ` ${JSON.stringify(error.params.allowedValues)}` : ''
+
+          return `${instancePath} ${message}${allowedValues}`.trim()
+        })
+        .join('\n')
+      const errorMessages = `${baseMessage}${schemaErrors}`
+
+      throw new Error(errorMessages)
     }
 
     return finalCoreConfig

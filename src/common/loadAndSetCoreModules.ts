@@ -2,6 +2,8 @@ import { startMeasurement } from '@universal-packages/time-measurer'
 
 import Core from '../Core'
 import { ProcessType } from '../Core.types'
+import { LOG_CONFIGURATION } from './LOG_CONFIGURATION'
+import { releaseLogger } from './releaseLogger'
 
 export async function loadAndSetCoreModules(processType: ProcessType, processableName: string, throwError?: boolean): Promise<boolean> {
   const measurer = startMeasurement()
@@ -13,17 +15,39 @@ export async function loadAndSetCoreModules(processType: ProcessType, processabl
 
     for (let i = 0; i < warnings.length; i++) {
       const currentWarning = warnings[i]
-      core.logger.publish('WARNING', currentWarning.title, currentWarning.message, 'CORE')
+      core.logger.log(
+        {
+          level: 'WARNING',
+          title: currentWarning.title,
+          message: currentWarning.message,
+          category: 'CORE'
+        },
+        LOG_CONFIGURATION
+      )
     }
 
-    core.logger.publish('DEBUG', 'Core modules loaded', null, 'CORE', { measurement: measurer.finish().toString() })
+    core.logger.log(
+      {
+        level: 'DEBUG',
+        title: 'Core modules loaded',
+        category: 'CORE',
+        measurement: measurer.finish()
+      },
+      LOG_CONFIGURATION
+    )
   } catch (error) {
-    core.logger.publish('ERROR', 'There was an error loading core modules', null, 'CORE', {
-      error: error,
-      measurement: measurer.finish().toString()
-    })
+    core.logger.log(
+      {
+        level: 'ERROR',
+        title: 'There was an error loading core modules',
+        category: 'CORE',
+        error,
+        measurement: measurer.finish()
+      },
+      LOG_CONFIGURATION
+    )
 
-    await core.logger.await
+    await releaseLogger()
 
     if (throwError) throw error
     return true

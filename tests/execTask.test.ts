@@ -1,4 +1,5 @@
 import { Logger } from '@universal-packages/logger'
+import { TerminalPresenter } from '@universal-packages/terminal-presenter'
 
 import { EnvironmentEvent } from '../src'
 import { execTask } from '../src/execTask'
@@ -58,7 +59,8 @@ describe(execTask, (): void => {
       stoppable: true,
       stopping: false,
       Task: GoodTask,
-      taskInstance: expect.any(GoodTask)
+      taskInstance: expect.any(GoodTask),
+      TerminalPresenter: TerminalPresenter
     })
     expect(GoodTaskEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeTaskExec', 'afterTaskExec', 'beforeModulesRelease', 'afterModulesRelease'])
     expect(TaskEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeTaskExec', 'afterTaskExec', 'beforeModulesRelease', 'afterModulesRelease'])
@@ -73,7 +75,7 @@ describe(execTask, (): void => {
         apps: { location: './tests/__fixtures__/apps' },
         config: { location: './tests/__fixtures__/config' },
         environments: { location: './tests/__fixtures__/environments' },
-        tasks: { location: './tests/__fixtures__/nonexistent' },
+        tasks: { location: 10 as any },
         modules: { location: './tests/__fixtures__/modules' }
       }
     })

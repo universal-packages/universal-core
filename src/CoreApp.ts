@@ -33,7 +33,7 @@ export default class CoreApp<C = any, A = any> extends Core {
     })
 
     if (!appModuleRegistry) {
-      throw new Error(`App "${name}" can't be found anywhere in\n${coreConfig.apps.location}`)
+      throw new Error(`App "${name}" can't be found anywhere in: ${coreConfig.apps.location}`)
     } else if (appModuleRegistry.error) {
       throw appModuleRegistry.error
     }

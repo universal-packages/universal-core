@@ -1,4 +1,5 @@
 import { Logger } from '@universal-packages/logger'
+import { TerminalPresenter } from '@universal-packages/terminal-presenter'
 
 import { EnvironmentEvent, runBare } from '../src'
 import GoodApp from './__fixtures__/apps/Good.app'
@@ -61,7 +62,8 @@ describe(runBare, (): void => {
       stoppable: true,
       stopping: false,
       Task: null,
-      taskInstance: null
+      taskInstance: null,
+      TerminalPresenter: TerminalPresenter
     })
     expect(TestEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad'])
     expect(UniversalEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad'])
@@ -71,7 +73,7 @@ describe(runBare, (): void => {
   it('exits if core config has errors', async (): Promise<void> => {
     await runBare({
       coreConfigOverride: {
-        apps: { location: './tests/__fixtures__/nonexistent' },
+        apps: { location: 10 as any },
         config: { location: './tests/__fixtures__/config' },
         environments: { location: './tests/__fixtures__/environments' },
         tasks: { location: './tests/__fixtures__/tasks' },

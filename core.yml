@@ -1,6 +1,6 @@
 default:
   apps:
-   location: './example'
+    location: './example'
   config:
     location: './example/config'
   modules:
@@ -19,13 +19,8 @@ development:
   logger:
     level: TRACE
     silence: false
-    terminal:
-      enable: true
-      clear: false
-      withHeader: false
-    localFile:
-      enable: true
-      asJson: false
+  terminalPresenter:
+    clear: false
 
 test:
   logger:

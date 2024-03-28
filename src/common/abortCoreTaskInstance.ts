@@ -1,6 +1,8 @@
 import { startMeasurement } from '@universal-packages/time-measurer'
 
 import Core from '../Core'
+import { LOG_CONFIGURATION } from './LOG_CONFIGURATION'
+import { releaseLogger } from './releaseLogger'
 
 export async function abortCoreTaskInstance(throwError?: boolean): Promise<boolean> {
   const measurer = startMeasurement()
@@ -8,9 +10,25 @@ export async function abortCoreTaskInstance(throwError?: boolean): Promise<boole
   if (core.taskInstance.abort) {
     try {
       await core.taskInstance.abort()
-      core.logger.publish('DEBUG', 'Task aborted', null, 'CORE', { measurement: measurer.finish().toString() })
+      core.logger.log(
+        {
+          level: 'DEBUG',
+          title: 'Task aborted',
+          category: 'CORE',
+          measurement: measurer.finish()
+        },
+        LOG_CONFIGURATION
+      )
     } catch (error) {
-      core.logger.publish('ERROR', core.Task.taskName || core.Task.name, 'There was an error while aborting task', 'CORE', { error })
+      core.logger.log(
+        {
+          level: 'ERROR',
+          message: 'There was an error while aborting task',
+          category: 'CORE',
+          error
+        },
+        LOG_CONFIGURATION
+      )
 
       try {
         await Core.releaseInternalModules(core.coreModules)
@@ -18,7 +36,7 @@ export async function abortCoreTaskInstance(throwError?: boolean): Promise<boole
         // We prioritize higher error
       }
 
-      await core.logger.await
+      await releaseLogger()
 
       if (throwError) throw error
       return true

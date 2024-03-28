@@ -1,4 +1,5 @@
 import { Logger } from '@universal-packages/logger'
+import { TerminalPresenter } from '@universal-packages/terminal-presenter'
 
 import { EnvironmentEvent } from '../src'
 import { runApp } from '../src/runApp'
@@ -74,7 +75,8 @@ describe(runApp, (): void => {
       stoppable: true,
       stopping: false,
       Task: null,
-      taskInstance: null
+      taskInstance: null,
+      TerminalPresenter: TerminalPresenter
     })
     expect(AppEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeAppPrepare', 'afterAppPrepare', 'beforeAppRuns', 'afterAppRuns'])
     expect(GoodAppEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeAppPrepare', 'afterAppPrepare', 'beforeAppRuns', 'afterAppRuns'])
@@ -86,7 +88,7 @@ describe(runApp, (): void => {
   it('exits if core config has errors', async (): Promise<void> => {
     await runApp('Good', {
       coreConfigOverride: {
-        apps: { location: './tests/__fixtures__/nonexistent' },
+        apps: { location: 10 as any },
         config: { location: './tests/__fixtures__/config' },
         environments: { location: './tests/__fixtures__/environments' },
         tasks: { location: './tests/__fixtures__/tasks' },

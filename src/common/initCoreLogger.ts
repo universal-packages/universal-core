@@ -1,9 +1,9 @@
-import { Logger, TerminalTransport } from '@universal-packages/logger'
+import { Logger } from '@universal-packages/logger'
 
-export function initCoreLogger(): void {
-  if (!core.logger) core.logger = new Logger({ level: process.env.NODE_ENV === 'test' ? 'ERROR' : 'TRACE', silence: !!process.env.CORE_TESTING })
+export async function initCoreLogger(): Promise<void> {
+  if (!core.logger) {
+    core.logger = new Logger({ level: process.env.NODE_ENV === 'test' ? 'ERROR' : 'TRACE', silence: !!process.env.CORE_TESTING, transports: ['terminal-presenter', 'local-file'] })
 
-  const terminalTransport = core.logger.getTransport('terminal') as TerminalTransport
-
-  terminalTransport.options.categoryColors['CORE'] = 'BLACK'
+    await core.logger.prepare()
+  }
 }

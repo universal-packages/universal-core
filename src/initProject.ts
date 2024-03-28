@@ -3,8 +3,11 @@ import { populateTemplates } from '@universal-packages/template-populator'
 import { exec } from 'child_process'
 import path from 'path'
 
+import { LOG_CONFIGURATION } from './common/LOG_CONFIGURATION'
+
 export async function initProject(name: string, args: Record<string, any>): Promise<void> {
-  const logger = new Logger({ silence: process.env.NODE_ENV === 'test' })
+  const logger = new Logger({ silence: process.env.NODE_ENV === 'test', transports: ['terminal-presenter', 'local-file'] })
+  await logger.prepare()
 
   let coreVersion = '1.0.0'
 
@@ -14,7 +17,15 @@ export async function initProject(name: string, args: Record<string, any>): Prom
     coreVersion = (await import(path.resolve(__dirname, '..', 'package.json'))).version
   }
 
-  logger.publish('INFO', 'initializing project', `./${name}`)
+  logger.log(
+    {
+      level: 'INFO',
+      title: 'Initializing project',
+      message: `./${name}`,
+      category: 'CORE'
+    },
+    LOG_CONFIGURATION
+  )
 
   if (args.ts) {
     await populateTemplates(path.resolve(__dirname, 'template-ts'), `./${name}`, { replacementVariables: { projectName: name, coreVersion } })
@@ -22,12 +33,28 @@ export async function initProject(name: string, args: Record<string, any>): Prom
     await populateTemplates(path.resolve(__dirname, 'template'), `./${name}`, { replacementVariables: { projectName: name, coreVersion } })
   }
 
-  logger.publish('INFO', 'Finishing')
+  logger.log(
+    {
+      level: 'INFO',
+      title: 'Finishing'
+    },
+    LOG_CONFIGURATION
+  )
 
   await installPackages(name)
   await initGit(name)
 
-  logger.publish('INFO', 'New project created', `Navigate to:\n  cd ${name}`)
+  logger.log(
+    {
+      level: 'INFO',
+      title: 'New project created',
+      message: `Navigate to:\n  cd ${name}`,
+      category: 'CORE'
+    },
+    LOG_CONFIGURATION
+  )
+
+  await logger.release()
 }
 
 async function installPackages(name: string): Promise<void> {

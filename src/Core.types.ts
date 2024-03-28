@@ -1,4 +1,5 @@
-import { LogLevel, Logger } from '@universal-packages/logger'
+import { Logger, LoggerOptions } from '@universal-packages/logger'
+import { TerminalPresenter, TerminalPresenterOptions } from '@universal-packages/terminal-presenter'
 
 import CoreApp from './CoreApp'
 import CoreEnvironment from './CoreEnvironment'
@@ -61,20 +62,8 @@ export interface CoreConfig {
   tasks?: {
     location?: string
   }
-  logger?: {
-    level?: LogLevel
-    silence?: boolean
-    terminal?: {
-      clear?: boolean
-      enable?: boolean
-      withHeader?: boolean
-    }
-    localFile?: {
-      asJson?: boolean
-      location?: string
-      enable?: boolean
-    }
-  }
+  terminalPresenter?: TerminalPresenterOptions
+  logger?: LoggerOptions
 }
 
 export interface CoreModules {
@@ -99,4 +88,5 @@ export interface CoreGlobal {
   stopping: boolean
   Task: typeof CoreTask
   taskInstance: CoreTask
+  TerminalPresenter: typeof TerminalPresenter
 }

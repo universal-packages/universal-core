@@ -1,6 +1,8 @@
 import { startMeasurement } from '@universal-packages/time-measurer'
 
 import CoreTask from '../CoreTask'
+import { LOG_CONFIGURATION } from './LOG_CONFIGURATION'
+import { releaseLogger } from './releaseLogger'
 
 export async function loadAndSetCoreTask(name: string, directive: string, directiveOptions: string[], args: Record<string, any>, throwError?: boolean): Promise<boolean> {
   const measurer = startMeasurement()
@@ -9,10 +11,16 @@ export async function loadAndSetCoreTask(name: string, directive: string, direct
     core.Task = await CoreTask.find(name, core.coreConfig)
     core.taskInstance = new core.Task(directive, directiveOptions, args, core.logger)
   } catch (error) {
-    core.logger.publish('ERROR', 'There was an error loading the task', null, 'CORE', {
-      error: error,
-      measurement: measurer.finish().toString()
-    })
+    core.logger.log(
+      {
+        level: 'ERROR',
+        title: 'There was an error loading the task',
+        category: 'CORE',
+        error,
+        measurement: measurer.finish()
+      },
+      LOG_CONFIGURATION
+    )
 
     try {
       await CoreTask.releaseInternalModules(core.coreModules)
@@ -20,7 +28,7 @@ export async function loadAndSetCoreTask(name: string, directive: string, direct
       // We prioritize higher error
     }
 
-    await core.logger.await
+    await releaseLogger()
 
     if (throwError) throw error
     return true

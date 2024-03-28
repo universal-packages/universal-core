@@ -2,6 +2,8 @@ import { startMeasurement } from '@universal-packages/time-measurer'
 
 import Core from '../Core'
 import { ProcessType } from '../Core.types'
+import { LOG_CONFIGURATION } from './LOG_CONFIGURATION'
+import { releaseLogger } from './releaseLogger'
 
 export async function loadAndSetEnvironments(processType: ProcessType, processableName: string, throwError?: boolean): Promise<boolean> {
   const measurer = startMeasurement()
@@ -11,14 +13,28 @@ export async function loadAndSetEnvironments(processType: ProcessType, processab
 
     core.environments = environments
 
-    core.logger.publish('DEBUG', 'Core environments loaded', null, 'CORE', { measurement: measurer.finish().toString() })
+    core.logger.log(
+      {
+        level: 'DEBUG',
+        title: 'Core environments loaded',
+        category: 'CORE',
+        measurement: measurer.finish()
+      },
+      LOG_CONFIGURATION
+    )
   } catch (error) {
-    core.logger.publish('ERROR', 'There was an error loading core environments', null, 'CORE', {
-      error: error,
-      measurement: measurer.finish().toString()
-    })
+    core.logger.log(
+      {
+        level: 'ERROR',
+        title: 'There was an error loading core environments',
+        category: 'CORE',
+        error,
+        measurement: measurer.finish()
+      },
+      LOG_CONFIGURATION
+    )
 
-    await core.logger.await
+    await releaseLogger()
 
     if (throwError) throw error
     return true

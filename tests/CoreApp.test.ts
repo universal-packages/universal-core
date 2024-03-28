@@ -32,7 +32,7 @@ describe(CoreApp, (): void => {
         error = err
       }
 
-      expect(error.message).toEqual(`App \"notinthere\" can't be found anywhere in\n./tests/__fixtures__/apps`)
+      expect(error.message).toEqual(`App \"notinthere\" can't be found anywhere in: ./tests/__fixtures__/apps`)
     })
 
     it('throws if app can not be loaded because of errors', async (): Promise<void> => {
