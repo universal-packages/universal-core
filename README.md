@@ -293,12 +293,12 @@ export default class WebServer extends CoreApp {
 
   async run() {
     await this.webServer.start({ port: this.config.port })
-    this.logger.publish('INFO', 'Web app has started')
+    this.logger.log({ level: 'INFO', title: 'Web app has started' })
   }
 
   async stop() {
     await this.webServer.stop()
-    this.logger.publish('INFO', 'Web app has stopped')
+    this.logger.log({ level: 'INFO', title: 'Web app has stopped' })
   }
 
   async release() {
