@@ -78,7 +78,7 @@ export const coreConfigSchema: JSONSchema7 = {
         decorateConsole: {
           type: 'boolean'
         },
-        enabled: {
+        enable: {
           type: 'boolean'
         },
         framesPerSecond: {

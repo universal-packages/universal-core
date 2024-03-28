@@ -19,7 +19,7 @@ const scenarios = [
   { name: 'terminalPresenter-1', config: { terminalPresenter: 'nop' }, errors: ['/terminalPresenter must be object'] },
   { name: 'terminalPresenter-2', config: { terminalPresenter: { clear: 'nop' } }, errors: ['/terminalPresenter/clear must be boolean'] },
   { name: 'terminalPresenter-3', config: { terminalPresenter: { decorateConsole: 'nop' } }, errors: ['/terminalPresenter/decorateConsole must be boolean'] },
-  { name: 'terminalPresenter-4', config: { terminalPresenter: { enabled: 'nop' } }, errors: ['/terminalPresenter/enabled must be boolean'] },
+  { name: 'terminalPresenter-4', config: { terminalPresenter: { enable: 'nop' } }, errors: ['/terminalPresenter/enable must be boolean'] },
   { name: 'terminalPresenter-5', config: { terminalPresenter: { framesPerSecond: 'nop' } }, errors: ['/terminalPresenter/framesPerSecond must be number'] },
   { name: 'logger-1', config: { logger: 'nop' }, errors: ['/logger must be object'] },
   {
