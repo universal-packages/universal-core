@@ -24,7 +24,7 @@ export async function runApp(name: string, options: RunAppOptions = {}): Promise
   const { args = {}, forked = false, coreConfigOverride, exitType = 'process' } = options
   const throwError = exitType === 'throw'
 
-  setCoreGlobal(forked)
+  setCoreGlobal()
   await initCoreLogger()
 
   // Common functions return true if something went wrong and we should exit

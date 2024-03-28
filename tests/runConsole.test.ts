@@ -60,7 +60,6 @@ describe(runConsole, (): void => {
         testModule: expect.any(TestModule)
       },
       environments: [expect.any(ConsoleEnvironment), expect.any(NotProductionEnvironment), expect.any(TestEnvironment), expect.any(UniversalEnvironment)],
-      forked: false,
       logger: expect.any(Logger),
       projectConfig: expect.objectContaining({ ExcellentModule: expect.anything(), 'good-module': expect.anything(), 'good-app': expect.anything() }),
       stoppable: false,

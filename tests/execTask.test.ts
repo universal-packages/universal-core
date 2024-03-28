@@ -54,7 +54,6 @@ describe(execTask, (): void => {
         expect.any(TestEnvironment),
         expect.any(UniversalEnvironment)
       ],
-      forked: false,
       logger: expect.any(Logger),
       projectConfig: expect.objectContaining({ ExcellentModule: expect.anything(), 'good-module': expect.anything(), 'good-app': expect.anything() }),
       stoppable: true,
