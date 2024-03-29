@@ -2,8 +2,9 @@ import { sleep } from '@universal-packages/time-measurer'
 
 import BaseTask from '../../src/CoreTask'
 
-export default class MigrateSomethingTask extends BaseTask {
-  public static readonly description = 'Migrates some important data'
+export default class ShowPercentageTask extends BaseTask {
+  public static readonly taskName = 'show-percentage'
+  public static readonly description = 'This task shows a percentage'
 
   private resolve: Function
   private progressInterval: NodeJS.Timeout
