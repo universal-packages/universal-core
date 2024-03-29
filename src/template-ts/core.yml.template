@@ -6,8 +6,6 @@ development:
         - tests
   logger:
     level: TRACE
-    terminal:
-      clear: true
 
 test:
   logger:
