@@ -2,9 +2,10 @@ import { startMeasurement } from '@universal-packages/time-measurer'
 
 import Core from '../Core'
 import { CoreConfig } from '../Core.types'
-import { LOG_CONFIGURATION } from './terminal-presenter/LOG_CONFIGURATION'
 import { adjustCoreLogger } from './adjustCoreLogger'
+import { initTerminalPresenter } from './initTerminalPresenter'
 import { releaseLoggerAndPresenter } from './releaseLoggerAndPresenter'
+import { LOG_CONFIGURATION } from './terminal-presenter/LOG_CONFIGURATION'
 
 export async function loadAndSetCoreConfig(coreConfigOverride: CoreConfig, throwError?: boolean): Promise<boolean> {
   const measurer = startMeasurement()
@@ -13,6 +14,7 @@ export async function loadAndSetCoreConfig(coreConfigOverride: CoreConfig, throw
     core.coreConfig = await Core.getCoreConfig(coreConfigOverride)
 
     await adjustCoreLogger()
+    initTerminalPresenter()
 
     core.logger.log(
       {

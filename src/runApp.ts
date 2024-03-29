@@ -3,7 +3,6 @@ import { sleep } from '@universal-packages/time-measurer'
 import AppWatcher from './AppWatcher'
 import { emitEnvironmentEvent } from './common/emitEnvironmentEvent'
 import { initCoreLogger } from './common/initCoreLogger'
-import { initTerminalPresenter } from './common/initTerminalPresenter'
 import { loadAndSetCoreApp } from './common/loadAndSetCoreApp'
 import { loadAndSetCoreConfig } from './common/loadAndSetCoreConfig'
 import { loadAndSetCoreModules } from './common/loadAndSetCoreModules'
@@ -15,6 +14,7 @@ import { releaseCoreModules } from './common/releaseCoreModules'
 import { releaseLoggerAndPresenter } from './common/releaseLoggerAndPresenter'
 import { runCoreAppInstance } from './common/runCoreAppInstance'
 import { setCoreGlobal } from './common/setCoreGlobal'
+import { startPresenting } from './common/startPresenting'
 import { stopCoreAppInstance } from './common/stopCoreAppInstance'
 import { LOG_CONFIGURATION } from './common/terminal-presenter/LOG_CONFIGURATION'
 import { debounce } from './debounce'
@@ -90,7 +90,7 @@ export async function runApp(name: string, options: RunAppOptions = {}): Promise
     if (await loadAndSetCoreApp(name, args, throwError)) return process.exit(1)
     if (await loadAndSetEnvironments('apps', core.App.appName || core.App.name, throwError)) return process.exit(1)
 
-    initTerminalPresenter()
+    startPresenting()
 
     const stopApp = async (restarting: boolean = false): Promise<void> => {
       // We are already restating-stopping

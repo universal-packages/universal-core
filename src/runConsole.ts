@@ -1,7 +1,6 @@
 import repl from 'repl'
 
 import Core from './Core'
-import { LOG_CONFIGURATION } from './common/terminal-presenter/LOG_CONFIGURATION'
 import { emitEnvironmentEvent } from './common/emitEnvironmentEvent'
 import { initCoreLogger } from './common/initCoreLogger'
 import { loadAndSetCoreConfig } from './common/loadAndSetCoreConfig'
@@ -11,6 +10,7 @@ import { loadAndSetProjectConfig } from './common/loadAndSetProjectConfig'
 import { releaseCoreModules } from './common/releaseCoreModules'
 import { releaseLoggerAndPresenter } from './common/releaseLoggerAndPresenter'
 import { setCoreGlobal } from './common/setCoreGlobal'
+import { LOG_CONFIGURATION } from './common/terminal-presenter/LOG_CONFIGURATION'
 import { RunConsoleOptions } from './runConsole.types'
 
 export async function runConsole(options: RunConsoleOptions = {}): Promise<void> {

@@ -1,9 +1,9 @@
 import { LOG_CONFIGURATION } from './terminal-presenter/LOG_CONFIGURATION'
-import { updateCoreDoc } from './updateCoreDoc'
 
 export async function initTerminalPresenter(): Promise<void> {
   core.TerminalPresenter.configure(core.coreConfig.terminalPresenter)
-  core.TerminalPresenter.start()
+  core.TerminalPresenter.clearScreen()
+  core.TerminalPresenter.captureOutput()
 
   if (core.coreConfig.terminalPresenter?.enable && process.env.NODE_ENV !== 'development') {
     core.logger.log(
@@ -16,8 +16,4 @@ export async function initTerminalPresenter(): Promise<void> {
       LOG_CONFIGURATION
     )
   }
-
-  core.TerminalPresenter.appendDocument('CORE-DOC', { rows: [{ blocks: [{ text: ' ' }] }] })
-
-  updateCoreDoc()
 }
