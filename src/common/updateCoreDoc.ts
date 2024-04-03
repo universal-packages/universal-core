@@ -1,9 +1,9 @@
+import { EnvironmentTagBlock } from '@universal-packages/logger-terminal-presenter'
 import { BlueColor, Color, GrayColor, OrangeColor, WhiteColor } from '@universal-packages/terminal-document'
 import { LoadingBlock, PresenterRowDescriptor, ProgressBar, ProgressBarController, TimeWatch } from '@universal-packages/terminal-presenter'
 import os from 'os'
 
 import { CpuUsageBlock } from './terminal-presenter/components/CpuUsageBlock'
-import { EnvironmentTagBlock } from './terminal-presenter/components/EnvironmentTagBlock'
 import { ProcessMemoryUsageBlock } from './terminal-presenter/components/ProcessMemoryUsageBlock'
 
 const TIME_WATCH_COMPONENT = TimeWatch()
