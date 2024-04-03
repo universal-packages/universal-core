@@ -19,7 +19,8 @@ const PROCESSES_COLORS: Record<string, { primary: Color; secondary: Color }> = {
   task: { primary: OrangeColor.OrangeRed, secondary: WhiteColor.White }
 }
 
-let TASK_PROGRESS_COMPONENT: ProgressBarController
+const TASK_PROGRESS_COMPONENT: ProgressBarController = ProgressBar({ color: 'light-slate-gray' })
+let PROGRESS_WAS_UPDATED = false
 
 export function updateCoreDoc() {
   const ENVIRONMENT_COLOR = ENVIRONMENT_COLORS[process.env.NODE_ENV] || ENVIRONMENT_COLORS.other
@@ -97,9 +98,7 @@ export function updateCoreDoc() {
 
   const middleRow: PresenterRowDescriptor = { blocks: [] }
 
-  if (core.Task) {
-    if (!TASK_PROGRESS_COMPONENT) TASK_PROGRESS_COMPONENT = ProgressBar({ color: 'light-slate-gray' })
-
+  if (core.Task && PROGRESS_WAS_UPDATED) {
     middleRow.blocks.push(TASK_PROGRESS_COMPONENT)
 
     documentRows.push(middleRow)
@@ -155,7 +154,10 @@ export function updateCoreDoc() {
 }
 
 export function updateCoreDocTaskProgress(progress: number) {
-  if (TASK_PROGRESS_COMPONENT) {
-    TASK_PROGRESS_COMPONENT.setProgress(progress)
+  if (!PROGRESS_WAS_UPDATED) {
+    PROGRESS_WAS_UPDATED = true
+    updateCoreDoc()
   }
+
+  TASK_PROGRESS_COMPONENT.setProgress(progress)
 }
