@@ -1,18 +1,12 @@
-import { BlueColor, Color, GrayColor, OrangeColor, PinkColor, PurpleColor, WhiteColor } from '@universal-packages/terminal-document'
+import { BlueColor, Color, GrayColor, OrangeColor, WhiteColor } from '@universal-packages/terminal-document'
 import { LoadingBlock, PresenterRowDescriptor, ProgressBar, ProgressBarController, TimeWatch } from '@universal-packages/terminal-presenter'
 import os from 'os'
 
-import { CpuUsage } from './terminal-presenter/components/CpuUsage'
-import { ProcessMemoryUsage } from './terminal-presenter/components/ProcessMemoryUsage'
+import { CpuUsageBlock } from './terminal-presenter/components/CpuUsageBlock'
+import { EnvironmentTagBlock } from './terminal-presenter/components/EnvironmentTagBlock'
+import { ProcessMemoryUsageBlock } from './terminal-presenter/components/ProcessMemoryUsageBlock'
 
 const TIME_WATCH_COMPONENT = TimeWatch()
-
-const ENVIRONMENT_COLORS: Record<string, { primary: Color; secondary: Color }> = {
-  development: { primary: OrangeColor.OrangeRed, secondary: WhiteColor.White },
-  production: { primary: PurpleColor.DarkMagenta, secondary: WhiteColor.White },
-  test: { primary: PinkColor.MediumVioletRed, secondary: WhiteColor.White },
-  other: { primary: PurpleColor.Purple, secondary: WhiteColor.White }
-}
 
 const PROCESSES_COLORS: Record<string, { primary: Color; secondary: Color }> = {
   app: { primary: BlueColor.DodgerBlue, secondary: WhiteColor.White },
@@ -23,7 +17,6 @@ const TASK_PROGRESS_COMPONENT: ProgressBarController = ProgressBar({ color: 'lig
 let PROGRESS_WAS_UPDATED = false
 
 export function updateCoreDoc() {
-  const ENVIRONMENT_COLOR = ENVIRONMENT_COLORS[process.env.NODE_ENV] || ENVIRONMENT_COLORS.other
   const primaryColor = core.App ? PROCESSES_COLORS.app.primary : core.Task ? PROCESSES_COLORS.task.primary : GrayColor.Gray
   const documentRows: PresenterRowDescriptor[] = []
 
@@ -80,14 +73,7 @@ export function updateCoreDoc() {
 
   headerRow.blocks.push({ backgroundColor: 'black', style: 'bold', text: ' CORE ', width: 'fit' })
   headerRow.blocks.push({ text: ' ', width: 'fit' })
-  headerRow.blocks.push({
-    backgroundColor: ENVIRONMENT_COLOR.primary,
-    color: ENVIRONMENT_COLOR.secondary,
-    style: 'bold',
-    text: ` ${process.env.NODE_ENV.toUpperCase()} `,
-    verticalAlign: 'middle',
-    width: 'fit'
-  })
+  headerRow.blocks.push(EnvironmentTagBlock())
   headerRow.blocks.push({ text: ' ', width: 'fit' })
   headerRow.blocks.push(TIME_WATCH_COMPONENT)
 
@@ -143,10 +129,10 @@ export function updateCoreDoc() {
 
   statsRow.blocks.push({ text: ' ' })
 
-  statsRow.blocks.push(CpuUsage())
+  statsRow.blocks.push(CpuUsageBlock())
   statsRow.blocks.push({ text: ' ', width: 'fit' })
 
-  statsRow.blocks.push(ProcessMemoryUsage())
+  statsRow.blocks.push(ProcessMemoryUsageBlock())
 
   documentRows.push(statsRow)
 

@@ -11,3 +11,7 @@ export * from './runApp'
 export * from './runApp.types'
 export * from './runBare'
 export * from './runBare.types'
+
+export * from './common/terminal-presenter/components/CpuUsageBlock'
+export * from './common/terminal-presenter/components/EnvironmentTagBlock'
+export * from './common/terminal-presenter/components/ProcessMemoryUsageBlock'

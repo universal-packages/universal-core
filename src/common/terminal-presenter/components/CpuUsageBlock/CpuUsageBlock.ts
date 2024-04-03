@@ -1,11 +1,11 @@
 import { BlockControllerConfiguration } from '@universal-packages/terminal-presenter'
 import os from 'os'
 
-import { CpuUsageController } from './CpuUsage.types'
+import { CpuUsageController } from './CpuUsageBlock.types'
 
 let ID = 0
 
-export function CpuUsage(): CpuUsageController {
+export function CpuUsageBlock(): CpuUsageController {
   let lastTimeCalculated = Date.now()
   let startingAverage = getAverageCpuUsage()
 

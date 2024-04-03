@@ -1,10 +1,10 @@
 import { BlockControllerConfiguration } from '@universal-packages/terminal-presenter'
 
-import { ProcessMemoryUsageController } from './ProcessMemoryUsage.types'
+import { ProcessMemoryUsageController } from './ProcessMemoryUsageBlock.types'
 
 let ID = 0
 
-export function ProcessMemoryUsage(): ProcessMemoryUsageController {
+export function ProcessMemoryUsageBlock(): ProcessMemoryUsageController {
   let lastCalculatedMemoryUsage = ''
 
   const id = `time-process-memory-usage-${ID++}`
