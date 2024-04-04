@@ -121,7 +121,7 @@ describe(AppWatcher, (): void => {
         expect(forkEmitter['kill']).toHaveBeenCalledWith('SIGALRM')
         expect(watcher).toMatchObject({ fileEventsBuffer: [] })
         expect(restartMock).toBeCalledTimes(1)
-        expect(restartMock).toBeCalledWith(['add file.js', 'addDir dir', 'change test.js', 'unlink file.js', 'unlinkDir dir'])
+        expect(restartMock).toHaveBeenCalledWith(['add file.js', 'addDir dir', 'change test.js', 'unlink file.js', 'unlinkDir dir'])
       })
 
       it('restarts by spawning again if last time child failed', async (): Promise<void> => {
