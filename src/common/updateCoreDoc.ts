@@ -1,6 +1,14 @@
 import { EnvironmentTagBlock } from '@universal-packages/logger-terminal-presenter'
 import { BlueColor, Color, GrayColor, OrangeColor, WhiteColor } from '@universal-packages/terminal-document'
-import { LoadingBlock, PresenterRowDescriptor, ProgressBarBlock, ProgressBarController, TimeWatchBlock, updateRealTimeDocument } from '@universal-packages/terminal-presenter'
+import {
+  LoadingBlock,
+  OPTIONS,
+  PresenterRowDescriptor,
+  ProgressBarBlock,
+  ProgressBarController,
+  TimeWatchBlock,
+  updateRealTimeDocument
+} from '@universal-packages/terminal-presenter'
 import os from 'os'
 
 import { CpuUsageBlock } from './terminal-presenter/components/CpuUsageBlock'
@@ -17,6 +25,8 @@ const TASK_PROGRESS_COMPONENT: ProgressBarController = ProgressBarBlock({ color:
 let PROGRESS_WAS_UPDATED = false
 
 export function updateCoreDoc() {
+  if (!OPTIONS.enabled) return
+
   const primaryColor = core.App ? PROCESSES_COLORS.app.primary : core.Task ? PROCESSES_COLORS.task.primary : GrayColor.Gray
   const documentRows: PresenterRowDescriptor[] = []
 
