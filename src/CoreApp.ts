@@ -27,7 +27,10 @@ export default class CoreApp<C = any, A = any> extends Core {
     const thirdPartyApps = await loadModules('./node_modules', { conventionPrefix: 'universal-core-app' })
     const finalApps = [...localApps, ...thirdPartyApps]
     const appModuleRegistry = finalApps.find((module: ModuleRegistry): boolean => {
-      const fileMatches = !!module.location.match(new RegExp(`(${pascalCaseName}|${paramCaseName}).(app|universal-core-app)\..*$`))
+      const fileMatches = !!module.location
+        .split('/')
+        .pop()
+        .match(new RegExp(`(${pascalCaseName}|${paramCaseName}).(app|universal-core-app)\..*$`))
 
       return module.exports ? module.exports?.appName === name || module.exports?.name === name || fileMatches : fileMatches
     })
