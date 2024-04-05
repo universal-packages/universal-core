@@ -28,8 +28,12 @@ export default class CoreTask<A = any> extends Core {
     const localTasks = await loadModules(coreConfig.tasks.location, { conventionPrefix: 'task' })
     const thirdPartyTasks = await loadModules('./node_modules', { conventionPrefix: 'universal-core-task' })
     const finalTasks = [...localTasks, ...thirdPartyTasks]
+
     const taskModuleRegistry = finalTasks.find((module: ModuleRegistry): boolean => {
-      const fileMatches = !!module.location.match(new RegExp(`(${pascalCaseName}|${paramCaseName}).(task|universal-core-task)\..*$`))
+      const fileMatches = !!module.location
+        .split('/')
+        .pop()
+        .match(new RegExp(`(${pascalCaseName}|${paramCaseName}).(task|universal-core-task)\..*$`))
 
       return module.exports ? module.exports.taskName === name || module.exports.name === name || fileMatches : fileMatches
     })
