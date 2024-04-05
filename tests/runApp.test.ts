@@ -1,5 +1,4 @@
 import { Logger } from '@universal-packages/logger'
-import { TerminalPresenter } from '@universal-packages/terminal-presenter'
 
 import { EnvironmentEvent } from '../src'
 import { runApp } from '../src/runApp'
@@ -75,8 +74,7 @@ describe(runApp, (): void => {
       stoppable: true,
       stopping: false,
       Task: null,
-      taskInstance: null,
-      TerminalPresenter: TerminalPresenter
+      taskInstance: null
     })
     expect(AppEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeAppPrepare', 'afterAppPrepare', 'beforeAppRuns', 'afterAppRuns'])
     expect(GoodAppEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeAppPrepare', 'afterAppPrepare', 'beforeAppRuns', 'afterAppRuns'])

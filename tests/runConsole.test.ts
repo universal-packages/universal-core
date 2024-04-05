@@ -1,5 +1,4 @@
 import { Logger } from '@universal-packages/logger'
-import { TerminalPresenter } from '@universal-packages/terminal-presenter'
 import EventEmitter from 'events'
 import repl from 'repl'
 
@@ -65,8 +64,7 @@ describe(runConsole, (): void => {
       stoppable: false,
       stopping: false,
       Task: null,
-      taskInstance: null,
-      TerminalPresenter: TerminalPresenter
+      taskInstance: null
     })
     expect(ConsoleEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeConsoleRuns', 'afterConsoleRuns'])
     expect(TestEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeConsoleRuns', 'afterConsoleRuns'])

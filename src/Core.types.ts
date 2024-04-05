@@ -1,5 +1,5 @@
 import { Logger, LoggerOptions } from '@universal-packages/logger'
-import { TerminalPresenter, TerminalPresenterOptions } from '@universal-packages/terminal-presenter'
+import { TerminalPresenterOptions } from '@universal-packages/terminal-presenter'
 
 import CoreApp from './CoreApp'
 import CoreEnvironment from './CoreEnvironment'
@@ -88,5 +88,4 @@ export interface CoreGlobal {
   stopping: boolean
   Task: typeof CoreTask
   taskInstance: CoreTask
-  TerminalPresenter: typeof TerminalPresenter
 }

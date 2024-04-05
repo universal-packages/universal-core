@@ -1,19 +1,19 @@
 import { EnvironmentTagBlock } from '@universal-packages/logger-terminal-presenter'
 import { BlueColor, Color, GrayColor, OrangeColor, WhiteColor } from '@universal-packages/terminal-document'
-import { LoadingBlock, PresenterRowDescriptor, ProgressBar, ProgressBarController, TimeWatch } from '@universal-packages/terminal-presenter'
+import { LoadingBlock, PresenterRowDescriptor, ProgressBarBlock, ProgressBarController, TimeWatchBlock, updateRealTimeDocument } from '@universal-packages/terminal-presenter'
 import os from 'os'
 
 import { CpuUsageBlock } from './terminal-presenter/components/CpuUsageBlock'
 import { ProcessMemoryUsageBlock } from './terminal-presenter/components/ProcessMemoryUsageBlock'
 
-const TIME_WATCH_COMPONENT = TimeWatch()
+const TIME_WATCH_COMPONENT = TimeWatchBlock()
 
 const PROCESSES_COLORS: Record<string, { primary: Color; secondary: Color }> = {
   app: { primary: BlueColor.DodgerBlue, secondary: WhiteColor.White },
   task: { primary: OrangeColor.OrangeRed, secondary: WhiteColor.White }
 }
 
-const TASK_PROGRESS_COMPONENT: ProgressBarController = ProgressBar({ color: 'light-slate-gray' })
+const TASK_PROGRESS_COMPONENT: ProgressBarController = ProgressBarBlock({ color: 'light-slate-gray' })
 let PROGRESS_WAS_UPDATED = false
 
 export function updateCoreDoc() {
@@ -136,7 +136,7 @@ export function updateCoreDoc() {
 
   documentRows.push(statsRow)
 
-  core.TerminalPresenter.updateDocument('CORE-DOC', { rows: documentRows })
+  updateRealTimeDocument('CORE-DOC', { rows: documentRows })
 }
 
 export function updateCoreDocTaskProgress(progress: number) {

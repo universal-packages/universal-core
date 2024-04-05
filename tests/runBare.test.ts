@@ -1,5 +1,4 @@
 import { Logger } from '@universal-packages/logger'
-import { TerminalPresenter } from '@universal-packages/terminal-presenter'
 
 import { EnvironmentEvent, runBare } from '../src'
 import GoodApp from './__fixtures__/apps/Good.app'
@@ -62,8 +61,7 @@ describe(runBare, (): void => {
       stoppable: true,
       stopping: false,
       Task: null,
-      taskInstance: null,
-      TerminalPresenter: TerminalPresenter
+      taskInstance: null
     })
     expect(TestEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad'])
     expect(UniversalEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad'])
