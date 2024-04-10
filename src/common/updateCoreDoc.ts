@@ -150,6 +150,8 @@ export function updateCoreDoc() {
 }
 
 export function updateCoreDocTaskProgress(progress: number) {
+  if (!OPTIONS.enabled) return
+
   if (!PROGRESS_WAS_UPDATED) {
     PROGRESS_WAS_UPDATED = true
     updateCoreDoc()
