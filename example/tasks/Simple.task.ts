@@ -20,7 +20,7 @@ export default class SimpleTask extends BaseTask {
 
       this.progressInterval = setInterval(() => {
         progress += 1
-        this.updatePresenterProgress(progress)
+        this.updateTaskProgress(progress)
 
         if (progress >= 100) {
           clearInterval(this.progressInterval)

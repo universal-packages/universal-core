@@ -2,9 +2,9 @@ import { sleep } from '@universal-packages/time-measurer'
 
 import BaseTask from '../../src/CoreTask'
 
-export default class ShowPercentageTask extends BaseTask {
-  public static readonly taskName = 'show-percentage'
-  public static readonly description = 'This task shows a percentage'
+export default class NoPercentageTask extends BaseTask {
+  public static readonly taskName = 'no-percentage'
+  public static readonly description = 'This task does not have a percentage'
 
   private resolve: Function
   private progressInterval: NodeJS.Timeout
@@ -19,21 +19,21 @@ export default class ShowPercentageTask extends BaseTask {
       let progress = 0
 
       this.progressInterval = setInterval(() => {
-        progress += 0.01
-        this.updateTaskProgress(progress)
+        progress += 1
 
         if (progress >= 100) {
+          this.updateTaskProgress(progress)
+
           clearInterval(this.progressInterval)
           resolve()
         }
-      }, 1)
+      }, 10)
     })
   }
 
   public async abort(): Promise<void> {
     clearTimeout(this.progressInterval)
     this.resolve()
-    await sleep(1000)
   }
 
   public async release(): Promise<void> {

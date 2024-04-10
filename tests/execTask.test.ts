@@ -46,6 +46,10 @@ describe(execTask, (): void => {
       appInstance: null,
       coreConfig: expect.objectContaining({ tasks: { location: './tests/__fixtures__/tasks' } }),
       coreModules: {},
+      developer: {
+        updateTaskProgress: expect.any(Function),
+        bucket: {}
+      },
       environments: [
         expect.any(GoodTaskEnvironment),
         expect.any(NotProductionEnvironment),

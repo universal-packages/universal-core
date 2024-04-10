@@ -75,12 +75,18 @@ export interface CoreModuleWarning {
   message: string
 }
 
+export interface CoreDeveloperSpace {
+  bucket: Record<string, any>
+  updateTaskProgress: (progress: number) => void
+}
+
 export interface CoreGlobal {
   App: typeof CoreApp
   appConfig: Record<string, any>
   appInstance: CoreApp
   coreConfig: CoreConfig
   coreModules: CoreModules
+  developer: CoreDeveloperSpace
   environments: CoreEnvironment[]
   logger: Logger
   projectConfig: ProjectConfig

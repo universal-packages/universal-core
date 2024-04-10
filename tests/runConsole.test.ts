@@ -58,6 +58,10 @@ describe(runConsole, (): void => {
         notProductionModule: expect.any(NotProductionModule),
         testModule: expect.any(TestModule)
       },
+      developer: {
+        updateTaskProgress: expect.any(Function),
+        bucket: {}
+      },
       environments: [expect.any(ConsoleEnvironment), expect.any(NotProductionEnvironment), expect.any(TestEnvironment), expect.any(UniversalEnvironment)],
       logger: expect.any(Logger),
       projectConfig: expect.objectContaining({ ExcellentModule: expect.anything(), 'good-module': expect.anything(), 'good-app': expect.anything() }),

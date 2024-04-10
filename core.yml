@@ -5,6 +5,8 @@ default:
     location: './example/config'
   modules:
     location: './example/modules'
+  environments:
+    location: './example/environments'
   tasks:
     location: './example/tasks'
 

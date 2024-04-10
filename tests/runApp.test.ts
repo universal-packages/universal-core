@@ -62,6 +62,10 @@ describe(runApp, (): void => {
         notProductionModule: expect.any(NotProductionModule),
         testModule: expect.any(TestModule)
       },
+      developer: {
+        updateTaskProgress: expect.any(Function),
+        bucket: {}
+      },
       environments: [
         expect.any(AppEnvironment),
         expect.any(GoodAppEnvironment),
