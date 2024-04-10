@@ -81,6 +81,12 @@ describe(runApp, (): void => {
     expect(TestEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeAppPrepare', 'afterAppPrepare', 'beforeAppRuns', 'afterAppRuns'])
     expect(UniversalEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeAppPrepare', 'afterAppPrepare', 'beforeAppRuns', 'afterAppRuns'])
     expect(NotProductionEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeAppPrepare', 'afterAppPrepare', 'beforeAppRuns', 'afterAppRuns'])
+    expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'Core config loaded', category: 'CORE' })
+    expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'Project config loaded', category: 'CORE' })
+    expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'Core environments loaded', category: 'CORE' })
+    expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'Core modules loaded', category: 'CORE' })
+    expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'App prepared', category: 'CORE' })
+    expect(Logger).toHaveLogged({ level: 'INFO', title: 'App good-app running', category: 'CORE' })
   })
 
   it('exits if core config has errors', async (): Promise<void> => {
@@ -98,6 +104,7 @@ describe(runApp, (): void => {
     expect(GoodApp.iWasPrepared).toEqual(false)
     expect(GoodApp.iWasRan).toEqual(false)
     expect(AppEnvironment.calls).toEqual([])
+    expect(Logger).toHaveLogged({ level: 'ERROR', title: 'There was an error loading the core config', category: 'CORE' })
   })
 
   it('exits if project config has errors', async (): Promise<void> => {
@@ -115,6 +122,7 @@ describe(runApp, (): void => {
     expect(GoodApp.iWasPrepared).toEqual(false)
     expect(GoodApp.iWasRan).toEqual(false)
     expect(AppEnvironment.calls).toEqual([])
+    expect(Logger).toHaveLogged({ level: 'ERROR', title: 'There was an error loading the project config', category: 'CORE' })
   })
 
   it('exits if environments load fails', async (): Promise<void> => {
@@ -132,6 +140,7 @@ describe(runApp, (): void => {
     expect(GoodApp.iWasPrepared).toEqual(false)
     expect(GoodApp.iWasRan).toEqual(false)
     expect(AppEnvironment.calls).toEqual([])
+    expect(Logger).toHaveLogged({ level: 'ERROR', title: 'There was an error loading core environments', category: 'CORE' })
   })
 
   it('exits if app load fails', async (): Promise<void> => {
@@ -149,6 +158,7 @@ describe(runApp, (): void => {
     expect(GoodApp.iWasPrepared).toEqual(false)
     expect(GoodApp.iWasRan).toEqual(false)
     expect(AppEnvironment.calls).toEqual([])
+    expect(Logger).toHaveLogged({ level: 'ERROR', title: 'There was an error loading the app', category: 'CORE' })
   })
 
   it('exits if modules has errors', async (): Promise<void> => {
@@ -166,6 +176,7 @@ describe(runApp, (): void => {
     expect(GoodApp.iWasPrepared).toEqual(false)
     expect(GoodApp.iWasRan).toEqual(false)
     expect(AppEnvironment.calls).toEqual(['beforeModulesLoad'])
+    expect(Logger).toHaveLogged({ level: 'ERROR', title: 'There was an error loading core modules', category: 'CORE' })
   })
 
   it('continues if modules warnings are present (log the warnings)', async (): Promise<void> => {
@@ -182,6 +193,7 @@ describe(runApp, (): void => {
     expect(GoodApp.iWasPrepared).toEqual(true)
     expect(GoodApp.iWasRan).toEqual(true)
     expect(AppEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeAppPrepare', 'afterAppPrepare', 'beforeAppRuns', 'afterAppRuns'])
+    expect(Logger).toHaveLogged({ level: 'WARNING', title: 'Two modules have the same name: good-module', category: 'CORE' })
   })
 
   it('exits if app preparation fails (unload modules)', async (): Promise<void> => {
@@ -198,6 +210,7 @@ describe(runApp, (): void => {
     expect(process.exit).toHaveBeenCalledWith(1)
     expect(core.coreModules).toEqual({})
     expect(AppEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeAppPrepare'])
+    expect(Logger).toHaveLogged({ level: 'ERROR', title: 'There was an error preparing the app', category: 'CORE' })
   })
 
   it('exits if running the app fails (unload modules)', async (): Promise<void> => {
@@ -214,6 +227,7 @@ describe(runApp, (): void => {
     expect(process.exit).toHaveBeenCalledWith(1)
     expect(core.coreModules).toEqual({})
     expect(AppEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeAppPrepare', 'afterAppPrepare', 'beforeAppRuns'])
+    expect(Logger).toHaveLogged({ level: 'ERROR', title: 'There was an error while running app', category: 'CORE' })
   })
 
   it('stops the app when receiving the signal', async (): Promise<void> => {
@@ -247,6 +261,10 @@ describe(runApp, (): void => {
       'beforeModulesRelease',
       'afterModulesRelease'
     ])
+    expect(Logger).toHaveLogged({ level: 'INFO', title: 'Stopping app gracefully', category: 'CORE' })
+    expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'App stopped', category: 'CORE' })
+    expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'App released', category: 'CORE' })
+    expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'Core modules unloaded', category: 'CORE' })
   })
 
   it('exists if stopping goes wrong', async (): Promise<void> => {
@@ -267,6 +285,7 @@ describe(runApp, (): void => {
     expect(process.exit).toHaveBeenCalledWith(1)
     expect(core.coreModules).toEqual({})
     expect(AppEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeAppPrepare', 'afterAppPrepare', 'beforeAppRuns', 'afterAppRuns', 'beforeAppStops'])
+    expect(Logger).toHaveLogged({ level: 'ERROR', title: 'There was an error while stopping app', category: 'CORE' })
   })
 
   it('exists if releasing goes wrong', async (): Promise<void> => {
@@ -297,6 +316,7 @@ describe(runApp, (): void => {
       'afterAppStops',
       'beforeAppRelease'
     ])
+    expect(Logger).toHaveLogged({ level: 'ERROR', title: 'There was an error while releasing app', category: 'CORE' })
   })
 
   it('exits if modules unloading goes wrong', async (): Promise<void> => {
@@ -328,6 +348,7 @@ describe(runApp, (): void => {
       'afterAppRelease',
       'beforeModulesRelease'
     ])
+    expect(Logger).toHaveLogged({ level: 'ERROR', title: 'There was an error while releasing modules', category: 'CORE' })
   })
 
   it("waits until the running reaches a stoppable state to start aborting (so we don't unload at the same time the app is being loaded)", async (): Promise<void> => {
@@ -473,6 +494,7 @@ describe(runApp, (): void => {
       await process.listeners('SIGINT')[0]('SIGINT')
 
       expect(ControlEnvironment.calls).toEqual([...baseEvents, ...stopEvents.slice(0, i + 1)])
+      expect(Logger).toHaveLogged({ level: 'ERROR', title: 'There was an error calling environment event', category: 'CORE' })
     }
   })
 })

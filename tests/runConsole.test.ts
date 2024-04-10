@@ -70,6 +70,10 @@ describe(runConsole, (): void => {
     expect(TestEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeConsoleRuns', 'afterConsoleRuns'])
     expect(UniversalEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeConsoleRuns', 'afterConsoleRuns'])
     expect(NotProductionEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeConsoleRuns', 'afterConsoleRuns'])
+    expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'Core config loaded', category: 'CORE' })
+    expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'Project config loaded', category: 'CORE' })
+    expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'Core environments loaded', category: 'CORE' })
+    expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'Core modules loaded', category: 'CORE' })
   })
 
   it('exits if core config has errors', async (): Promise<void> => {
@@ -85,6 +89,7 @@ describe(runConsole, (): void => {
 
     expect(process.exit).toHaveBeenCalledWith(1)
     expect(ConsoleEnvironment.calls).toEqual([])
+    expect(Logger).toHaveLogged({ level: 'ERROR', title: 'There was an error loading the core config', category: 'CORE' })
   })
 
   it('exits if project config has errors', async (): Promise<void> => {
@@ -100,6 +105,7 @@ describe(runConsole, (): void => {
 
     expect(process.exit).toHaveBeenCalledWith(1)
     expect(ConsoleEnvironment.calls).toEqual([])
+    expect(Logger).toHaveLogged({ level: 'ERROR', title: 'There was an error loading the project config', category: 'CORE' })
   })
 
   it('exits if environments load fails', async (): Promise<void> => {
@@ -115,6 +121,7 @@ describe(runConsole, (): void => {
 
     expect(process.exit).toHaveBeenCalledWith(1)
     expect(ConsoleEnvironment.calls).toEqual([])
+    expect(Logger).toHaveLogged({ level: 'ERROR', title: 'There was an error loading core environments', category: 'CORE' })
   })
 
   it('exits if modules has errors', async (): Promise<void> => {
@@ -130,6 +137,7 @@ describe(runConsole, (): void => {
 
     expect(process.exit).toHaveBeenCalledWith(1)
     expect(ConsoleEnvironment.calls).toEqual(['beforeModulesLoad'])
+    expect(Logger).toHaveLogged({ level: 'ERROR', title: 'There was an error loading core modules', category: 'CORE' })
   })
 
   it('continues if modules warnings are present (log the warnings)', async (): Promise<void> => {
@@ -144,6 +152,7 @@ describe(runConsole, (): void => {
     })
 
     expect(ConsoleEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeConsoleRuns', 'afterConsoleRuns'])
+    expect(Logger).toHaveLogged({ level: 'WARNING', title: 'Two modules have the same name: good-module', category: 'CORE' })
   })
 
   it('exits if repl server starting fails (unload modules)', async (): Promise<void> => {
@@ -164,6 +173,7 @@ describe(runConsole, (): void => {
     expect(process.exit).toHaveBeenCalledWith(1)
     expect(core.coreModules).toEqual({})
     expect(ConsoleEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeConsoleRuns'])
+    expect(Logger).toHaveLogged({ level: 'ERROR', title: 'There was an error while running the console', category: 'CORE' })
   })
 
   it('unload modules when repl server exists', async (): Promise<void> => {
@@ -189,6 +199,7 @@ describe(runConsole, (): void => {
       'beforeModulesRelease',
       'afterModulesRelease'
     ])
+    expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'Core modules unloaded', category: 'CORE' })
   })
 
   it('exists if module releasing fails', async (): Promise<void> => {
@@ -207,6 +218,7 @@ describe(runConsole, (): void => {
     expect(process.exit).toHaveBeenCalledWith(1)
     expect(core.coreModules).toEqual({})
     expect(ConsoleEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeConsoleRuns', 'afterConsoleRuns', 'afterConsoleStops', 'beforeModulesRelease'])
+    expect(Logger).toHaveLogged({ level: 'ERROR', title: 'There was an error while releasing modules', category: 'CORE' })
   })
 
   it('exits if environments events fails', async (): Promise<void> => {
@@ -251,6 +263,7 @@ describe(runConsole, (): void => {
       await replServerMock.listeners('exit')[0]()
 
       expect(ControlEnvironment.calls).toEqual([...baseEvents, ...stopEvents.slice(0, i + 1)])
+      expect(Logger).toHaveLogged({ level: 'ERROR', title: 'There was an error calling environment event', category: 'CORE' })
     }
   })
 })

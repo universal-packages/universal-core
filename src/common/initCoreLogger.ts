@@ -1,14 +1,16 @@
-import { Logger } from '@universal-packages/logger'
+import { Logger, LoggerOptions } from '@universal-packages/logger'
 import { TerminalPresenterTransport } from '@universal-packages/logger-terminal-presenter'
 
 export async function initCoreLogger(): Promise<void> {
   if (!core.logger) {
-    core.logger = new Logger({
+    const loggerOptions: LoggerOptions = {
       includeTransportAdapters: { 'terminal-presenter': TerminalPresenterTransport },
-      level: process.env.NODE_ENV === 'test' ? 'ERROR' : 'TRACE',
-      silence: !!process.env.CORE_TESTING,
-      transports: ['terminal-presenter', 'local-file']
-    })
+      level: process.env.NODE_ENV === 'test' ? 'ERROR' : 'TRACE'
+    }
+
+    if (process.env.NODE_ENV !== 'test') loggerOptions.transports = ['terminal-presenter', 'local-file']
+
+    core.logger = new Logger(loggerOptions)
 
     await core.logger.prepare()
   }

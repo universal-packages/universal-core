@@ -1,4 +1,4 @@
-import { Logger } from '@universal-packages/logger'
+import { Logger, TestTransport } from '@universal-packages/logger'
 
 import { EnvironmentEvent } from '../src'
 import { execTask } from '../src/execTask'
@@ -65,6 +65,13 @@ describe(execTask, (): void => {
     expect(TestEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeTaskExec', 'afterTaskExec', 'beforeModulesRelease', 'afterModulesRelease'])
     expect(UniversalEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeTaskExec', 'afterTaskExec', 'beforeModulesRelease', 'afterModulesRelease'])
     expect(NotProductionEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeTaskExec', 'afterTaskExec', 'beforeModulesRelease', 'afterModulesRelease'])
+    expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'Core config loaded', category: 'CORE' })
+    expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'Project config loaded', category: 'CORE' })
+    expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'Core environments loaded', category: 'CORE' })
+    expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'Core modules loaded', category: 'CORE' })
+    expect(Logger).toHaveLogged({ level: 'INFO', title: 'good-task executing...', category: 'CORE' })
+    expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'good-task executed', category: 'CORE' })
+    expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'Core modules unloaded', category: 'CORE' })
   })
 
   it('exits if core config has errors', async (): Promise<void> => {
@@ -81,6 +88,7 @@ describe(execTask, (): void => {
     expect(process.exit).toHaveBeenCalledWith(1)
     expect(GoodTask.iWasExecuted).toEqual(false)
     expect(TaskEnvironment.calls).toEqual([])
+    expect(Logger).toHaveLogged({ level: 'ERROR', title: 'There was an error loading the core config', category: 'CORE' })
   })
 
   it('exits if project config has errors', async (): Promise<void> => {
@@ -97,6 +105,7 @@ describe(execTask, (): void => {
     expect(process.exit).toHaveBeenCalledWith(1)
     expect(GoodTask.iWasExecuted).toEqual(false)
     expect(TaskEnvironment.calls).toEqual([])
+    expect(Logger).toHaveLogged({ level: 'ERROR', title: 'There was an error loading the project config', category: 'CORE' })
   })
 
   it('exits if environments load fails', async (): Promise<void> => {
@@ -113,6 +122,7 @@ describe(execTask, (): void => {
     expect(process.exit).toHaveBeenCalledWith(1)
     expect(GoodTask.iWasExecuted).toEqual(false)
     expect(TaskEnvironment.calls).toEqual([])
+    expect(Logger).toHaveLogged({ level: 'ERROR', title: 'There was an error loading core environments', category: 'CORE' })
   })
 
   it('exits if task load fails', async (): Promise<void> => {
@@ -129,6 +139,7 @@ describe(execTask, (): void => {
     expect(process.exit).toHaveBeenCalledWith(1)
     expect(GoodTask.iWasExecuted).toEqual(false)
     expect(TaskEnvironment.calls).toEqual([])
+    expect(Logger).toHaveLogged({ level: 'ERROR', title: 'There was an error loading the task', category: 'CORE' })
   })
 
   it('exits if modules has errors', async (): Promise<void> => {
@@ -145,6 +156,7 @@ describe(execTask, (): void => {
     expect(process.exit).toHaveBeenCalledWith(1)
     expect(GoodTask.iWasExecuted).toEqual(false)
     expect(TaskEnvironment.calls).toEqual(['beforeModulesLoad'])
+    expect(Logger).toHaveLogged({ level: 'ERROR', title: 'There was an error loading core modules', category: 'CORE' })
   })
 
   it('continues if modules warnings are present (log the warnings)', async (): Promise<void> => {
@@ -160,6 +172,7 @@ describe(execTask, (): void => {
 
     expect(GoodTask.iWasExecuted).toEqual(true)
     expect(TaskEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeTaskExec', 'afterTaskExec', 'beforeModulesRelease', 'afterModulesRelease'])
+    expect(Logger).toHaveLogged({ level: 'WARNING', title: 'Two modules have the same name: good-module', category: 'CORE' })
   })
 
   it('exits if task execution fails (unload modules)', async (): Promise<void> => {
@@ -176,6 +189,7 @@ describe(execTask, (): void => {
     expect(process.exit).toHaveBeenCalledWith(1)
     expect(core.coreModules).toEqual({})
     expect(TaskEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeTaskExec'])
+    expect(Logger).toHaveLogged({ level: 'ERROR', title: 'There was an error while executing task exec-error-task', category: 'CORE' })
   })
 
   it('exits if modules unloading goes wrong', async (): Promise<void> => {
@@ -192,6 +206,7 @@ describe(execTask, (): void => {
     expect(process.exit).toHaveBeenCalledWith(1)
     expect(core.coreModules).toEqual({})
     expect(TaskEnvironment.calls).toEqual(['beforeModulesLoad', 'afterModulesLoad', 'beforeTaskExec', 'afterTaskExec', 'beforeModulesRelease'])
+    expect(Logger).toHaveLogged({ level: 'ERROR', title: 'There was an error while releasing modules', category: 'CORE' })
   })
 
   it('aborts the execution when receiving the signal', async (): Promise<void> => {
@@ -221,6 +236,8 @@ describe(execTask, (): void => {
       'beforeModulesRelease',
       'afterModulesRelease'
     ])
+    expect(Logger).toHaveLogged({ level: 'INFO', title: 'Aborting task gracefully', category: 'CORE' })
+    expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'Task aborted', category: 'CORE' })
   })
 
   it('exists if abortion goes wrong', async (): Promise<void> => {
@@ -239,6 +256,7 @@ describe(execTask, (): void => {
     })
 
     expect(process.exit).toHaveBeenCalledWith(1)
+    expect(Logger).toHaveLogged({ level: 'ERROR', title: 'There was an error while aborting task', category: 'CORE' })
   })
 
   it('waits until the execution reaches a stoppable state to start aborting (so we do not unload at the same time the task is being loaded)', async (): Promise<void> => {
@@ -314,6 +332,7 @@ describe(execTask, (): void => {
       'beforeModulesRelease',
       'afterModulesRelease'
     ])
+    expect(Logger).toHaveLogged({ level: 'ERROR', title: 'There was an error calling environment event', category: 'CORE' })
 
     ControlEnvironment.calls = []
     EventErrorEnvironment.toError = 'afterTaskAborts'
@@ -342,5 +361,6 @@ describe(execTask, (): void => {
       'beforeModulesRelease',
       'afterModulesRelease'
     ])
+    expect(Logger).toHaveLogged({ level: 'ERROR', title: 'There was an error calling environment event', category: 'CORE' })
   })
 })

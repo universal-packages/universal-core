@@ -1,4 +1,4 @@
-import { LocalFileTransport } from '@universal-packages/logger'
+import { LocalFileTransport, TestTransport } from '@universal-packages/logger'
 import { TerminalPresenterTransport } from '@universal-packages/logger-terminal-presenter'
 
 import { adjustCoreLogger } from '../../src/common/adjustCoreLogger'
@@ -12,17 +12,17 @@ describe('adjustLogger', (): void => {
 
     expect(core.logger).toMatchObject({
       level: 'ERROR',
-      silence: true,
-      transports: [expect.any(TerminalPresenterTransport), expect.any(LocalFileTransport)]
+      silence: false,
+      transports: [expect.any(TestTransport)]
     })
 
-    core.coreConfig = { logger: { level: 'DEBUG', silence: false, transports: ['terminal-presenter'] } }
+    core.coreConfig = { logger: { level: 'DEBUG', silence: true, transports: ['terminal-presenter'] } }
 
     await adjustCoreLogger()
 
     expect(core.logger).toMatchObject({
       level: 'DEBUG',
-      silence: false,
+      silence: true,
       transports: [expect.any(TerminalPresenterTransport)]
     })
   })

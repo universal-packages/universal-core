@@ -24,4 +24,4 @@ development:
 
 test:
   logger:
-    silence: true
+    level: TRACE
