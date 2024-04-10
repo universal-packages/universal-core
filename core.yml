@@ -21,7 +21,3 @@ development:
     silence: false
   terminalPresenter:
     clear: false
-
-test:
-  logger:
-    level: TRACE

@@ -3,10 +3,7 @@ import { TerminalPresenterTransport } from '@universal-packages/logger-terminal-
 
 export async function initCoreLogger(): Promise<void> {
   if (!core.logger) {
-    const loggerOptions: LoggerOptions = {
-      includeTransportAdapters: { 'terminal-presenter': TerminalPresenterTransport },
-      level: process.env.NODE_ENV === 'test' ? 'ERROR' : 'TRACE'
-    }
+    const loggerOptions: LoggerOptions = { includeTransportAdapters: { 'terminal-presenter': TerminalPresenterTransport } }
 
     if (process.env.NODE_ENV !== 'test') loggerOptions.transports = ['terminal-presenter', 'local-file']
 

@@ -11,7 +11,7 @@ describe('adjustLogger', (): void => {
     initCoreLogger()
 
     expect(core.logger).toMatchObject({
-      level: 'ERROR',
+      level: 'TRACE',
       silence: false,
       transports: [expect.any(TestTransport)]
     })
