@@ -1,5 +1,6 @@
 import { Logger, LoggerOptions } from '@universal-packages/logger'
-import { TerminalPresenterOptions } from '@universal-packages/terminal-presenter'
+import { DocumentDescriptor } from '@universal-packages/terminal-document'
+import { PresenterDocumentDescriptor, TerminalPresenterOptions } from '@universal-packages/terminal-presenter'
 
 import CoreApp from './CoreApp'
 import CoreEnvironment from './CoreEnvironment'
@@ -80,6 +81,23 @@ export interface CoreDeveloperSpace {
   updateTaskProgress: (progress: number) => void
 }
 
+export interface TerminalPresenterCoreAnalog {
+  configure: (options: TerminalPresenterOptions) => void
+  appendRealTimeDocument: (id: string, presenterDocument: PresenterDocumentDescriptor) => void
+  clearRealTimeDocuments: () => void
+  clearScreen: () => void
+  captureConsole: () => void
+  prependRealTimeDocument: (id: string, presenterDocument: PresenterDocumentDescriptor) => void
+  present: () => void
+  printDocument: (documentDescriptor: DocumentDescriptor) => void
+  printString: (subject: string) => void
+  releaseConsole: () => void
+  removeRealTimeDocument: (id: string) => void
+  restore: () => void
+  updateRealTimeDocument: (id: string, presenterDocument: PresenterDocumentDescriptor) => void
+  OPTIONS: TerminalPresenterOptions
+}
+
 export interface CoreGlobal {
   App: typeof CoreApp
   appConfig: Record<string, any>
@@ -94,4 +112,5 @@ export interface CoreGlobal {
   stopping: boolean
   Task: typeof CoreTask
   taskInstance: CoreTask
+  terminalPresenter: TerminalPresenterCoreAnalog
 }
