@@ -113,10 +113,6 @@ development:
     level: TRACE
     terminal:
       clear: true
-
-test:
-  logger:
-    silence: true
 ```
 
 As you can see you can provide configuration depending on the environment you are running or in other words depending what `NODE_ENV` value is set.

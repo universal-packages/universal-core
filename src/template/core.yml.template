@@ -6,7 +6,3 @@ development:
         - tests
   logger:
     level: TRACE
-
-test:
-  logger:
-    silence: true
