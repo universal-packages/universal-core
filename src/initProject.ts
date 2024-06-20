@@ -3,11 +3,14 @@ import { populateTemplates } from '@universal-packages/template-populator'
 import { exec } from 'child_process'
 import path from 'path'
 
+import { initCoreLogger } from './common/initCoreLogger'
+import { releaseLoggerAndPresenter } from './common/releaseLoggerAndPresenter'
+import { setCoreGlobal } from './common/setCoreGlobal'
 import { LOG_CONFIGURATION } from './common/terminal-presenter/LOG_CONFIGURATION'
 
 export async function initProject(name: string, args: Record<string, any>): Promise<void> {
-  const logger = new Logger({ silence: process.env.NODE_ENV === 'test', transports: ['terminal-presenter', 'local-file'] })
-  await logger.prepare()
+  setCoreGlobal()
+  await initCoreLogger()
 
   let coreVersion = '1.0.0'
 
@@ -17,7 +20,7 @@ export async function initProject(name: string, args: Record<string, any>): Prom
     coreVersion = (await import(path.resolve(__dirname, '..', 'package.json'))).version
   }
 
-  logger.log(
+  core.logger.log(
     {
       level: 'INFO',
       title: 'Initializing project',
@@ -33,7 +36,7 @@ export async function initProject(name: string, args: Record<string, any>): Prom
     await populateTemplates(path.resolve(__dirname, 'template'), `./${name}`, { replacementVariables: { projectName: name, coreVersion } })
   }
 
-  logger.log(
+  core.logger.log(
     {
       level: 'INFO',
       title: 'Finishing'
@@ -44,7 +47,7 @@ export async function initProject(name: string, args: Record<string, any>): Prom
   await installPackages(name)
   await initGit(name)
 
-  logger.log(
+  core.logger.log(
     {
       level: 'INFO',
       title: 'New project created',
@@ -54,7 +57,7 @@ export async function initProject(name: string, args: Record<string, any>): Prom
     LOG_CONFIGURATION
   )
 
-  await logger.release()
+  await releaseLoggerAndPresenter()
 }
 
 async function installPackages(name: string): Promise<void> {
