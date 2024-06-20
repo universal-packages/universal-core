@@ -51,20 +51,19 @@ export default class ExampleApp extends CoreApp {
    *
    * this.logger
    *
-   * to publish any kind of relevant log entries in your app
+   * to log any kind of relevant log entries in your app
    *
    * */
   async run() {
     // Be sure to handle any expected error
     // If this function throws an error the app will not initialize
     this.timeout = setTimeout(() => {}, 999999999);
-    this.logger.publish(
-      "INFO",
-      `Example app has started in port`,
-      null,
-      "APP",
-      { metadata: this.config }
-    );
+    core.logger.log({
+      level: "INFO",
+      title: "Example app has started",
+      category: "APP",
+      metadata: this.config,
+    });
   }
 
   /**

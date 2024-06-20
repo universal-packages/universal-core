@@ -1,5 +1,5 @@
 development:
-  app:
+  apps:
     watcher:
       enabled: true
       ignore:
