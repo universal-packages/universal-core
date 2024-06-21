@@ -1,4 +1,8 @@
-import { CoreEnvironment } from "@universal-packages/core";
+import {
+  CoreEnvironment,
+  EnvironmentName,
+  ProcessType,
+} from "@universal-packages/core";
 
 export default class ExampleEnvironment extends CoreEnvironment {
   public static readonly environment: EnvironmentName | EnvironmentName[] = 'development'
