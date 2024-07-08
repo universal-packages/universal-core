@@ -331,6 +331,10 @@ Quick explanation of what your app provides.
 
 Before core passed the configuration loaded to this app it can optionally grab this default configuration and merge it with the loaded one, normally used to avoid errors.
 
+#### **`allowAppWatch`** `boolean` `default: true`
+
+If your apps provides its own way to reload itself when a file changes you can set this to `false` to avoid conflicts with the core watcher. This overrides the watcher configuration in the core configuration file.
+
 ### Instance properties
 
 #### **`config`** `Object`
