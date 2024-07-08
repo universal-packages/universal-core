@@ -81,7 +81,11 @@ export default class CoreInitializer<A = any> extends Core {
       }
     }
 
+    this.updateProgress(50)
+
     if (this.initialize) await this.initialize()
+
+    this.updateProgress(100)
   }
 
   public abort(): Promise<void> | void {
