@@ -1,5 +1,5 @@
 import { startMeasurement } from '@universal-packages/time-measurer'
-import { paramCase, pascalCase } from 'change-case'
+import { camelCase, paramCase, pascalCase } from 'change-case'
 
 import { releaseLoggerAndPresenter } from './releaseLoggerAndPresenter'
 import { LOG_CONFIGURATION } from './terminal-presenter/LOG_CONFIGURATION'
@@ -8,10 +8,15 @@ export async function setCoreApp(name: string, args: Record<string, any>, throwE
   const measurer = startMeasurement()
 
   try {
-    const pascalCaseName = pascalCase(name)
-    const paramCaseName = paramCase(name)
+    const camelCaseNameWithForcedApp = camelCase(name).replace(/Module$/, '') + 'App'
+    const paramCaseNameWithForcedApp = paramCase(name).replace(/-module$/, '') + '-app'
+    const pascalCaseNameWithForcedApp = pascalCase(name).replace(/Module$/, '') + 'App'
 
-    core.appConfig = core.projectConfig[pascalCaseName] || core.projectConfig[paramCaseName] || core.projectConfig[core.App.appName]
+    core.appConfig =
+      core.projectConfig[camelCaseNameWithForcedApp] ||
+      core.projectConfig[paramCaseNameWithForcedApp] ||
+      core.projectConfig[pascalCaseNameWithForcedApp] ||
+      core.projectConfig[core.App.appName]
     core.appInstance = new core.App({ ...core.App.defaultConfig, ...core.appConfig }, args, core.logger)
   } catch (error) {
     core.logger.log(

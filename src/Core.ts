@@ -134,10 +134,12 @@ export default class Core {
       const currentModule = finalModules[i]
       const moduleName = currentModule.exports.moduleName || currentModule.exports.name
       const moduleCamelCaseName = camelCase(moduleName)
-      const moduleParamCaseName = paramCase(moduleName)
-      const modulePascalCaseName = pascalCase(moduleName)
-      const subjectName = moduleCamelCaseName.replace(/Module$/, '') + 'Subject'
-      const moduleConfig = projectConfig[moduleParamCaseName] || projectConfig[modulePascalCaseName] || projectConfig[moduleName]
+      const moduleCamelCaseNameWithForcedModule = camelCase(moduleName).replace(/Module$/, '') + 'Module'
+      const moduleParamCaseNameWithForcedModule = paramCase(moduleName).replace(/-module$/, '') + '-module'
+      const modulePascalCaseNameWithForcedModule = pascalCase(moduleName).replace(/Module$/, '') + 'Module'
+      const subjectName = camelCase(moduleName).replace(/Module$/, '') + 'Subject'
+      const moduleConfig =
+        projectConfig[moduleCamelCaseNameWithForcedModule] || projectConfig[moduleParamCaseNameWithForcedModule] || projectConfig[modulePascalCaseNameWithForcedModule]
       const ModuleClass: typeof CoreModule = currentModule.exports
 
       const configuredNodeEnvironments = [].concat(ModuleClass.environment).filter(Boolean)
