@@ -136,7 +136,7 @@ export default class Core {
       const moduleCamelCaseName = camelCase(moduleName)
       const moduleParamCaseName = paramCase(moduleName)
       const modulePascalCaseName = pascalCase(moduleName)
-      const subjectName = moduleCamelCaseName.replace('Module', 'Subject')
+      const subjectName = moduleCamelCaseName.replace(/Module$/, '') + 'Subject'
       const moduleConfig = projectConfig[moduleParamCaseName] || projectConfig[modulePascalCaseName] || projectConfig[moduleName]
       const ModuleClass: typeof CoreModule = currentModule.exports
 
