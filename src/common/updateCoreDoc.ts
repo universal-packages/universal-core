@@ -10,16 +10,23 @@ const TIME_WATCH_COMPONENT = TimeWatchBlock()
 
 const PROCESSES_COLORS: Record<string, { primary: Color; secondary: Color }> = {
   app: { primary: BlueColor.DodgerBlue, secondary: WhiteColor.White },
-  task: { primary: OrangeColor.OrangeRed, secondary: WhiteColor.White }
+  task: { primary: OrangeColor.OrangeRed, secondary: WhiteColor.White },
+  initializer: { primary: GrayColor.Gray, secondary: WhiteColor.White }
 }
 
-const TASK_PROGRESS_COMPONENT: ProgressBarController = ProgressBarBlock({ color: 'light-slate-gray' })
+const PROGRESS_COMPONENT: ProgressBarController = ProgressBarBlock({ color: 'light-slate-gray' })
 let PROGRESS_WAS_UPDATED = false
 
 export function updateCoreDoc() {
   if (!core.terminalPresenter.OPTIONS.enabled) return
 
-  const primaryColor = core.App ? PROCESSES_COLORS.app.primary : core.Task ? PROCESSES_COLORS.task.primary : GrayColor.Gray
+  const primaryColor = core.App
+    ? PROCESSES_COLORS.app.primary
+    : core.Task
+    ? PROCESSES_COLORS.task.primary
+    : core.Initializer
+    ? PROCESSES_COLORS.initializer.primary
+    : GrayColor.Gray
   const documentRows: PresenterRowDescriptor[] = []
 
   const headerRow: PresenterRowDescriptor = {
@@ -48,9 +55,7 @@ export function updateCoreDoc() {
       width: 'fit'
     })
     headerRow.blocks.push({ text: ' ', width: 'fit' })
-  }
-
-  if (core.Task) {
+  } else {
     headerRow.blocks.push(LoadingBlock())
     headerRow.blocks.push({ text: ' ', width: 'fit' })
 
@@ -58,7 +63,7 @@ export function updateCoreDoc() {
       backgroundColor: primaryColor,
       color: PROCESSES_COLORS.app.secondary,
       style: 'bold',
-      text: ' TASK ',
+      text: core.Task ? ' TASK ' : 'INITIALIZER',
       width: 'fit'
     })
     headerRow.blocks.push({ text: ' ', width: 'fit' })
@@ -87,7 +92,7 @@ export function updateCoreDoc() {
   const middleRow: PresenterRowDescriptor = { blocks: [] }
 
   if (core.Task && PROGRESS_WAS_UPDATED) {
-    middleRow.blocks.push(TASK_PROGRESS_COMPONENT)
+    middleRow.blocks.push(PROGRESS_COMPONENT)
 
     documentRows.push(middleRow)
   }
@@ -141,7 +146,7 @@ export function updateCoreDoc() {
   core.terminalPresenter.updateRealTimeDocument('CORE-DOC', { rows: documentRows })
 }
 
-export function updateCoreDocTaskProgress(progress: number) {
+export function updateCoreDocProgress(progress: number) {
   if (!core.terminalPresenter.OPTIONS.enabled) return
 
   if (!PROGRESS_WAS_UPDATED) {
@@ -149,5 +154,5 @@ export function updateCoreDocTaskProgress(progress: number) {
     updateCoreDoc()
   }
 
-  TASK_PROGRESS_COMPONENT.setProgress(progress)
+  PROGRESS_COMPONENT.setProgress(progress)
 }

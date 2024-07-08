@@ -52,7 +52,7 @@ export default class CoreTask<A = any> extends Core {
 
   public abort(): Promise<void> | void {}
 
-  protected updateTaskProgress(progress: number): void {
-    core.developer.updateTaskProgress(progress)
+  protected updateProgress(progress: number): void {
+    core.developer.updateProgress(progress)
   }
 }

@@ -1,6 +1,6 @@
 import * as TP from '@universal-packages/terminal-presenter'
 
-import { updateCoreDocTaskProgress } from './updateCoreDoc'
+import { updateCoreDocProgress } from './updateCoreDoc'
 
 export function setCoreGlobal(): void {
   global.core = {
@@ -10,12 +10,14 @@ export function setCoreGlobal(): void {
     coreConfig: null,
     coreModules: null,
     developer: {
-      updateTaskProgress: (progress: number) => {
-        updateCoreDocTaskProgress(progress)
+      updateProgress: (progress: number) => {
+        updateCoreDocProgress(progress)
       },
       bucket: {}
     },
     environments: null,
+    Initializer: null,
+    initializerInstance: null,
     logger: null,
     projectConfig: null,
     stoppable: false,

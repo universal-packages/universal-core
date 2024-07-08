@@ -22,7 +22,7 @@ export default class NoPercentageTask extends BaseTask {
         progress += 1
 
         if (progress >= 100) {
-          this.updateTaskProgress(progress)
+          this.updateProgress(progress)
 
           clearInterval(this.progressInterval)
           resolve()

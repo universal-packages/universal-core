@@ -4,6 +4,7 @@ import { PresenterDocumentDescriptor, TerminalPresenterOptions } from '@universa
 
 import CoreApp from './CoreApp'
 import CoreEnvironment from './CoreEnvironment'
+import CoreInitializer from './CoreInitializer'
 import CoreModule from './CoreModule'
 import CoreTask from './CoreTask'
 
@@ -78,7 +79,7 @@ export interface CoreModuleWarning {
 
 export interface CoreDeveloperSpace {
   bucket: Record<string, any>
-  updateTaskProgress: (progress: number) => void
+  updateProgress: (progress: number) => void
 }
 
 export interface TerminalPresenterCoreAnalog {
@@ -106,6 +107,8 @@ export interface CoreGlobal {
   coreModules: CoreModules
   developer: CoreDeveloperSpace
   environments: CoreEnvironment[]
+  Initializer: typeof CoreInitializer
+  initializerInstance: CoreInitializer
   logger: Logger
   projectConfig: ProjectConfig
   stoppable: boolean

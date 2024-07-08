@@ -3,16 +3,17 @@ import { sleep } from '@universal-packages/time-measurer'
 import AppWatcher from './AppWatcher'
 import { emitEnvironmentEvent } from './common/emitEnvironmentEvent'
 import { initCoreLogger } from './common/initCoreLogger'
-import { loadAndSetCoreApp } from './common/loadAndSetCoreApp'
 import { loadAndSetCoreConfig } from './common/loadAndSetCoreConfig'
 import { loadAndSetCoreModules } from './common/loadAndSetCoreModules'
 import { loadAndSetEnvironments } from './common/loadAndSetEnvironments'
 import { loadAndSetProjectConfig } from './common/loadAndSetProjectConfig'
+import { loadCoreApp } from './common/loadCoreApp'
 import { prepareCoreAppInstance } from './common/prepareCoreAppInstance'
 import { releaseCoreAppInstance } from './common/releaseCoreAppInstance'
 import { releaseCoreModules } from './common/releaseCoreModules'
 import { releaseLoggerAndPresenter } from './common/releaseLoggerAndPresenter'
 import { runCoreAppInstance } from './common/runCoreAppInstance'
+import { setCoreApp } from './common/setCoreApp'
 import { setCoreGlobal } from './common/setCoreGlobal'
 import { startPresenting } from './common/startPresenting'
 import { stopCoreAppInstance } from './common/stopCoreAppInstance'
@@ -30,7 +31,10 @@ export async function runApp(name: string, options: RunAppOptions = {}): Promise
   // Common functions return true if something went wrong and we should exit
   if (await loadAndSetCoreConfig(coreConfigOverride, throwError)) return process.exit(1)
 
-  if (!forked && core.coreConfig.apps?.watcher?.enabled) {
+  // Only load the App class so we can check for static configurations
+  if (await loadCoreApp(name, throwError)) return process.exit(1)
+
+  if (!forked && core.coreConfig.apps?.watcher?.enabled && core.App.allowAppWatch) {
     core.logger.log(
       {
         level: 'QUERY',
@@ -87,7 +91,7 @@ export async function runApp(name: string, options: RunAppOptions = {}): Promise
   } else {
     // Common functions return true if something went wrong and we should exit
     if (await loadAndSetProjectConfig(throwError)) return process.exit(1)
-    if (await loadAndSetCoreApp(name, args, throwError)) return process.exit(1)
+    if (await setCoreApp(name, args, throwError)) return process.exit(1)
     if (await loadAndSetEnvironments('apps', core.App.appName || core.App.name, throwError)) return process.exit(1)
 
     startPresenting()

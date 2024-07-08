@@ -20,7 +20,7 @@ export default class ShowPercentageTask extends BaseTask {
 
       this.progressInterval = setInterval(() => {
         progress += 0.01
-        this.updateTaskProgress(progress)
+        this.updateProgress(progress)
 
         if (progress >= 100) {
           clearInterval(this.progressInterval)

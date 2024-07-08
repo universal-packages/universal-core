@@ -36,7 +36,7 @@ beforeEach((): void => {
 })
 
 describe(runApp, (): void => {
-  it('do all the preparations funds an app and runs it (sets core)', async (): Promise<void> => {
+  it('do all the preparations finds an app and runs it (sets core)', async (): Promise<void> => {
     await runApp('Good', {
       coreConfigOverride: {
         apps: { location: './tests/__fixtures__/apps' },
@@ -63,7 +63,7 @@ describe(runApp, (): void => {
         testModule: expect.any(TestModule)
       },
       developer: {
-        updateTaskProgress: expect.any(Function),
+        updateProgress: expect.any(Function),
         bucket: {}
       },
       environments: [
@@ -73,6 +73,8 @@ describe(runApp, (): void => {
         expect.any(TestEnvironment),
         expect.any(UniversalEnvironment)
       ],
+      Initializer: null,
+      initializerInstance: null,
       logger: expect.any(Logger),
       projectConfig: expect.objectContaining({ ExcellentModule: expect.anything(), 'good-module': expect.anything(), 'good-app': expect.anything() }),
       stoppable: true,

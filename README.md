@@ -11,13 +11,13 @@ Universal Core is a generic framework to run any kind of node application in a c
 To initialize a core project you can use the cli by running
 
 ```shell
-npx @universal-packages/core init my-new-app
+npx @universal-packages/core new my-app
 ```
 
 To initialize a typescript project use the flag `-ts`
 
 ```shell
-npx @universal-packages/core init my-new-app --ts
+npx @universal-packages/core new my-app --ts
 ```
 
 You will end up with the following structure
@@ -42,18 +42,18 @@ npm install @universal-packages/core
 
 The universal core cli is very simple and your entry point to run universal core projects.
 
-### init
+### new
 
 ```shell
-ucore init <project-name> <--ts|--typescript>?
+ucore new <project-name> <--ts|--typescript>?
 ```
 
-Initialize a new project directly in the current working directory, install packages and inits git for you.
+Initialize a new project in its own directory, install packages and inits git for you.
 
 Example:
 
 ```shell
-ucore init web-app
+ucore new web-app
 ```
 
 ### run
@@ -82,6 +82,20 @@ Example:
 
 ```
 ucore exec database-task generate-migration create-users-table --fast
+```
+
+### initialize
+
+```
+ucore initialize <initializer-name> <--ts|--typescript>?
+```
+
+If a universal core library offers some kind of initializer you can use this command to initialize it in your project, `<initializer-name>` is the name of the library you want to initialize, it will may provide a typescript template that will be populated.
+
+Example:
+
+```
+ucore initialize some-core-library --typescript
 ```
 
 ### console
@@ -432,6 +446,117 @@ Once all is loaded and prepared exec any kind of whatever. Some data migration o
 After pressing `CTRL+C` universal core will optionally call this method, if you have a way to stop your task do it here so the execution can be stopped gracefully.
 
 > If your exec method is just a loop you can set here a `this.stopping = true` property.
+
+## Core Initializers
+
+When building a universal core library you can provide an initializer to help users to start using your library, initializers are meant to be ran once and they can be used to setup a project with some boilerplate code.
+
+If your library provides some boilerplate code you can place your templates in a `templates` folder in the same directory as your initializer file.
+
+```shell
+- universal-core-easy-mailing
+  |- src
+    |- easy-mailing.universal-core-initializer.js
+    |- templates
+      |- default
+        |- source
+          |- mailing
+            |- Example.mailer.js
+          |- config
+            |- easy-mailing-module.yaml
+      |- typescript
+        |- source
+          |- mailing
+            |- Example.mailer.ts
+          |- config
+            |- easy-mailing-module.yaml
+        |- root
+          |- tsconfig.json
+```
+
+Thats the only thing you need to do, all core initializers will populate the templates.
+
+If you need to do some custom stuff you can do it in the `initialize` protected method.
+
+```js
+import { CoreInitializer } from '@universal-packages/core'
+
+export default class EasyMailingInitializer extends CoreInitializer {
+  static initializerName = 'easy-mailing'
+  static description = 'Easy mailing initialization, sets up some stuff for you'
+
+  // This is always required so that knows where to find the templates
+  readonly templatesLocation: string = `${__dirname}/templates`
+
+  async initialize() {
+    // Do some custom stuff here
+  }
+
+  async rollback() {
+    // If the user aborts the initialization process, you can rollback here or signal the initialize method to stop doing custom stuff
+  }
+}
+```
+
+### Static properties
+
+#### **`initializerName`** `String`
+
+Name to be used when finding an initializer to run, internally this is preferred before using the class name.
+
+#### **`description`** `String`
+
+Quick explanation of what your initializer does.
+
+#### **`this.args`** `Object`
+
+Any params passed via command line will be passed to the app instance and can be accessed via `this.args`
+
+```
+ucore initialize easy-mailing --gmail
+                             |       |
+                                args
+```
+
+#### **`this.typescript`** `boolean`
+
+If the user passed the `--typescript` flag this property will be set to `true`.
+
+```
+ucore initialize easy-mailing --typescript
+                             |             |
+                                typescript
+```
+
+#### **`this.sourceLocation`** `string`
+
+If the user passed the `--source` to a different source location this property will be set to the value.
+
+```
+ucore initialize easy-mailing --source ./code
+                             |                |
+                               sourceLocation
+```
+
+#### **`this.templatesLocation`** `string`
+
+This always needs to be set to the location of the templates folder. So that the automatic population knows where to find the templates.
+
+#### **`this.logger`** `Logger`
+
+You can use the core project logger passed to the instance via `this.logger`.
+
+### Instance methods (Initializer life cycle)
+
+#### **`initialize()`** `optional`
+
+This will be called after the templates have been populated, you can do some custom stuff here.
+
+#### **`rollback()`** `optional`
+
+After pressing `CTRL+C` universal core will optionally call this method, if you have a way to stop your initialization process do it here so the execution can be stopped gracefully.
+
+> If your initialize method is just a loop you can set here a `this.stopping = true` property.
 
 ## CoreEnvironment
 

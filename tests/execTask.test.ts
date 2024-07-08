@@ -1,4 +1,4 @@
-import { Logger, TestTransport } from '@universal-packages/logger'
+import { Logger } from '@universal-packages/logger'
 
 import { EnvironmentEvent } from '../src'
 import { execTask } from '../src/execTask'
@@ -28,7 +28,7 @@ beforeEach((): void => {
 })
 
 describe(execTask, (): void => {
-  it('do all the preparations funds a task and runs it (sets core)', async (): Promise<void> => {
+  it('do all the preparations finds a task and runs it (sets core)', async (): Promise<void> => {
     await execTask('Good', {
       coreConfigOverride: {
         apps: { location: './tests/__fixtures__/apps' },
@@ -47,7 +47,7 @@ describe(execTask, (): void => {
       coreConfig: expect.objectContaining({ tasks: { location: './tests/__fixtures__/tasks' } }),
       coreModules: {},
       developer: {
-        updateTaskProgress: expect.any(Function),
+        updateProgress: expect.any(Function),
         bucket: {}
       },
       environments: [
@@ -57,6 +57,8 @@ describe(execTask, (): void => {
         expect.any(TestEnvironment),
         expect.any(UniversalEnvironment)
       ],
+      Initializer: null,
+      initializerInstance: null,
       logger: expect.any(Logger),
       projectConfig: expect.objectContaining({ ExcellentModule: expect.anything(), 'good-module': expect.anything(), 'good-app': expect.anything() }),
       stoppable: true,

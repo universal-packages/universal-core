@@ -1,13 +1,15 @@
 import yargs, { ArgumentsCamelCase, Argv } from 'yargs'
 
+import { createProject } from './createProject'
 import { execTask } from './execTask'
-import { initProject } from './initProject'
 import { runApp } from './runApp'
 import { runConsole } from './runConsole'
+import { runInitializer } from './runInitializer'
 
 interface ArgvExtract {
   appName: string
   taskName: string
+  initializerName: string
   taskDirective: string
   directiveOptions: string[]
   options: ArgumentsCamelCase
@@ -50,16 +52,30 @@ yargs
     }
   })
   .command({
-    command: 'init <project-name>',
+    command: 'initialize <initializer-name>',
     aliases: 'i',
-    describe: 'Inits a new core project',
+    describe: 'Runs a named core initializer that will set up a core library',
+    builder: (yargs: Argv) =>
+      yargs
+        .positional('initializer-name', { description: 'Name of the core initializer', type: 'string', demandOption: true })
+        .options('source', { alias: ['src'], description: 'Main directory in the project', type: 'string', default: './src' })
+        .options('typescript', { alias: ['ts'], description: 'Tells the initializer to use the typescript template if available', type: 'boolean', default: false }),
+    handler: (argv: ArgumentsCamelCase) => {
+      const argvExtract = processArgv(argv)
+      runInitializer(argvExtract.initializerName, { args: argvExtract.options })
+    }
+  })
+  .command({
+    command: 'new <project-name>',
+    aliases: 'n',
+    describe: 'Creates a new core project',
     builder: (yargs: Argv) =>
       yargs
         .positional('project-name', { description: 'Name to give to the core project', type: 'string', demandOption: true })
         .options('typescript', { alias: ['ts'], description: 'Inits the core project using the typescript template', type: 'boolean', default: false }),
     handler: (argv: ArgumentsCamelCase) => {
       const argvExtract = processArgv(argv)
-      initProject(argvExtract.projectName, argvExtract.options)
+      createProject(argvExtract.projectName, argvExtract.options)
     }
   })
   .options('env', { alias: ['environment'], description: 'Set node env environment', type: 'string', default: 'development' })
@@ -78,6 +94,7 @@ function processArgv(argv: ArgumentsCamelCase): ArgvExtract {
 
   const appName = argv['appName'] as string
   const taskName = argv['taskName'] as string
+  const initializerName = argv['initializerName'] as string
   const taskDirective = argv['taskDirective'] as string
   const directiveOptions = argv['directiveOptions'] as string[]
   const projectName = argv['projectName'] as string
@@ -92,6 +109,8 @@ function processArgv(argv: ArgumentsCamelCase): ArgvExtract {
   delete options['app-name']
   delete options['taskName']
   delete options['task-name']
+  delete options['initializerName']
+  delete options['initializer-name']
   delete options['task-directive']
   delete options['taskDirective']
   delete options['task-options']
@@ -100,5 +119,5 @@ function processArgv(argv: ArgumentsCamelCase): ArgvExtract {
   delete options['projectName']
   delete options['project-name']
 
-  return { appName, taskName, taskDirective, directiveOptions, options, projectName }
+  return { appName, taskName, initializerName, taskDirective, directiveOptions, options, projectName }
 }

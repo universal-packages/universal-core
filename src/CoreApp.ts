@@ -9,6 +9,7 @@ export default class CoreApp<C = any, A = any> extends Core {
   public static readonly appName: string
   public static readonly description: string
   public static readonly defaultConfig: any
+  public static readonly allowAppWatch: boolean = true
 
   public readonly config: C
   public readonly args: A

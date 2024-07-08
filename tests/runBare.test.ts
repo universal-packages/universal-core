@@ -56,10 +56,12 @@ describe(runBare, (): void => {
         testModule: expect.any(TestModule)
       },
       developer: {
-        updateTaskProgress: expect.any(Function),
+        updateProgress: expect.any(Function),
         bucket: {}
       },
       environments: [expect.any(NotProductionEnvironment), expect.any(TestEnvironment), expect.any(UniversalEnvironment)],
+      Initializer: null,
+      initializerInstance: null,
       logger: expect.any(Logger),
       projectConfig: expect.objectContaining({ ExcellentModule: expect.anything(), 'good-module': expect.anything(), 'good-app': expect.anything() }),
       stoppable: true,
