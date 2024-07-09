@@ -20,13 +20,26 @@ let PROGRESS_WAS_UPDATED = false
 export function updateCoreDoc() {
   if (!core.terminalPresenter.OPTIONS.enabled) return
 
-  const primaryColor = core.App
-    ? PROCESSES_COLORS.app.primary
-    : core.Task
-    ? PROCESSES_COLORS.task.primary
-    : core.Initializer
-    ? PROCESSES_COLORS.initializer.primary
-    : GrayColor.Gray
+  const appPrimaryColor = core.App ? PROCESSES_COLORS.app.primary : null
+  const taskPrimaryColor = core.Task ? PROCESSES_COLORS.task.primary : null
+  const initializerPrimaryColor = core.Initializer ? PROCESSES_COLORS.initializer.primary : null
+  const primaryColor = appPrimaryColor || taskPrimaryColor || initializerPrimaryColor || GrayColor.Gray
+
+  const appSecondaryColor = core.App ? PROCESSES_COLORS.app.secondary : null
+  const taskSecondaryColor = core.Task ? PROCESSES_COLORS.task.secondary : null
+  const initializerSecondaryColor = core.Initializer ? PROCESSES_COLORS.initializer.secondary : null
+  const secondaryColor = appSecondaryColor || taskSecondaryColor || initializerSecondaryColor || WhiteColor.White
+
+  const appProcessName = core.App ? ' APP ' : ''
+  const taskProcessName = core.Task ? ' TASK ' : ''
+  const initializerProcessName = core.Initializer ? ' INITIALIZER ' : ''
+  const processName = appProcessName || taskProcessName || initializerProcessName || ' CORE '
+
+  const appSubjectName = core.App ? core.App.appName || core.App.name : ''
+  const taskSubjectName = core.Task ? core.Task.taskName || core.Task.name : ''
+  const initializerSubjectName = core.Initializer ? core.Initializer.initializerName || core.Initializer.name : ''
+  const subjectName = appSubjectName || taskSubjectName || initializerSubjectName || 'Core'
+
   const documentRows: PresenterRowDescriptor[] = []
 
   const headerRow: PresenterRowDescriptor = {
@@ -38,43 +51,26 @@ export function updateCoreDoc() {
 
   if (core.App) {
     headerRow.blocks.push(LoadingBlock({ style: 'star' }))
-    headerRow.blocks.push({ text: ' ', width: 'fit' })
-
-    headerRow.blocks.push({
-      backgroundColor: primaryColor,
-      color: PROCESSES_COLORS.app.secondary,
-      style: 'bold',
-      text: ' APP ',
-      width: 'fit'
-    })
-    headerRow.blocks.push({ text: ' ', width: 'fit' })
-    headerRow.blocks.push({
-      color: primaryColor,
-      style: 'bold',
-      text: core.App.appName || core.App.name,
-      width: 'fit'
-    })
-    headerRow.blocks.push({ text: ' ', width: 'fit' })
   } else {
     headerRow.blocks.push(LoadingBlock())
-    headerRow.blocks.push({ text: ' ', width: 'fit' })
-
-    headerRow.blocks.push({
-      backgroundColor: primaryColor,
-      color: PROCESSES_COLORS.app.secondary,
-      style: 'bold',
-      text: core.Task ? ' TASK ' : 'INITIALIZER',
-      width: 'fit'
-    })
-    headerRow.blocks.push({ text: ' ', width: 'fit' })
-    headerRow.blocks.push({
-      color: primaryColor,
-      style: 'bold',
-      text: core.Task.taskName || core.Task.name,
-      width: 'fit'
-    })
-    headerRow.blocks.push({ text: ' ', width: 'fit' })
   }
+
+  headerRow.blocks.push({ text: ' ', width: 'fit' })
+  headerRow.blocks.push({
+    backgroundColor: primaryColor,
+    color: secondaryColor,
+    style: 'bold',
+    text: processName,
+    width: 'fit'
+  })
+  headerRow.blocks.push({ text: ' ', width: 'fit' })
+  headerRow.blocks.push({
+    color: primaryColor,
+    style: 'bold',
+    text: subjectName,
+    width: 'fit'
+  })
+  headerRow.blocks.push({ text: ' ', width: 'fit' })
 
   headerRow.blocks.push({ text: ' ' })
 
