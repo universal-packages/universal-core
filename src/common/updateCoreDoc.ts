@@ -1,5 +1,5 @@
 import { EnvironmentTagBlock } from '@universal-packages/logger-terminal-presenter'
-import { BlueColor, Color, GrayColor, OrangeColor, WhiteColor } from '@universal-packages/terminal-document'
+import { BlueColor, Color, GrayColor, GreenColor, OrangeColor, WhiteColor } from '@universal-packages/terminal-document'
 import { LoadingBlock, PresenterRowDescriptor, ProgressBarBlock, ProgressBarController, TimeWatchBlock } from '@universal-packages/terminal-presenter'
 import os from 'os'
 
@@ -11,7 +11,7 @@ const TIME_WATCH_COMPONENT = TimeWatchBlock()
 const PROCESSES_COLORS: Record<string, { primary: Color; secondary: Color }> = {
   app: { primary: BlueColor.DodgerBlue, secondary: WhiteColor.White },
   task: { primary: OrangeColor.OrangeRed, secondary: WhiteColor.White },
-  initializer: { primary: GrayColor.Gray, secondary: WhiteColor.White }
+  initializer: { primary: GreenColor.DarkGreen, secondary: WhiteColor.White }
 }
 
 const PROGRESS_COMPONENT: ProgressBarController = ProgressBarBlock({ color: 'light-slate-gray' })
@@ -38,7 +38,7 @@ export function updateCoreDoc() {
   const appSubjectName = core.App ? core.App.appName || core.App.name : ''
   const taskSubjectName = core.Task ? core.Task.taskName || core.Task.name : ''
   const initializerSubjectName = core.Initializer ? core.Initializer.initializerName || core.Initializer.name : ''
-  const subjectName = appSubjectName || taskSubjectName || initializerSubjectName || 'Core'
+  const subjectName = appSubjectName || taskSubjectName || initializerSubjectName || 'New Project'
 
   const documentRows: PresenterRowDescriptor[] = []
 
@@ -87,7 +87,7 @@ export function updateCoreDoc() {
 
   const middleRow: PresenterRowDescriptor = { blocks: [] }
 
-  if (core.Task && PROGRESS_WAS_UPDATED) {
+  if (PROGRESS_WAS_UPDATED) {
     middleRow.blocks.push(PROGRESS_COMPONENT)
 
     documentRows.push(middleRow)
