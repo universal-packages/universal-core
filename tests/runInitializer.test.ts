@@ -1,21 +1,10 @@
 import { Logger } from '@universal-packages/logger'
 import { populateTemplates } from '@universal-packages/template-populator'
 
-import { EnvironmentEvent } from '../src'
-import { execTask } from '../src/execTask'
 import { runInitializer } from '../src/runInitializer'
-import ControlEnvironment from './__fixtures__/environments-event-error/Control.environment'
-import EventErrorEnvironment from './__fixtures__/environments-event-error/EventError.environment'
-import GoodTaskEnvironment from './__fixtures__/environments/GoodTask.environment'
-import TaskEnvironment from './__fixtures__/environments/Task.environment'
-import TestEnvironment from './__fixtures__/environments/Test.environment'
-import UniversalEnvironment from './__fixtures__/environments/Universal.environment'
 import AbortableInitializer from './__fixtures__/initializers-abortable/Abortable.universal-core-initializer'
 import HackyLoadInitializer from './__fixtures__/initializers-hacky-load/HackyLoad.universal-core-initializer'
 import GoodInitializer from './__fixtures__/initializers/Good.universal-core-initializer'
-import AbortableTask from './__fixtures__/tasks-abortable/Abortable.task'
-import HackyLoadTask from './__fixtures__/tasks-hacky-load/HackyLoad.task'
-import GoodTask from './__fixtures__/tasks/Good.task'
 
 jest.mock('@universal-packages/template-populator')
 
@@ -24,12 +13,6 @@ jest.spyOn(process, 'exit').mockImplementation(((): void => {}) as any)
 beforeEach((): void => {
   jest.clearAllMocks()
   GoodInitializer.iWasInitialized = false
-  GoodTask.iWasAborted = false
-  GoodTaskEnvironment.calls = []
-  TaskEnvironment.calls = []
-  TestEnvironment.calls = []
-  UniversalEnvironment.calls = []
-  ControlEnvironment.calls = []
   process.removeAllListeners()
 })
 
@@ -61,7 +44,7 @@ describe(runInitializer, (): void => {
       Initializer: GoodInitializer,
       initializerInstance: expect.any(GoodInitializer),
       logger: expect.any(Logger),
-      projectConfig: expect.objectContaining({ ExcellentModule: expect.anything(), 'good-module': expect.anything(), 'good-app': expect.anything() }),
+      projectConfig: null,
       stoppable: true,
       stopping: false,
       Task: null,
@@ -84,7 +67,6 @@ describe(runInitializer, (): void => {
       }
     })
     expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'Core config loaded', category: 'CORE' })
-    expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'Project config loaded', category: 'CORE' })
     expect(Logger).toHaveLogged({ level: 'INFO', title: 'Initializing good-initializer...', category: 'CORE' })
     expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'good-initializer initialized', category: 'CORE' })
   })

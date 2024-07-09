@@ -22,7 +22,6 @@ export async function runInitializer(name: string, options: RunInitializerOption
   // Common functions return true if something went wrong and we should exit
   if (await loadAndSetCoreConfig(coreConfigOverride, throwError)) return process.exit(1)
 
-  if (await loadAndSetProjectConfig(throwError)) return process.exit(1)
   if (await loadAndSetCoreInitializer(name, args, locationOverride, throwError)) return process.exit(1)
 
   startPresenting()
