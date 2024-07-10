@@ -29,8 +29,9 @@ export default class CoreInitializer<A = any> extends Core {
   public static async find(name: string, locationOverride?: string): Promise<typeof CoreInitializer> {
     const pascalCaseName = pascalCase(name)
     const paramCaseName = paramCase(name)
-    const thirdPartyInitializers = await loadModules(locationOverride || './node_modules', { conventionPrefix: 'universal-core-initializer' })
-    const finalInitializers = [...thirdPartyInitializers]
+    const inDevelopmentInitializer = await loadModules(locationOverride || './src', { conventionPrefix: 'universal-core-initializer' })
+    const thirdPartyInitializers = await loadModules('./node_modules', { conventionPrefix: 'universal-core-initializer' })
+    const finalInitializers = [...inDevelopmentInitializer, ...thirdPartyInitializers]
 
     const initializerModuleRegistry = finalInitializers.find((module: ModuleRegistry): boolean => {
       const fileMatches = !!module.location
