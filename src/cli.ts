@@ -1,6 +1,5 @@
 import yargs, { ArgumentsCamelCase, Argv } from 'yargs'
 
-import { createProject } from './createProject'
 import { execTask } from './execTask'
 import { runApp } from './runApp'
 import { runConsole } from './runConsole'
@@ -75,7 +74,7 @@ yargs
         .options('typescript', { alias: ['ts'], description: 'Inits the core project using the typescript template', type: 'boolean', default: false }),
     handler: (argv: ArgumentsCamelCase) => {
       const argvExtract = processArgv(argv)
-      createProject(argvExtract.projectName, argvExtract.options)
+      runInitializer('universal-core-project', { args: { ...argvExtract.options, projectName: argvExtract.projectName } })
     }
   })
   .options('env', { alias: ['environment'], description: 'Set node env environment', type: 'string', default: 'development' })

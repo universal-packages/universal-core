@@ -492,12 +492,16 @@ export default class EasyMailingInitializer extends CoreInitializer {
   // This is always required so that knows where to find the templates
   readonly templatesLocation: string = `${__dirname}/templates`
 
-  async initialize() {
-    // Do some custom stuff here
+  async beforeTemplatePopulate() {
+    // Do some custom stuff before the templates are populated
   }
 
-  async rollback() {
-    // If the user aborts the initialization process, you can rollback here or signal the initialize method to stop doing custom stuff
+  async afterTemplatePopulate() {
+    // Do some custom stuff after the templates are populated
+  }
+
+  async abort() {
+    // If the user aborts the initialization process, you can gracefully stop it here
   }
 }
 ```

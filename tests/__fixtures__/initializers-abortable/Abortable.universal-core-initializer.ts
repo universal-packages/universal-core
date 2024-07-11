@@ -10,7 +10,7 @@ export default class AbortableInitializer extends CoreInitializer {
   private resolve: (value: void | PromiseLike<void>) => void
   private extraTimeout: NodeJS.Timeout
 
-  protected async initialize(): Promise<void> {
+  protected async afterTemplatePopulate(): Promise<void> {
     return new Promise((resolve): void => {
       this.resolve = resolve
       AbortableInitializer.iWasInitialized = true
@@ -18,7 +18,7 @@ export default class AbortableInitializer extends CoreInitializer {
     })
   }
 
-  protected rollback(): Promise<void> | void {
+  public abort(): Promise<void> | void {
     AbortableInitializer.iWasAborted = true
     setTimeout(this.resolve, 100)
     clearTimeout(this.extraTimeout)

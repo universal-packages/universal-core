@@ -1,4 +1,5 @@
 import { Logger, LoggerOptions } from '@universal-packages/logger'
+import { SubProcess, SubProcessOptions } from '@universal-packages/sub-process'
 import { DocumentDescriptor } from '@universal-packages/terminal-document'
 import { PresenterDocumentDescriptor, TerminalPresenterOptions } from '@universal-packages/terminal-presenter'
 
@@ -79,7 +80,18 @@ export interface CoreModuleWarning {
 
 export interface CoreDeveloperSpace {
   bucket: Record<string, any>
-  updateProgress: (progress: number) => void
+  terminalPresenter: {
+    setProgressPercentage: (progressPercentage: number) => void
+    increaseProgressPercentageBy: (percentage: number) => void
+
+    startProgressIncreaseSimulation: (amount: number, simulatedTime: number, refreshRate?: number) => void
+    finishProgressIncreaseSimulation: () => void
+
+    setScriptOutput: (scriptOutput: string) => void
+
+    setSubProcess: (options: SubProcessOptions) => SubProcess
+    runSubProcess: (options: SubProcessOptions) => Promise<SubProcess>
+  }
 }
 
 export interface TerminalPresenterCoreAnalog {

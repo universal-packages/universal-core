@@ -7,7 +7,7 @@ export default class HackyLoadInitializer extends CoreInitializer {
 
   private resolve: (value: void | PromiseLike<void>) => void
 
-  protected async initialize(): Promise<void> {
+  protected async afterTemplatePopulate(): Promise<void> {
     return new Promise((resolve): void => {
       this.resolve = resolve
       HackyLoadInitializer.iWasInitialized = true
@@ -15,7 +15,7 @@ export default class HackyLoadInitializer extends CoreInitializer {
     })
   }
 
-  protected rollback(): Promise<void> | void {
+  public abort(): Promise<void> | void {
     HackyLoadInitializer.iWasAborted = true
     this.resolve()
   }

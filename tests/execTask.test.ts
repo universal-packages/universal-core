@@ -47,8 +47,16 @@ describe(execTask, (): void => {
       coreConfig: expect.objectContaining({ tasks: { location: './tests/__fixtures__/tasks' } }),
       coreModules: {},
       developer: {
-        updateProgress: expect.any(Function),
-        bucket: {}
+        bucket: {},
+        terminalPresenter: {
+          setProgressPercentage: expect.any(Function),
+          increaseProgressPercentageBy: expect.any(Function),
+          startProgressIncreaseSimulation: expect.any(Function),
+          finishProgressIncreaseSimulation: expect.any(Function),
+          setScriptOutput: expect.any(Function),
+          setSubProcess: expect.any(Function),
+          runSubProcess: expect.any(Function)
+        }
       },
       environments: [
         expect.any(GoodTaskEnvironment),

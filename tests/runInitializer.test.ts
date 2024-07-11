@@ -37,8 +37,16 @@ describe(runInitializer, (): void => {
       coreConfig: expect.any(Object),
       coreModules: null,
       developer: {
-        updateProgress: expect.any(Function),
-        bucket: {}
+        bucket: {},
+        terminalPresenter: {
+          setProgressPercentage: expect.any(Function),
+          increaseProgressPercentageBy: expect.any(Function),
+          startProgressIncreaseSimulation: expect.any(Function),
+          finishProgressIncreaseSimulation: expect.any(Function),
+          setScriptOutput: expect.any(Function),
+          setSubProcess: expect.any(Function),
+          runSubProcess: expect.any(Function)
+        }
       },
       environments: null,
       Initializer: GoodInitializer,

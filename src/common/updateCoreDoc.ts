@@ -17,6 +17,8 @@ const PROCESSES_COLORS: Record<string, { primary: Color; secondary: Color }> = {
 const PROGRESS_COMPONENT: ProgressBarController = ProgressBarBlock({ color: 'light-slate-gray' })
 let PROGRESS_WAS_UPDATED = false
 
+let SCRIPT_OUTPUT = null
+
 export function updateCoreDoc() {
   if (!core.terminalPresenter.OPTIONS.enabled) return
 
@@ -82,6 +84,14 @@ export function updateCoreDoc() {
 
   documentRows.push(headerRow)
 
+  // SCRIPT OUTPUT ROW ===============================================================
+
+  if (SCRIPT_OUTPUT) {
+    const scriptOutputRow: PresenterRowDescriptor = { blocks: [] }
+    scriptOutputRow.blocks.push({ free: true, text: SCRIPT_OUTPUT })
+    documentRows.push(scriptOutputRow)
+  }
+
   // MIDDLE ROW ===============================================================
   documentRows.push({ blocks: [{ text: ' ' }] })
 
@@ -142,7 +152,7 @@ export function updateCoreDoc() {
   core.terminalPresenter.updateRealTimeDocument('CORE-DOC', { rows: documentRows })
 }
 
-export function updateCoreDocProgress(progress: number) {
+export function setCoreDocProgressPercentage(progress: number) {
   if (!core.terminalPresenter.OPTIONS.enabled) return
 
   if (!PROGRESS_WAS_UPDATED) {
@@ -151,4 +161,10 @@ export function updateCoreDocProgress(progress: number) {
   }
 
   PROGRESS_COMPONENT.setProgress(progress)
+}
+
+export function setCoreDocScriptOutput(output: string) {
+  if (SCRIPT_OUTPUT === output) return
+  SCRIPT_OUTPUT = output
+  updateCoreDoc()
 }

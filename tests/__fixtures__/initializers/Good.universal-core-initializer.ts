@@ -9,12 +9,12 @@ export default class GoodInitializer extends CoreInitializer {
 
   public readonly templatesLocation: string = `${__dirname}/templates`
 
-  protected async initialize(): Promise<void> {
+  protected async afterTemplatePopulate(): Promise<void> {
     await sleep(50)
     GoodInitializer.iWasInitialized = true
   }
 
-  protected rollback(): Promise<void> | void {
+  public abort(): Promise<void> | void {
     GoodInitializer.iWasAborted = true
   }
 }

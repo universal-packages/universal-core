@@ -16,8 +16,8 @@ export default class CoreInitializer<A = any> extends Core {
 
   public readonly templatesLocation: string = `${__dirname}/templates`
 
-  private readonly templateVariables: Record<string, string> = {}
-  private readonly operationLocation: './'
+  protected readonly templateVariables: Record<string, string> = {}
+  protected readonly operationLocation: string = './'
 
   public constructor(args: A, logger: Logger) {
     super(logger)
@@ -29,9 +29,9 @@ export default class CoreInitializer<A = any> extends Core {
   public static async find(name: string, locationOverride?: string): Promise<typeof CoreInitializer> {
     const pascalCaseName = pascalCase(name)
     const paramCaseName = paramCase(name)
-    const inDevelopmentInitializer = await loadModules(locationOverride || './src', { conventionPrefix: 'universal-core-initializer' })
+    const inDevelopmentInitializers = await loadModules(locationOverride || './src', { conventionPrefix: 'universal-core-initializer' })
     const thirdPartyInitializers = await loadModules('./node_modules', { conventionPrefix: 'universal-core-initializer' })
-    const finalInitializers = [...inDevelopmentInitializer, ...thirdPartyInitializers]
+    const finalInitializers = [...inDevelopmentInitializers, ...thirdPartyInitializers]
 
     const initializerModuleRegistry = finalInitializers.find((module: ModuleRegistry): boolean => {
       const fileMatches = !!module.location
@@ -39,7 +39,7 @@ export default class CoreInitializer<A = any> extends Core {
         .pop()
         .match(new RegExp(`(${pascalCaseName}|${paramCaseName}).universal-core-initializer\..*$`))
 
-      return module.exports ? module.exports.taskName === name || module.exports.name === name || fileMatches : fileMatches
+      return module.exports ? module.exports.initializerName === name || module.exports.name === name || fileMatches : fileMatches
     })
 
     if (!initializerModuleRegistry) {
@@ -52,21 +52,34 @@ export default class CoreInitializer<A = any> extends Core {
   }
 
   public async run(): Promise<void> {
-    let templateLocation: string | false = ''
+    await this.beforeTemplatePopulate()
+    await this.populateTemplate()
+    await this.afterTemplatePopulate()
+
+    core.developer.terminalPresenter.setProgressPercentage(100)
+  }
+
+  public abort(): Promise<void> | void {}
+
+  protected beforeTemplatePopulate(): Promise<void> | void {}
+  protected afterTemplatePopulate(): Promise<void> | void {}
+
+  private async populateTemplate(): Promise<void> {
+    let templateLocation = quickCheckDirectory(`${this.templatesLocation}/default`)
 
     if (this.typescript) {
-      templateLocation = quickCheckDirectory(`${this.templatesLocation}/typescript`)
+      const typescriptTemplateLocation = quickCheckDirectory(`${this.templatesLocation}/typescript`)
 
-      if (!templateLocation) {
+      if (!typescriptTemplateLocation) {
         this.logger.log({
           level: 'WARNING',
           title: 'Typescript template not available',
           message: 'The typescript template was requested but the initializer does not provide it',
           category: 'CORE'
         })
+      } else {
+        templateLocation = typescriptTemplateLocation
       }
-    } else {
-      templateLocation = quickCheckDirectory(`${this.templatesLocation}/default`)
     }
 
     if (templateLocation) {
@@ -81,23 +94,5 @@ export default class CoreInitializer<A = any> extends Core {
         await populateTemplates(rootTemplateLocation, this.operationLocation, { replacementVariables: { ...this.templateVariables } })
       }
     }
-
-    this.updateProgress(50)
-
-    if (this.initialize) await this.initialize()
-
-    this.updateProgress(100)
-  }
-
-  public abort(): Promise<void> | void {
-    if (this.rollback) return this.rollback()
-  }
-
-  protected initialize(): Promise<void> | void {}
-
-  protected rollback(): Promise<void> | void {}
-
-  protected updateProgress(progress: number): void {
-    core.developer.updateProgress(progress)
   }
 }

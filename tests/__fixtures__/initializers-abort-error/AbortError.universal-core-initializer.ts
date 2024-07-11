@@ -7,11 +7,11 @@ export default class AbortErrorInitializer extends CoreInitializer {
 
   public readonly templatesLocation: string = `${__dirname}/templates`
 
-  protected async initialize(): Promise<void> {
+  protected async afterTemplatePopulate(): Promise<void> {
     await sleep(500)
   }
 
-  protected rollback(): Promise<void> | void {
+  public abort(): Promise<void> | void {
     throw 'Error'
   }
 }
