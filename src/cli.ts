@@ -74,7 +74,10 @@ yargs
         .options('typescript', { alias: ['ts'], description: 'Inits the core project using the typescript template', type: 'boolean', default: false }),
     handler: (argv: ArgumentsCamelCase) => {
       const argvExtract = processArgv(argv)
-      runInitializer('universal-core-project', { args: { ...argvExtract.options, projectName: argvExtract.projectName } })
+      runInitializer('universal-core-project', {
+        args: { ...argvExtract.options, projectName: argvExtract.projectName },
+        coreConfigOverride: { logger: { transports: ['terminal-presenter'] } }
+      })
     }
   })
   .options('env', { alias: ['environment'], description: 'Set node env environment', type: 'string', default: 'development' })

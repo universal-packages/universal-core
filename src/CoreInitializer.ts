@@ -55,7 +55,7 @@ export default class CoreInitializer<A = any> extends Core {
   }
 
   public async run(): Promise<void> {
-    if (quickCheckFile(`${this.operationLocation}/package.json`)) {
+    if (quickCheckFile(`${process.cwd()}/package.json`)) {
       const appName = require(`${process.cwd()}/package.json`).name
       this.templateVariables['appName'] = appName
     }

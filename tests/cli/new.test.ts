@@ -7,6 +7,17 @@ describe('cli', (): void => {
     process.argv = ['node', 'ucore', 'new', 'core-name', '--ts']
     await import('../../src/cli')
 
-    expect(runInitializer).toHaveBeenCalledWith('universal-core-project', { args: { projectName: 'core-name', ts: true, typescript: true } })
+    expect(runInitializer).toHaveBeenCalledWith('universal-core-project', {
+      args: {
+        projectName: 'core-name',
+        ts: true,
+        typescript: true
+      },
+      coreConfigOverride: {
+        logger: {
+          transports: ['terminal-presenter']
+        }
+      }
+    })
   })
 })

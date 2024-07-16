@@ -4,7 +4,6 @@ import { abortCoreInitializerInstance } from './common/abortCoreInitializerInsta
 import { initCoreLogger } from './common/initCoreLogger'
 import { loadAndSetCoreConfig } from './common/loadAndSetCoreConfig'
 import { loadAndSetCoreInitializer } from './common/loadAndSetCoreInitializer'
-import { loadAndSetProjectConfig } from './common/loadAndSetProjectConfig'
 import { releaseLoggerAndPresenter } from './common/releaseLoggerAndPresenter'
 import { runCoreInitializerInstance } from './common/runCoreInitializerInstance'
 import { setCoreGlobal } from './common/setCoreGlobal'
@@ -17,7 +16,7 @@ export async function runInitializer(name: string, options: RunInitializerOption
   const throwError = exitType === 'throw'
 
   setCoreGlobal()
-  await initCoreLogger()
+  await initCoreLogger(coreConfigOverride)
 
   // Common functions return true if something went wrong and we should exit
   if (await loadAndSetCoreConfig(coreConfigOverride, throwError)) return process.exit(1)
