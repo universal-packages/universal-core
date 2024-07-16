@@ -92,7 +92,10 @@ describe(runInitializer, (): void => {
     })
 
     expect(populateTemplates).toHaveBeenCalledWith(expect.stringMatching(/universal-core\/tests\/__fixtures__\/initializers\/templates\/default/), './src', {
-      replacementVariables: {}
+      replacementVariables: {
+        appName: '@universal-packages/core',
+        sourceLocation: './src'
+      }
     })
   })
 
@@ -110,7 +113,10 @@ describe(runInitializer, (): void => {
     })
 
     expect(populateTemplates).toHaveBeenCalledWith(expect.stringMatching(/universal-core\/tests\/__fixtures__\/initializers\/templates\/typescript/), './src', {
-      replacementVariables: {}
+      replacementVariables: {
+        appName: '@universal-packages/core',
+        sourceLocation: './src'
+      }
     })
   })
 
@@ -128,7 +134,10 @@ describe(runInitializer, (): void => {
     })
 
     expect(populateTemplates).not.toHaveBeenCalledWith(expect.stringMatching(/universal-core\/tests\/__fixtures__\/initializers\/templates\/typescript/), './src', {
-      replacementVariables: {}
+      replacementVariables: {
+        appName: '@universal-packages/core',
+        sourceLocation: './src'
+      }
     })
     expect(Logger).toHaveLogged({
       level: 'WARNING',

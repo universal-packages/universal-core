@@ -52,6 +52,11 @@ export default class CoreInitializer<A = any> extends Core {
   }
 
   public async run(): Promise<void> {
+    const appName = require(`${process.cwd()}/package.json`).name
+
+    this.templateVariables['sourceLocation'] = this.sourceLocation
+    this.templateVariables['appName'] = appName
+
     await this.beforeTemplatePopulate()
     await this.populateTemplate()
     await this.afterTemplatePopulate()
