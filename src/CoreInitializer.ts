@@ -1,4 +1,4 @@
-import { quickCheckDirectory } from '@universal-packages/fs-utils'
+import { quickCheckDirectory, quickCheckFile } from '@universal-packages/fs-utils'
 import { Logger } from '@universal-packages/logger'
 import { ModuleRegistry, loadModules } from '@universal-packages/module-loader'
 import { populateTemplates } from '@universal-packages/template-populator'
@@ -55,10 +55,12 @@ export default class CoreInitializer<A = any> extends Core {
   }
 
   public async run(): Promise<void> {
-    const appName = require(`${process.cwd()}/package.json`).name
+    if (quickCheckFile(`${this.operationLocation}/package.json`)) {
+      const appName = require(`${process.cwd()}/package.json`).name
+      this.templateVariables['appName'] = appName
+    }
 
     this.templateVariables['sourceLocation'] = this.sourceLocation
-    this.templateVariables['appName'] = appName
 
     await this.beforeTemplatePopulate()
     await this.populateTemplate()
