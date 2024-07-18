@@ -36,7 +36,7 @@ export default class CoreProjectInitializer extends CoreInitializer {
     }
 
     this.templateVariables.projectName = this.paramCaseName
-    this.templateVariables.coreVersion = coreVersion
+    this.templateVariables.coreVersion = `^${coreVersion}`
   }
 
   protected async afterTemplatePopulate(): Promise<void> {
