@@ -335,6 +335,14 @@ Before core passed the configuration loaded to this app it can optionally grab t
 
 If your apps provides its own way to reload itself when a file changes you can set this to `false` to avoid conflicts with the core watcher. This overrides the watcher configuration in the core configuration file.
 
+#### **`allowLoadModules`** `boolean` `default: true`
+
+Some apps may not need any module because they are self sufficient, if this is the case you can set this to `false` to avoid loading any module.
+
+#### **`allowLoadEnvironments`** `boolean` `default: true`
+
+Some apps may not need any environment because they are self sufficient, if this is the case you can set this to `false` to avoid loading any environment.
+
 ### Instance properties
 
 #### **`config`** `Object`
@@ -410,6 +418,14 @@ Name to be used when finding an task to exec, internally this is preferred befor
 #### **`description`** `String`
 
 Quick explanation of what your task does.
+
+#### **`allowLoadModules`** `boolean` `default: true`
+
+Some apps may not need any module because they are self sufficient, if this is the case you can set this to `false` to avoid loading any module.
+
+#### **`allowLoadEnvironments`** `boolean` `default: true`
+
+Some apps may not need any environment because they are self sufficient, if this is the case you can set this to `false` to avoid loading any environment.
 
 ### Instance properties
 

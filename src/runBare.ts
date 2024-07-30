@@ -22,7 +22,7 @@ export async function runBare(options: RunBareOptions = {}): Promise<UnloadFunct
 
   // Common functions return true if something went wrong and we should exit
   if (await loadAndSetProjectConfig(throwError)) return process.exit(1)
-  if (await loadAndSetEnvironments('bare', 'bare', throwError)) return process.exit(1)
+  if (await loadAndSetEnvironments('bare', 'bare', true, throwError)) return process.exit(1)
 
   const unload = async (): Promise<void> => {
     // To truly unload gracefully we need to wait to a total load
@@ -38,7 +38,7 @@ export async function runBare(options: RunBareOptions = {}): Promise<UnloadFunct
 
   // Common functions return true if something went wrong and we should exit
   if (await emitEnvironmentEvent('beforeModulesLoad', throwError)) return process.exit(1)
-  if (await loadAndSetCoreModules('bare', 'bare', throwError)) return process.exit(1)
+  if (await loadAndSetCoreModules('bare', 'bare', true, throwError)) return process.exit(1)
   if (await emitEnvironmentEvent('afterModulesLoad', throwError)) return process.exit(1)
 
   core.stoppable = true

@@ -10,6 +10,8 @@ export default class CoreApp<C = any, A = any> extends Core {
   public static readonly description: string
   public static readonly defaultConfig: any
   public static readonly allowAppWatch: boolean = true
+  public static readonly allowLoadModules: boolean = true
+  public static readonly allowLoadEnvironments: boolean = true
 
   public readonly config: C
   public readonly args: A

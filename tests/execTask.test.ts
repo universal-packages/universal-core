@@ -11,6 +11,7 @@ import TestEnvironment from './__fixtures__/environments/Test.environment'
 import UniversalEnvironment from './__fixtures__/environments/Universal.environment'
 import AbortableTask from './__fixtures__/tasks-abortable/Abortable.task'
 import HackyLoadTask from './__fixtures__/tasks-hacky-load/HackyLoad.task'
+import NotAllowTask from './__fixtures__/tasks-no-allow/NotAllow.task'
 import GoodTask from './__fixtures__/tasks/Good.task'
 
 jest.spyOn(process, 'exit').mockImplementation(((): void => {}) as any)
@@ -24,6 +25,7 @@ beforeEach((): void => {
   TestEnvironment.calls = []
   UniversalEnvironment.calls = []
   ControlEnvironment.calls = []
+  NotProductionEnvironment.calls = []
   process.removeAllListeners()
 })
 
@@ -101,6 +103,76 @@ describe(execTask, (): void => {
     expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'Core modules loaded', category: 'CORE' })
     expect(Logger).toHaveLogged({ level: 'INFO', title: 'good-task executing...', category: 'CORE' })
     expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'good-task executed', category: 'CORE' })
+    expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'Core modules unloaded', category: 'CORE' })
+  })
+
+  it('do all the preparations and ignore environments and module load if configured', async (): Promise<void> => {
+    await execTask('not-allow-task', {
+      coreConfigOverride: {
+        apps: { location: './tests/__fixtures__/apps' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks-no-allow' },
+        modules: { location: './tests/__fixtures__/modules' }
+      }
+    })
+
+    expect(NotAllowTask.iWasExecuted).toEqual(true)
+    expect(core).toEqual({
+      App: null,
+      appConfig: null,
+      appInstance: null,
+      coreConfig: expect.objectContaining({ tasks: { location: './tests/__fixtures__/tasks-no-allow' } }),
+      coreModules: {},
+      developer: {
+        bucket: {},
+        terminalPresenter: {
+          setProgressPercentage: expect.any(Function),
+          increaseProgressPercentageBy: expect.any(Function),
+          startProgressIncreaseSimulation: expect.any(Function),
+          finishProgressIncreaseSimulation: expect.any(Function),
+          setScriptOutput: expect.any(Function),
+          setSubProcess: expect.any(Function),
+          runSubProcess: expect.any(Function)
+        }
+      },
+      environments: [],
+      Initializer: null,
+      initializerInstance: null,
+      logger: expect.any(Logger),
+      projectConfig: expect.objectContaining({ ExcellentModule: expect.anything(), 'good-module': expect.anything(), 'good-app': expect.anything() }),
+      stoppable: true,
+      stopping: false,
+      Task: NotAllowTask,
+      taskInstance: expect.any(NotAllowTask),
+      terminalPresenter: {
+        configure: expect.any(Function),
+        appendRealTimeDocument: expect.any(Function),
+        clearRealTimeDocuments: expect.any(Function),
+        clearScreen: expect.any(Function),
+        captureConsole: expect.any(Function),
+        prependRealTimeDocument: expect.any(Function),
+        present: expect.any(Function),
+        printString: expect.any(Function),
+        printDocument: expect.any(Function),
+        releaseConsole: expect.any(Function),
+        removeRealTimeDocument: expect.any(Function),
+        restore: expect.any(Function),
+        updateRealTimeDocument: expect.any(Function),
+        OPTIONS: expect.any(Object)
+      }
+    })
+    expect(GoodTaskEnvironment.calls).toEqual([])
+    expect(TaskEnvironment.calls).toEqual([])
+    expect(TestEnvironment.calls).toEqual([])
+    expect(UniversalEnvironment.calls).toEqual([])
+    expect(NotProductionEnvironment.calls).toEqual([])
+    expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'Core config loaded', category: 'CORE' })
+    expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'Project config loaded', category: 'CORE' })
+    expect(Logger).not.toHaveLogged({ level: 'DEBUG', title: 'Core environments loaded', category: 'CORE' })
+    expect(Logger).not.toHaveLogged({ level: 'DEBUG', title: 'Core modules loaded', category: 'CORE' })
+    expect(Logger).toHaveLogged({ level: 'INFO', title: 'not-allow-task executing...', category: 'CORE' })
+    expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'not-allow-task executed', category: 'CORE' })
     expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'Core modules unloaded', category: 'CORE' })
   })
 

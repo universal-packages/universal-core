@@ -28,7 +28,7 @@ export async function execTask(name: string, options: ExecTaskOptions = {}): Pro
 
   if (await loadAndSetProjectConfig(throwError)) return process.exit(1)
   if (await loadAndSetCoreTask(name, directive, directiveOptions, args, throwError)) return process.exit(1)
-  if (await loadAndSetEnvironments('tasks', core.Task.taskName || core.Task.name, throwError)) return process.exit(1)
+  if (await loadAndSetEnvironments('tasks', core.Task.taskName || core.Task.name, core.Task.allowLoadEnvironments, throwError)) return process.exit(1)
 
   startPresenting()
 
@@ -62,7 +62,7 @@ export async function execTask(name: string, options: ExecTaskOptions = {}): Pro
 
   // Common functions return true if something went wrong and we should exit
   if (await emitEnvironmentEvent('beforeModulesLoad', throwError)) return process.exit(1)
-  if (await loadAndSetCoreModules('tasks', core.Task.taskName || core.Task.name, throwError)) return process.exit(1)
+  if (await loadAndSetCoreModules('tasks', core.Task.taskName || core.Task.name, core.Task.allowLoadModules, throwError)) return process.exit(1)
   if (await emitEnvironmentEvent('afterModulesLoad', throwError)) return process.exit(1)
 
   core.stoppable = true

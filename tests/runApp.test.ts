@@ -2,6 +2,7 @@ import { Logger } from '@universal-packages/logger'
 
 import { EnvironmentEvent } from '../src'
 import { runApp } from '../src/runApp'
+import NotAllowApp from './__fixtures__/apps-no-allow/NotAllow.app'
 import GoodApp from './__fixtures__/apps/Good.app'
 import ControlEnvironment from './__fixtures__/environments-event-error/Control.environment'
 import EventErrorEnvironment from './__fixtures__/environments-event-error/EventError.environment'
@@ -32,6 +33,7 @@ beforeEach((): void => {
   TestEnvironment.calls = []
   UniversalEnvironment.calls = []
   ControlEnvironment.calls = []
+  NotProductionEnvironment.calls = []
   process.removeAllListeners()
 })
 
@@ -117,6 +119,76 @@ describe(runApp, (): void => {
     expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'Core modules loaded', category: 'CORE' })
     expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'App prepared', category: 'CORE' })
     expect(Logger).toHaveLogged({ level: 'INFO', title: 'App good-app running', category: 'CORE' })
+  })
+
+  it('do all the preparations and ignore environments and module load if configured', async (): Promise<void> => {
+    await runApp('not-allow-app', {
+      coreConfigOverride: {
+        apps: { location: './tests/__fixtures__/apps-no-allow' },
+        config: { location: './tests/__fixtures__/config' },
+        environments: { location: './tests/__fixtures__/environments' },
+        tasks: { location: './tests/__fixtures__/tasks' },
+        modules: { location: './tests/__fixtures__/modules' }
+      }
+    })
+
+    expect(NotAllowApp.iWasPrepared).toEqual(true)
+    expect(NotAllowApp.iWasRan).toEqual(true)
+    expect(core).toEqual({
+      App: NotAllowApp,
+      appConfig: undefined,
+      appInstance: expect.any(NotAllowApp),
+      coreConfig: expect.objectContaining({ apps: { location: './tests/__fixtures__/apps-no-allow' } }),
+      coreModules: {},
+      developer: {
+        bucket: {},
+        terminalPresenter: {
+          setProgressPercentage: expect.any(Function),
+          increaseProgressPercentageBy: expect.any(Function),
+          startProgressIncreaseSimulation: expect.any(Function),
+          finishProgressIncreaseSimulation: expect.any(Function),
+          setScriptOutput: expect.any(Function),
+          setSubProcess: expect.any(Function),
+          runSubProcess: expect.any(Function)
+        }
+      },
+      environments: [],
+      Initializer: null,
+      initializerInstance: null,
+      logger: expect.any(Logger),
+      projectConfig: expect.objectContaining({ ExcellentModule: expect.anything(), 'good-module': expect.anything(), 'good-app': expect.anything() }),
+      stoppable: true,
+      stopping: false,
+      Task: null,
+      taskInstance: null,
+      terminalPresenter: {
+        configure: expect.any(Function),
+        appendRealTimeDocument: expect.any(Function),
+        clearRealTimeDocuments: expect.any(Function),
+        clearScreen: expect.any(Function),
+        captureConsole: expect.any(Function),
+        prependRealTimeDocument: expect.any(Function),
+        present: expect.any(Function),
+        printString: expect.any(Function),
+        printDocument: expect.any(Function),
+        releaseConsole: expect.any(Function),
+        removeRealTimeDocument: expect.any(Function),
+        restore: expect.any(Function),
+        updateRealTimeDocument: expect.any(Function),
+        OPTIONS: expect.any(Object)
+      }
+    })
+    expect(AppEnvironment.calls).toEqual([])
+    expect(GoodAppEnvironment.calls).toEqual([])
+    expect(TestEnvironment.calls).toEqual([])
+    expect(UniversalEnvironment.calls).toEqual([])
+    expect(NotProductionEnvironment.calls).toEqual([])
+    expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'Core config loaded', category: 'CORE' })
+    expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'Project config loaded', category: 'CORE' })
+    expect(Logger).not.toHaveLogged({ level: 'DEBUG', title: 'Core environments loaded', category: 'CORE' })
+    expect(Logger).not.toHaveLogged({ level: 'DEBUG', title: 'Core modules loaded', category: 'CORE' })
+    expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'App prepared', category: 'CORE' })
+    expect(Logger).toHaveLogged({ level: 'INFO', title: 'App not-allow-app running', category: 'CORE' })
   })
 
   it('exits if core config has errors', async (): Promise<void> => {

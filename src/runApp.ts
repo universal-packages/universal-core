@@ -92,7 +92,7 @@ export async function runApp(name: string, options: RunAppOptions = {}): Promise
     // Common functions return true if something went wrong and we should exit
     if (await loadAndSetProjectConfig(throwError)) return process.exit(1)
     if (await setCoreApp(name, args, throwError)) return process.exit(1)
-    if (await loadAndSetEnvironments('apps', core.App.appName || core.App.name, throwError)) return process.exit(1)
+    if (await loadAndSetEnvironments('apps', core.App.appName || core.App.name, core.App.allowLoadEnvironments, throwError)) return process.exit(1)
 
     startPresenting()
 
@@ -155,7 +155,7 @@ export async function runApp(name: string, options: RunAppOptions = {}): Promise
 
     // Common functions return true if something went wrong and we should exit
     if (await emitEnvironmentEvent('beforeModulesLoad', throwError)) return process.exit(1)
-    if (await loadAndSetCoreModules('apps', core.App.appName || core.App.name, throwError)) return process.exit(1)
+    if (await loadAndSetCoreModules('apps', core.App.appName || core.App.name, core.App.allowLoadModules, throwError)) return process.exit(1)
     if (await emitEnvironmentEvent('afterModulesLoad', throwError)) return process.exit(1)
 
     if (await emitEnvironmentEvent('beforeAppPrepare', throwError)) return process.exit(1)

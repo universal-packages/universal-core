@@ -24,14 +24,14 @@ export async function runConsole(options: RunConsoleOptions = {}): Promise<void>
   if (await loadAndSetCoreConfig(coreConfigOverride, throwError)) return process.exit(1)
 
   if (await loadAndSetProjectConfig(throwError)) return process.exit(1)
-  if (await loadAndSetEnvironments('console', 'console', throwError)) return process.exit(1)
+  if (await loadAndSetEnvironments('console', 'console', true, throwError)) return process.exit(1)
 
   // Avoid terminating without unlading properly
   process.addListener('SIGINT', (): void => {})
   process.addListener('SIGTERM', (): void => {})
 
   if (await emitEnvironmentEvent('beforeModulesLoad', throwError)) return process.exit(1)
-  if (await loadAndSetCoreModules('console', 'console', throwError)) return process.exit(1)
+  if (await loadAndSetCoreModules('console', 'console', true, throwError)) return process.exit(1)
   if (await emitEnvironmentEvent('afterModulesLoad', throwError)) return process.exit(1)
 
   try {

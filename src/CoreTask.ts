@@ -8,6 +8,8 @@ import { CoreConfig } from './Core.types'
 export default class CoreTask<A = any> extends Core {
   public static readonly taskName: string
   public static readonly description: string
+  public static readonly allowLoadModules: boolean = true
+  public static readonly allowLoadEnvironments: boolean = true
 
   public readonly directive: string
   public readonly directiveOptions: string[]

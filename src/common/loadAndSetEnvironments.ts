@@ -2,10 +2,15 @@ import { startMeasurement } from '@universal-packages/time-measurer'
 
 import Core from '../Core'
 import { ProcessType } from '../Core.types'
-import { LOG_CONFIGURATION } from './terminal-presenter/LOG_CONFIGURATION'
 import { releaseLoggerAndPresenter } from './releaseLoggerAndPresenter'
+import { LOG_CONFIGURATION } from './terminal-presenter/LOG_CONFIGURATION'
 
-export async function loadAndSetEnvironments(processType: ProcessType, processableName: string, throwError?: boolean): Promise<boolean> {
+export async function loadAndSetEnvironments(processType: ProcessType, processableName: string, allowLoadEnvironments: boolean, throwError?: boolean): Promise<boolean> {
+  if (!allowLoadEnvironments) {
+    core.environments = []
+    return false
+  }
+
   const measurer = startMeasurement()
 
   try {
