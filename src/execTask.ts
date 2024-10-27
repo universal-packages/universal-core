@@ -14,9 +14,9 @@ import { releaseLoggerAndPresenter } from './common/releaseLoggerAndPresenter'
 import { setCoreGlobal } from './common/setCoreGlobal'
 import { startPresenting } from './common/startPresenting'
 import { LOG_CONFIGURATION } from './common/terminal-presenter/LOG_CONFIGURATION'
-import { AbortTaskFunction, ExecTaskOptions } from './execTask.types'
+import { ExecTaskOptions } from './execTask.types'
 
-export async function execTask(name: string, options: ExecTaskOptions = {}): Promise<AbortTaskFunction> {
+export async function execTask(name: string, options: ExecTaskOptions = {}): Promise<void> {
   const { args = {}, coreConfigOverride, directive = '', directiveOptions = [], exitType }: ExecTaskOptions = options
   const throwError = exitType === 'throw'
 
@@ -76,6 +76,4 @@ export async function execTask(name: string, options: ExecTaskOptions = {}): Pro
   if (await emitEnvironmentEvent('afterModulesRelease', throwError)) return process.exit(1)
 
   await releaseLoggerAndPresenter()
-
-  return abortTask
 }
