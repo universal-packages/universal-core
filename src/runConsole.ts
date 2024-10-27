@@ -57,7 +57,7 @@ export async function runConsole(options: RunConsoleOptions = {}): Promise<void>
       if (await emitEnvironmentEvent('afterConsoleStops', throwError)) return process.exit(1)
 
       if (await emitEnvironmentEvent('beforeModulesRelease', throwError)) return process.exit(1)
-      if (await releaseCoreModules(throwError)) return process.exit(1)
+      if (await releaseCoreModules(true, throwError)) return process.exit(1)
       if (await emitEnvironmentEvent('afterModulesRelease', throwError)) return process.exit(1)
     })
   } catch (error) {

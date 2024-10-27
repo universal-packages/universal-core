@@ -173,7 +173,7 @@ describe(execTask, (): void => {
     expect(Logger).not.toHaveLogged({ level: 'DEBUG', title: 'Core modules loaded', category: 'CORE' })
     expect(Logger).toHaveLogged({ level: 'INFO', title: 'not-allow-task executing...', category: 'CORE' })
     expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'not-allow-task executed', category: 'CORE' })
-    expect(Logger).toHaveLogged({ level: 'DEBUG', title: 'Core modules unloaded', category: 'CORE' })
+    expect(Logger).not.toHaveLogged({ level: 'DEBUG', title: 'Core modules unloaded', category: 'CORE' })
   })
 
   it('exits if core config has errors', async (): Promise<void> => {

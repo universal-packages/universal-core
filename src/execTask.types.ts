@@ -7,3 +7,5 @@ export interface ExecTaskOptions {
   directiveOptions?: string[]
   exitType?: 'process' | 'throw'
 }
+
+export type AbortTaskFunction = () => Promise<void>

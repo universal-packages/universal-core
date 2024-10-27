@@ -135,7 +135,7 @@ export async function runApp(name: string, options: RunAppOptions = {}): Promise
       if (await emitEnvironmentEvent('afterAppRelease', throwError)) return process.exit(1)
 
       if (await emitEnvironmentEvent('beforeModulesRelease', throwError)) return process.exit(1)
-      if (await releaseCoreModules(throwError)) return process.exit(1)
+      if (await releaseCoreModules(core.App.allowLoadModules, throwError)) return process.exit(1)
       if (await emitEnvironmentEvent('afterModulesRelease', throwError)) return process.exit(1)
 
       releaseLoggerAndPresenter()

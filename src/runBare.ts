@@ -32,7 +32,7 @@ export async function runBare(options: RunBareOptions = {}): Promise<UnloadFunct
 
     // Common functions return true if something went wrong and we should exit
     if (await emitEnvironmentEvent('beforeModulesRelease', throwError)) return process.exit(1)
-    if (await releaseCoreModules(throwError)) return process.exit(1)
+    if (await releaseCoreModules(true, throwError)) return process.exit(1)
     if (await emitEnvironmentEvent('afterModulesRelease', throwError)) return process.exit(1)
   }
 
