@@ -1,4 +1,4 @@
-#!/usr/bin/env node --import tsx
+#!/usr/bin/env -S node --import tsx
 
 const fs = require('fs')
 const path = require('path')
