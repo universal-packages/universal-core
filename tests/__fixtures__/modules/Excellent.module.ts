@@ -4,6 +4,7 @@ export default class ExcellentModule extends CoreModule {
   public static iWasPrepared = false
   public static iWasReleased = false
   public static readonly moduleName = 'excellent-module'
+  public static readonly loadPriority = 110
 
   public async prepare(): Promise<void> {
     this.subject = 'I am the subject of the excellent core module'

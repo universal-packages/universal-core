@@ -186,6 +186,7 @@ export default class RedisModule extends CoreModule {
   static environment = 'production'
   static onlyFor = 'apps'
   static tideTo = 'web-server-app'
+  static loadPriority = 100
 
   subject = null
 
@@ -238,6 +239,10 @@ If specified the environment will only be loaded if the process type matches, fo
 #### **`tideTo`** `String | String[]`
 
 If specified the environment will only be loaded if the process name matches, for instance the example above will only be loaded if we are running an app called `web-server-app`, another example will be to set it like `static tideTo = ['web-server-app', 'worker-app']` to only be ran in those.
+
+#### **`loadPriority`** `Number`
+
+If specified the module will be loaded in the order of the priority, the lower the number the sooner the module will be loaded, if not specified the module will be loaded in the order they were found. The default priority is `100`.
 
 ### Instance properties
 

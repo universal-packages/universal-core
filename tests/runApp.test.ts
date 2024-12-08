@@ -51,6 +51,7 @@ describe(runApp, (): void => {
 
     expect(GoodApp.iWasPrepared).toEqual(true)
     expect(GoodApp.iWasRan).toEqual(true)
+    expect(Object.keys(core.coreModules)).toEqual(['goodAppModule', 'notProductionModule', 'testModule', 'goodModule', 'excellentModule', 'appModule'])
     expect(core).toEqual({
       App: GoodApp,
       appConfig: { doStuff: true, test: true },

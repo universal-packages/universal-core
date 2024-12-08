@@ -9,6 +9,7 @@ export default class CoreModule<C = any, S = any> {
   public static readonly environment: EnvironmentName | EnvironmentName[]
   public static readonly onlyFor: ProcessType
   public static readonly tideTo: string | string[]
+  public static readonly loadPriority: number = 100
 
   public readonly config: C
   public readonly logger: Logger

@@ -113,12 +113,9 @@ export default class Core {
   ): Promise<[CoreModules, CoreModuleWarning[]]> {
     const localModules = await loadModules(coreConfig.modules.location, { conventionPrefix: 'module' })
     const thirdPartyModules = await loadModules('./node_modules', { conventionPrefix: 'universal-core-module' })
-    const finalModules = [
-      ...thirdPartyModules.sort((moduleA: ModuleRegistry, ModuleB: ModuleRegistry): number =>
-        moduleA.location.replace(/^.*(\\|\/|\:)/, '') > ModuleB.location.replace(/^.*(\\|\/|\:)/, '') ? 1 : -1
-      ),
-      ...localModules
-    ]
+    const finalModules = [...thirdPartyModules, ...localModules].sort((moduleA: ModuleRegistry, ModuleB: ModuleRegistry): number =>
+      moduleA.exports.loadPriority > ModuleB.exports.loadPriority ? 1 : moduleA.exports.loadPriority < ModuleB.exports.loadPriority ? -1 : 0
+    )
     const warnings: CoreModuleWarning[] = []
     const coreModules: CoreModules = {}
 
