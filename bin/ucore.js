@@ -1,19 +1,21 @@
-#!/usr/bin/env -S node --import tsx
+#!/usr/bin/env node
 
 const fs = require('fs')
 const path = require('path')
 
-try {
-  const compiledCli = fs.existsSync(path.resolve(__dirname, '..', 'cli.js'))
+import('tsx').then(() => {
+  try {
+    const compiledCli = fs.existsSync(path.resolve(__dirname, '..', 'cli.js'))
 
-  if (compiledCli) {
-    require('../cli')
-  } else {
-    require('../src/cli')
+    if (compiledCli) {
+      require('../cli')
+    } else {
+      require('../src/cli')
+    }
+  } catch (error) {
+    // There was an actual error in this TS library
+    if (process[Symbol.for('ts-node.register.instance')] !== undefined) {
+      console.log(error)
+    }
   }
-} catch (error) {
-  // There was an actual error in this TS library
-  if (process[Symbol.for('ts-node.register.instance')] !== undefined) {
-    console.log(error)
-  }
-}
+})
