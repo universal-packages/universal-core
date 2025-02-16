@@ -126,10 +126,8 @@ export default class AppWatcher extends EventEmitter {
       CORE_APP_ARGS: JSON.stringify(this.args),
       CORE_FORK: 'true'
     }
-    const tsScriptExists = fs.existsSync(path.resolve(__dirname, 'runApp.script.ts'))
-    const extension = tsScriptExists ? 'ts' : 'js'
 
-    this.currentChildProcess = fork(path.resolve(__dirname, `runApp.script.${extension}`), { env, stdio: ['ipc', 'inherit', 'inherit'] })
+    this.currentChildProcess = fork(path.resolve(__dirname, 'runApp.script.js'), { env, stdio: ['ipc', 'inherit', 'inherit'] })
 
     this.currentChildProcess.on('exit', (code: number): void => {
       this.currentChildProcess = null

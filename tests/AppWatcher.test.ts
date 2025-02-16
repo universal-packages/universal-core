@@ -71,7 +71,7 @@ describe(AppWatcher, (): void => {
       expect(watcher).toMatchObject({ ready: true })
       expect(readyMock).toHaveBeenCalledTimes(1)
       expect(forkMock).toHaveBeenCalledTimes(1)
-      expect(forkMock).toHaveBeenCalledWith(expect.stringMatching(/universal-core\/src\/runApp.script.ts/), {
+      expect(forkMock).toHaveBeenCalledWith(expect.stringMatching(/universal-core\/src\/runApp.script.js/), {
         env: expect.objectContaining({ CORE_APP_NAME: 'app', CORE_APP_ARGS: '{}', CORE_FORK: 'true' }),
         stdio: ['ipc', 'inherit', 'inherit']
       })
@@ -193,7 +193,7 @@ describe(AppWatcher, (): void => {
       forkEmitter.emit('exit', 0)
 
       expect(forkMock).toHaveBeenCalledTimes(2)
-      expect(forkMock).toHaveBeenLastCalledWith(expect.stringMatching(/universal-core\/src\/runApp.script.ts/), {
+      expect(forkMock).toHaveBeenLastCalledWith(expect.stringMatching(/universal-core\/src\/runApp.script.js/), {
         env: expect.objectContaining({ CORE_APP_NAME: 'app', CORE_APP_ARGS: '{}', CORE_FORK: 'true' }),
         stdio: ['ipc', 'inherit', 'inherit']
       })
